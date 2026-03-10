@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "UserWord": {
+      "title": "UserWord",
+      "description": "A user's progress on a specific vocabulary word",
+      "type": "object",
+      "properties": {
+        "wordId": {
+          "type": "string",
+          "description": "The ID of the vocabulary word"
+        },
+        "box": {
+          "type": "number",
+          "description": "The Leitner box number (0 to 6)"
+        },
+        "nextReviewDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The next date the word should be reviewed"
+        },
+        "lastTestedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last date the word was tested"
+        }
+      },
+      "required": ["wordId", "box"]
+    },
+    "UserStats": {
+      "title": "UserStats",
+      "description": "A user's overall statistics",
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "number"
+        },
+        "timeSpent": {
+          "type": "number"
+        },
+        "wordsLearnt": {
+          "type": "number"
+        },
+        "wordsRevised": {
+          "type": "number"
+        },
+        "groupsLearnt": {
+          "type": "number"
+        },
+        "wordsFinished": {
+          "type": "number"
+        }
+      },
+      "required": ["points", "timeSpent", "wordsLearnt", "wordsRevised", "groupsLearnt", "wordsFinished"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "A user's profile and progress data",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's Firebase Auth UID"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "stats": {
+          "$ref": "#/entities/UserStats"
+        },
+        "userWords": {
+          "type": "object",
+          "description": "Map of wordId to UserWord",
+          "additionalProperties": {
+            "$ref": "#/entities/UserWord"
+          }
+        }
+      },
+      "required": ["uid", "stats", "userWords"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user profiles and their vocabulary progress"
+    }
+  }
+}

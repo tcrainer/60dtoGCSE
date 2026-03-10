@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (matches auth.uid)
+    // Fields:
+    //   - uid: string (required, immutable)
+    //   - email: string (optional)
+    //   - stats: map (required)
+    //     - points: number
+    //     - timeSpent: number
+    //     - wordsLearnt: number
+    //     - wordsRevised: number
+    //     - groupsLearnt: number
+    //     - wordsFinished: number
+    //   - userWords: map (required)
+    //     - [wordId]: map
+    //       - wordId: string
+    //       - box: number
+    //       - nextReviewDate: string (optional)
+    //       - lastTestedDate: string (optional)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) ||
+        request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) ||
+        request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidStats(stats) {
+      return stats is map &&
+             stats.keys().hasAll(['points', 'timeSpent', 'wordsLearnt', 'wordsRevised', 'groupsLearnt', 'wordsFinished']) &&
+             stats.points is number && stats.points >= 0 &&
+             stats.timeSpent is number && stats.timeSpent >= 0 &&
+             stats.wordsLearnt is number && stats.wordsLearnt >= 0 &&
+             stats.wordsRevised is number && stats.wordsRevised >= 0 &&
+             stats.groupsLearnt is number && stats.groupsLearnt >= 0 &&
+             stats.wordsFinished is number && stats.wordsFinished >= 0;
+    }
+
+    function isValidUserWords(userWords) {
+      return userWords is map && userWords.size() < 5000; 
+    }
+
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'stats', 'userWords']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
+             (!('email' in data) || (data.email is string && data.email.size() < 256)) &&
+             isValidStats(data.stats) &&
+             isValidUserWords(data.userWords);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && uidUnchanged();
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && uidNotModified();
+      allow delete: if isOwner(userId);
+    }
+  }
+}
