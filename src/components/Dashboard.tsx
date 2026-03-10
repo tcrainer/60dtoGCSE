@@ -35,6 +35,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const { userWords, stats, dailyStats, awardBonus } = useStore();
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPointsInfo, setShowPointsInfo] = useState(false);
+  const [showLevelInfo, setShowLevelInfo] = useState(false);
+  const [showStreakInfo, setShowStreakInfo] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
   const [selectedWordsToRevise, setSelectedWordsToRevise] = useState<
@@ -242,14 +244,25 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               <div className="p-3 bg-white/20 text-white rounded-2xl shrink-0">
                 <Trophy className="w-6 h-6" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-amber-100 uppercase tracking-wider">Level {level.level}</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-1">
+                  <p className="text-xs font-bold text-amber-100 uppercase tracking-wider">Level {level.level}</p>
+                  <button
+                    onClick={() => setShowLevelInfo(true)}
+                    className="p-0.5 bg-white/20 hover:bg-white/30 rounded-full transition-colors shrink-0"
+                    title="Level info"
+                  >
+                    <HelpCircle className="w-3 h-3 text-white" />
+                  </button>
+                </div>
                 <p className="text-sm font-black text-white truncate">{level.name}</p>
                 <div className="mt-1 w-full bg-white/30 rounded-full h-1">
                   <div className="h-1 rounded-full bg-white transition-all" style={{ width: `${level.progress}%` }} />
                 </div>
-                {level.nextLevel && (
-                  <p className="text-[10px] text-amber-100 mt-0.5">{level.nextLevel.minPoints - stats.points} pts to Lv{level.level + 1}</p>
+                {level.nextLevel ? (
+                  <p className="text-[10px] text-amber-100 mt-0.5">{level.nextLevel.minPoints - stats.points} pts → <span className="font-bold">{level.nextLevel.name}</span></p>
+                ) : (
+                  <p className="text-[10px] text-amber-100 mt-0.5 font-bold">Max level! 🏆</p>
                 )}
               </div>
             </div>
@@ -259,16 +272,40 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               <div className={`p-3 rounded-2xl shrink-0 ${stats.streak >= 3 ? "bg-orange-100 text-orange-600" : "bg-slate-100 text-slate-500"}`}>
                 <Flame className="w-6 h-6" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-gray-500">Streak</p>
-                <p className="text-xl font-bold text-gray-900">{stats.streak} {stats.streak === 1 ? "day" : "days"}</p>
-                <p className="text-sm">{getStreakFlames(stats.streak)}</p>
-                <p className="text-[10px] font-bold text-amber-600">+{getStreakBonus(stats.streak)} pts/day bonus</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-1">
+                  <p className="text-xs font-medium text-gray-500">Streak</p>
+                  <button
+                    onClick={() => setShowStreakInfo(true)}
+                    className="p-0.5 text-gray-400 hover:text-orange-500 transition-colors shrink-0"
+                    title="Streak bonus info"
+                  >
+                    <HelpCircle className="w-3 h-3" />
+                  </button>
+                </div>
+                <p className="text-xl font-bold text-gray-900">{stats.streak} {stats.streak === 1 ? "day" : "days"} {getStreakFlames(stats.streak)}</p>
+                <p className="text-[10px] font-bold text-amber-600">+{getStreakBonus(stats.streak)} pts bonus today</p>
+                {/* Next tier hint */}
+                {(() => {
+                  const s = stats.streak;
+                  let nextTierAt = 0;
+                  let nextBonus = 0;
+                  if (s < 1)       { nextTierAt = 1;  nextBonus = 20; }
+                  else if (s < 2)  { nextTierAt = 2;  nextBonus = 40; }
+                  else if (s < 3)  { nextTierAt = 3;  nextBonus = 60; }
+                  else if (s < 4)  { nextTierAt = 4;  nextBonus = 80; }
+                  else if (s < 5)  { nextTierAt = 5;  nextBonus = 100; }
+                  else if (s < 10) { nextTierAt = 10; nextBonus = 150; }
+                  else if (s < 20) { nextTierAt = 20; nextBonus = 200; }
+                  else if (s < 30) { nextTierAt = 30; nextBonus = 250; }
+                  else if (s < 40) { nextTierAt = 40; nextBonus = 300; }
+                  else if (s < 50) { nextTierAt = 50; nextBonus = 400; }
+                  if (nextTierAt === 0) return null;
+                  const daysLeft = nextTierAt - s;
+                  return <p className="text-[10px] text-gray-400 mt-0.5">{daysLeft} more day{daysLeft > 1 ? "s" : ""} → +{nextBonus} pts/day</p>;
+                })()}
                 {(stats.jokers ?? 0) > 0 && (
                   <p className="text-[10px] text-blue-500 font-bold mt-0.5">🃏 {stats.jokers} joker{stats.jokers > 1 ? "s" : ""} saved</p>
-                )}
-                {stats.streak > 0 && stats.streak % 7 === 0 && (
-                  <p className="text-[10px] text-purple-500 font-bold">🎉 7-day streak!</p>
                 )}
               </div>
             </div>
@@ -1062,6 +1099,112 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           </div>
         </div>
       )}
+
+      {/* Level Info Modal */}
+      {showLevelInfo && (() => {
+        const level = getLevel(stats.points);
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+            <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">🏆 All Levels</h2>
+                <button onClick={() => setShowLevelInfo(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { level: 1,  name: "Rookie",            minPoints: 0     },
+                  { level: 2,  name: "Schüler",           minPoints: 100   },
+                  { level: 3,  name: "Lernender",         minPoints: 300   },
+                  { level: 4,  name: "Fortgeschrittener", minPoints: 700   },
+                  { level: 5,  name: "Sprachprofi",       minPoints: 1500  },
+                  { level: 6,  name: "Wortmeister",       minPoints: 3000  },
+                  { level: 7,  name: "Deutschheld",       minPoints: 6000  },
+                  { level: 8,  name: "Sprachgenie",       minPoints: 12000 },
+                  { level: 9,  name: "Deutschmeister",    minPoints: 25000 },
+                  { level: 10, name: "Sprachlegende",     minPoints: 50000 },
+                ].map(l => {
+                  const isCurrent = l.level === level.level;
+                  const isNext = !!(level.nextLevel && l.level === level.level + 1);
+                  const isPast = l.level < level.level;
+                  return (
+                    <div key={l.level} className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${isCurrent ? "bg-amber-50 border-amber-300 ring-1 ring-amber-300" : isNext ? "bg-indigo-50 border-indigo-200" : isPast ? "bg-gray-50 border-gray-100 opacity-60" : "bg-white border-gray-100"}`}>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-lg font-black w-7 text-center ${isCurrent ? "text-amber-500" : isPast ? "text-gray-400" : "text-gray-300"}`}>
+                          {isPast ? "✓" : isCurrent ? "★" : String(l.level)}
+                        </span>
+                        <div>
+                          <p className={`text-sm font-bold ${isCurrent ? "text-amber-700" : isNext ? "text-indigo-700" : "text-gray-600"}`}>{l.name}</p>
+                          {isNext && <p className="text-[10px] text-indigo-500 font-medium">{l.minPoints - stats.points} pts to go!</p>}
+                        </div>
+                      </div>
+                      <span className={`text-xs font-bold ${isCurrent ? "text-amber-600" : "text-gray-400"}`}>{l.minPoints.toLocaleString()} pts</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <button onClick={() => setShowLevelInfo(false)} className="w-full mt-6 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors">
+                Got it!
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Streak Info Modal */}
+      {showStreakInfo && (() => {
+        const streakTiers = [
+          { days: "1",    bonus: 20  },
+          { days: "2",    bonus: 40  },
+          { days: "3",    bonus: 60  },
+          { days: "4",    bonus: 80  },
+          { days: "5–9",  bonus: 100 },
+          { days: "10–19",bonus: 150 },
+          { days: "20–29",bonus: 200 },
+          { days: "30–39",bonus: 250 },
+          { days: "40–49",bonus: 300 },
+          { days: "50+",  bonus: 400 },
+        ];
+        const s = stats.streak;
+        const currentTierIndex = s === 0 ? -1 : s === 1 ? 0 : s === 2 ? 1 : s === 3 ? 2 : s === 4 ? 3 : s <= 9 ? 4 : s <= 19 ? 5 : s <= 29 ? 6 : s <= 39 ? 7 : s <= 49 ? 8 : 9;
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+            <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-2xl font-bold text-gray-900">🔥 Streak Bonuses</h2>
+                <button onClick={() => setShowStreakInfo(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 mb-5">Complete a GCSE learning session every day to earn streak bonus points.</p>
+              <div className="space-y-2">
+                {streakTiers.map((tier, i) => {
+                  const isCurrent = i === currentTierIndex;
+                  const flames = "🔥".repeat(Math.min(i + 1, 5));
+                  return (
+                    <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-2xl border ${isCurrent ? "bg-orange-50 border-orange-300 ring-1 ring-orange-300" : "bg-gray-50 border-gray-100"}`}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-base">{flames}</span>
+                        <p className={`text-sm font-bold ${isCurrent ? "text-orange-700" : "text-gray-600"}`}>Day {tier.days}</p>
+                        {isCurrent && <span className="text-[10px] bg-orange-200 text-orange-700 font-bold px-2 py-0.5 rounded-full">YOU</span>}
+                      </div>
+                      <span className={`text-sm font-black ${isCurrent ? "text-orange-600" : "text-gray-400"}`}>+{tier.bonus} pts</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                <p className="text-xs font-bold text-blue-700">🃏 Joker System</p>
+                <p className="text-xs text-blue-600 mt-1">Every 7 days in a row earns a Joker. Miss a day? It is used automatically to save your streak.</p>
+              </div>
+              <button onClick={() => setShowStreakInfo(false)} className="w-full mt-6 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors">
+                Got it!
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Points Info Modal */}
       {showPointsInfo && (
