@@ -67,7 +67,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     window.addEventListener("touchstart", handleActivity);
 
     const interval = setInterval(() => {
-      if (Date.now() - lastActivityRef.current < 9000) {
+      if (Date.now() - lastActivityRef.current < 15000) {
         activeTimeRef.current += 1;
       }
     }, 1000);
@@ -608,6 +608,26 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
 function SessionSummary({ results, onComplete }: { results: { wordId: string; correct: boolean }[]; onComplete: () => void }) {
   const correctCount = results.filter(r => r.correct).length;
   const incorrectCount = results.length - correctCount;
+  const { stats } = useStore();
+  const streak = stats.streak;
+  const jokers = stats.jokers ?? 0;
+
+  // Import helpers inline to avoid circular import issues
+  const getStreakFlamesLocal = (s: number) => "🔥".repeat(Math.min(s, 5));
+  const getStreakBonusLocal = (s: number) => {
+    if (s <= 0)  return 0;
+    if (s === 1) return 20;
+    if (s === 2) return 40;
+    if (s === 3) return 60;
+    if (s === 4) return 80;
+    if (s <= 9)  return 100;
+    if (s <= 19) return 150;
+    if (s <= 29) return 200;
+    if (s <= 39) return 250;
+    if (s <= 49) return 300;
+    return 400;
+  };
+  const newJokerEarned = streak > 0 && streak % 7 === 0;
 
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-lg max-w-md mx-auto">
@@ -617,13 +637,13 @@ function SessionSummary({ results, onComplete }: { results: { wordId: string; co
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
         Session Complete!
       </h2>
-      <p className="text-gray-500 mb-8 text-center">
+      <p className="text-gray-500 mb-6 text-center">
         Great job! You've finished all the words in this session.
         <br />
         <span className="font-bold text-indigo-600 mt-2 block">Go to Box 1 to learn words you did not know.</span>
       </p>
 
-      <div className="grid grid-cols-2 gap-4 w-full mb-8">
+      <div className="grid grid-cols-2 gap-4 w-full mb-4">
         <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
           <p className="text-emerald-600 font-bold text-2xl">{correctCount}</p>
           <p className="text-emerald-800 text-xs font-medium uppercase tracking-wider">Correct</p>
@@ -633,6 +653,21 @@ function SessionSummary({ results, onComplete }: { results: { wordId: string; co
           <p className="text-rose-800 text-xs font-medium uppercase tracking-wider">Incorrect</p>
         </div>
       </div>
+
+      {/* Streak bonus panel */}
+      {streak > 0 && (
+        <div className="w-full bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-4 mb-4 text-center">
+          <p className="text-2xl mb-1">{getStreakFlamesLocal(streak)}</p>
+          <p className="text-sm font-bold text-orange-700">{streak}-day streak!</p>
+          <p className="text-xs text-orange-600">Complete today's GCSE day to earn <span className="font-bold">+{getStreakBonusLocal(streak)} bonus pts</span></p>
+          {newJokerEarned && (
+            <p className="text-xs text-purple-600 font-bold mt-1">🃏 You earned a joker! ({jokers} total)</p>
+          )}
+          {jokers > 0 && !newJokerEarned && (
+            <p className="text-xs text-blue-500 mt-1">🃏 {jokers} joker{jokers > 1 ? "s" : ""} saved — miss a day without losing your streak!</p>
+          )}
+        </div>
+      )}
 
       <button
         onClick={onComplete}
