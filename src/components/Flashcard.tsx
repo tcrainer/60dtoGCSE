@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Word } from "../data/vocabulary";
-import { checkAnswer, stripArticle, removeParentheses } from "../utils/grading";
+import { checkAnswer, checkWritingAnswer, stripArticle, removeParentheses } from "../utils/grading";
 import { useStore } from "../store/useStore";
 import { ArrowRight, Check, X, HelpCircle } from "lucide-react";
 
@@ -172,8 +172,11 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         message = res.message;
       }
     } else {
+      const isWritingTopic = currentWord.topicId.startsWith("S");
       const target = askGerman ? currentWord.german : currentWord.english;
-      const result = checkAnswer(input, target, askGerman);
+      const result = isWritingTopic
+        ? checkWritingAnswer(input, target)
+        : checkAnswer(input, target, askGerman);
       correct = result.isCorrect;
       points = result.points;
       message = result.message;
@@ -197,7 +200,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
 
   const handleHint = useCallback(() => {
     if (showResult || hint) return;
-    const target = askGerman ? currentWord.german : currentWord.english;
+    const target = (askGerman ? currentWord.german : currentWord.english).replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
     const mainWord = stripArticle(removeParentheses(target.split(/[/,]/)[0].trim()));
     if (mainWord.length > 0) {
       setHint(mainWord[0]);
@@ -404,8 +407,17 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
       <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
         {/* Top Half - Light Blue - English */}
         <div className="flex-1 bg-blue-50 p-8 flex flex-col justify-center items-center min-h-[220px] border-b border-blue-100 relative">
-          <span className="absolute top-4 left-4 text-xs font-bold text-blue-400 uppercase tracking-wider">
+          <span className="absolute top-4 left-4 text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
             English
+            {currentWord.topicId === "S1" && (
+              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">✉ Informal</span>
+            )}
+            {currentWord.topicId === "S2" && (
+              <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion</span>
+            )}
+            {currentWord.topicId === "S3" && (
+              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal</span>
+            )}
           </span>
           {!askGerman && !showResult ? (
             <div className="w-full">
@@ -434,7 +446,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
           ) : (
             <div className="text-center">
               <h2 className="text-3xl font-bold text-blue-900 flex items-center gap-2">
-                {currentWord.english}
+                {currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")}
                 {!showResult && (
                   <button
                     type="button"
