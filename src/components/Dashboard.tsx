@@ -672,6 +672,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       
                       const dayWords = vocabulary.filter(w => compareDays(w.day, day));
                       const hasWords = dayWords.length > 0;
+                      const someTested = hasWords && dayWords.some(w => userWords[w.id] && userWords[w.id].box > 0);
                       const allTested = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box > 0);
                       const allMastered = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box === 6);
 
@@ -688,7 +689,9 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       if (allMastered) {
                         bgColor = "bg-amber-400 text-white font-bold border-amber-500";
                       } else if (allTested) {
-                        bgColor = "bg-emerald-500 text-white font-bold border-emerald-600";
+                        bgColor = "bg-amber-300 text-amber-900 font-bold border-amber-400";
+                      } else if (someTested) {
+                        bgColor = "bg-emerald-400 text-white font-bold border-emerald-500";
                       }
 
                       if (isToday) {
@@ -712,6 +715,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                   <p className="text-center text-xs text-slate-500 mt-4">
                     60 Days to Paper 2
                   </p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 justify-center">
+                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-emerald-400 inline-block"></span>Some done</span>
+                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-amber-300 inline-block"></span>All done</span>
+                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-amber-400 inline-block"></span>Mastered</span>
+                  </div>
                 </div>
               ) : (
                 <>
