@@ -1,135 +1,135 @@
 export const topicB1WritingVocab = `
-1	Liebe NAME / Lieber NAME	Dear (female) / Dear (male)
-1	Wie geht es dir?	How are you?
-1	Mir geht es gut / nicht so gut	I am fine / not so good
-1	Danke für deinen (letzten) Brief / deine (letzte) Email	Thank you for your (last) letter / email
-1	Liebe / Herzliche Grüße	All the best / Kind regards
-2	Bis bald / Bis dann	See you soon
-2	Ich hoffe, es geht dir gut.	I hope you are well.
-2	Als wir am Wochenende... gegangen sind, haben wir...	When we went... at the weekend, we...
-2	Es war so lustig / aufregend / langweilig, weil...	It was so funny / exciting / boring because...
-2	Danach sind wir... gegangen / gefahren	After that we went / drove to...
-3	Wir könnten...	We could...
-3	Wie wäre es, wenn wir...	How would it be if we...
-3	Hast du Lust, ... zu machen?	Do you feel like doing...?
-3	Ist bei dir alles in Ordnung?	Is everything all right?
-3	Ich habe mich lange nicht gemeldet, weil..	I haven't been in touch because...
-4	Ich habe so viel zu erzählen!	I have so much to tell you!
-4	Das Beste war, dass...	The best thing was that...
-4	Ich freue mich schon darauf!	I'm already looking forward to it!
-4	Sag mir Bescheid, (wenn) (ob)	Let me know (if) (whether)
-4	Melde dich bitte bald bei mir.	Get in touch soon, please.
-5	Was hältst du davon, wenn wir uns bald treffen würden?	What do you think about meeting soon?
-5	Ich schlage vor, dass wir...	I suggest that we...
-5	Hättest du Zeit am Wochenende?	Would you have time at the weekend?
-5	Ich würde mich freuen, wenn du...	I would be happy if you...
-5	Das hat mich total überrascht / gefreut / geärgert	That totally surprised / pleased / annoyed me
-6	Ich hoffe, du nimmst es mir nicht übel	I hope you don't take offence
-6	Stell dir vor, was passiert ist!	Imagine what happened!
-6	Genießt du die Ferien / das Wochenende...?	Are you enjoying the holidays / weekend?
-6	Die Prüfungen sind Gott sei Dank vorbei.	The exams are thankfully over.
-6	Das wäre toll / super / klasse!	That would be great!
-7	Ich vermisse dich!	I miss you!
-7	Schönes Wochenende / Schöne Ferien	Have a nice weekend / holidays
-7	Drück dich / Bussi	Hug you / kiss
-7	Mir geht es hervorragend / ausgezeichnet	I am great / excellent
+1	Liebe NAME / Lieber NAME	Dear (female) / Dear (male) [INFORMAL]
+1	Wie geht es dir?	How are you? [INFORMAL]
+1	Mir geht es gut / nicht so gut	I'm doing well / not so well [INFORMAL]
+1	Danke für deinen (letzten) Brief / deine (letzte) Email	Thank you for your (last) letter / email [INFORMAL]
+1	Liebe / Herzliche Grüße	Love / Warm regards [INFORMAL]
+2	Bis bald / Bis dann	See you soon [INFORMAL]
+2	Ich hoffe, es geht dir gut.	I hope you are well. [INFORMAL]
+2	Als wir am Wochenende... gegangen sind, haben wir...	When we went... at the weekend, we... [INFORMAL]
+2	Es war so lustig / aufregend / langweilig, weil...	It was so funny / exciting / boring because... [INFORMAL]
+2	Danach sind wir... gegangen / gefahren	After that we went / drove to... [INFORMAL]
+3	Wir könnten...	We could... [INFORMAL]
+3	Wie wäre es, wenn wir...	How would it be if we... [INFORMAL]
+3	Hast du Lust, ... zu machen?	Do you feel like doing...? [INFORMAL]
+3	Ist bei dir alles in Ordnung?	Is everything all right? [INFORMAL]
+3	Ich habe mich lange nicht gemeldet, weil..	I haven't been in touch because... [INFORMAL]
+4	Ich habe so viel zu erzählen!	I have so much to tell you! [INFORMAL]
+4	Das Beste war, dass...	The best thing was that... [INFORMAL]
+4	Ich freue mich schon darauf!	I'm already looking forward to it! [INFORMAL]
+4	Sag mir Bescheid, (wenn) (ob)	Let me know (if) (whether) [INFORMAL]
+4	Melde dich bitte bald bei mir.	Get in touch soon, please. [INFORMAL]
+5	Was hältst du davon, wenn wir uns bald treffen würden?	What do you think about meeting soon? [INFORMAL]
+5	Ich schlage vor, dass wir...	I suggest that we... [INFORMAL]
+5	Hättest du Zeit am Wochenende?	Would you have time at the weekend? [INFORMAL]
+5	Ich würde mich freuen, wenn du...	I would be happy if you... [INFORMAL]
+5	Das hat mich total überrascht / gefreut / geärgert	That totally surprised / pleased / annoyed me [INFORMAL]
+6	Ich hoffe, du nimmst es mir nicht übel	I hope you don't take offence [INFORMAL]
+6	Stell dir vor, was passiert ist!	Imagine what happened! [INFORMAL]
+6	Genießt du die Ferien / das Wochenende...?	Are you enjoying the holidays / weekend? [INFORMAL]
+6	Die Prüfungen sind Gott sei Dank vorbei.	The exams are thankfully over. [INFORMAL]
+6	Das wäre toll / super / klasse!	That would be great! [INFORMAL]
+7	Ich vermisse dich!	I miss you! [INFORMAL]
+7	Schönes Wochenende / Schöne Ferien	Have a nice weekend / holidays [INFORMAL]
+7	Drück dich / Bussi	Hug you / kiss [INFORMAL]
+7	Mir geht es hervorragend / ausgezeichnet	I'm doing great / excellent [INFORMAL]
 
-8	Meiner Meinung nach ist...	In my opinion...
-8	Ich denke / glaube, dass	I think / believe that
-8	Der Vorteil ist, dass	An advantage is that
-8	Der Nachteil ist, dass	A disadvantage is that
-8	zum Beispiel / beispielsweise	for example
-8	Ich stimme ... zu	I agree with...
-9	Ich muss ... widersprechen.	I have to disagree with...
-9	begründe deine Meinung	justify your opinion
-9	Dafür spricht, dass	Reasons for this...
-9	Dagegen spricht, dass	Reasons against this...
-9	Ein Grund dafür / dagegen ist, dass	A reason for / against is that
-9	beschreibe...	describe...
-10	einen Vorschlag machen	to make a suggestion
-10	Ich schlage vor, dass...	I suggest that...
-10	Einerseits..., andererseits...	On the one hand..., on the other hand...
-10	Das liegt daran, dass...	That is because...
-10	Das führt dazu, dass...	That leads to...
-10	Zusammenfassend kann man sagen, dass...	To summarise, one can say that...
-11	Alles in allem denke ich, dass...	All in all I think that...
-11	ich persönlich denke, dass	I personally think that
-11	... hat völlig recht	... is absolutely right
-11	ich bin ganz anderer Meinung als...	I totally disagree with...
-11	Ich bin (nicht) überzeugt, dass	I am (not) convinced that
-11	Das stimmt doch nur teilweise	It's only partly true
-12	Da bin ich mir nicht so sicher.	I'm not so sure about that.
-12	Ja, das könnte passen, allerdings finde ich eher...	Yes, but I find rather...
-12	Man sollte auch bedenken, dass...	One should also consider that...
-12	Es kommt darauf an, ob...	It depends on whether...
-12	Ich ..(verb) lieber, als / ich bevorzuge ...	I prefer...
-13	Das hat zur Folge, dass...	That has the consequence that...
-13	Abschließend möchte ich sagen, dass...	In conclusion I would like to say...
-13	Aus den genannten Gründen...	For the reasons mentioned...
-13	Meines Erachtens ist ...	In my opinion (formal)
-13	Meine Meinung ist, dass	My opinion is that
-14	Ich kann ... nur zustimmen	I can only agree with...
-14	Ich stimme der Aussage (von ...) zu.	I agree with x's statement
-14	besser / schlechter	better / worse
-14	selten / häufig, seltener / häufiger	seldom / often, less / more often
-14	positiv / negativ	positive / negative
+8	Meiner Meinung nach ist...	In my opinion... [OPINION]
+8	Ich denke / glaube, dass	I think / believe that [OPINION]
+8	Der Vorteil ist, dass	An advantage is that [OPINION]
+8	Der Nachteil ist, dass	A disadvantage is that [OPINION]
+8	zum Beispiel / beispielsweise	for example [OPINION]
+8	Ich stimme ... zu	I agree with... [OPINION]
+9	Ich muss ... widersprechen.	I have to disagree with... [OPINION]
+9	begründe deine Meinung	justify your opinion [OPINION]
+9	Dafür spricht, dass	An argument/reason in favour is that... [OPINION]
+9	Dagegen spricht, dass	An argument/reason against is that... [OPINION]
+9	Ein Grund dafür / dagegen ist, dass	A reason for / against is that [OPINION]
+9	beschreibe...	describe... [OPINION]
+10	einen Vorschlag machen	to make a suggestion [OPINION]
+10	Ich schlage vor, dass...	I suggest that... [OPINION]
+10	Einerseits..., andererseits...	On the one hand..., on the other hand... [OPINION]
+10	Das liegt daran, dass...	That is because... [OPINION]
+10	Das führt dazu, dass...	That leads to... [OPINION]
+10	Zusammenfassend kann man sagen, dass...	To summarise, one can say that... [OPINION]
+11	Alles in allem denke ich, dass...	All in all I think that... [OPINION]
+11	ich persönlich denke, dass	I personally think that [OPINION]
+11	... hat völlig recht	... is absolutely right [OPINION]
+11	ich bin ganz anderer Meinung als...	I totally disagree with... [OPINION]
+11	Ich bin (nicht) überzeugt, dass	I am (not) convinced that [OPINION]
+11	Das stimmt doch nur teilweise	It's only partly true [OPINION]
+12	Da bin ich mir nicht so sicher.	I'm not so sure about that. [OPINION]
+12	Ja, das könnte passen, allerdings finde ich eher...	Yes, that could be right, however I tend to think... [OPINION]
+12	Man sollte auch bedenken, dass...	One should also consider that... [OPINION]
+12	Es kommt darauf an, ob...	It depends on whether... [OPINION]
+12	Ich bevorzuge ... / ich ... lieber	I prefer... [OPINION]
+13	Das hat zur Folge, dass...	That has the consequence that... [OPINION]
+13	Abschließend möchte ich sagen, dass...	In conclusion I would like to say... [OPINION]
+13	Aus den genannten Gründen...	For the reasons mentioned... [OPINION]
+13	Meines Erachtens ist ...	In my opinion (formal) [OPINION]
+13	Meine Meinung ist, dass	My opinion is that [OPINION]
+14	Ich kann ... nur zustimmen	I can only agree with... [OPINION]
+14	Ich stimme der Aussage (von ...) zu.	I agree with the statement (of...) [OPINION]
+14	besser / schlechter	better / worse [OPINION]
+14	selten / häufig	rarely / often [OPINION]
+14	positiv / negativ	positive / negative [OPINION]
 
-15	Sehr geehrte Damen und Herren,	Dear Sir or Madam,
-15	Sehr geehrte Frau NAME, / Sehr geehrter Herr NAME,	Dear Ms... / Dear Mr...
-15	Mit freundlichen Grüßen	With kind regards
-15	Ich schreibe Ihnen, weil...	I am writing to you because...
-15	Ich möchte Ihnen mitteilen, dass	I would like to inform you that
-15	Könnten Sie bitte...	Could you please...
-15	Ich hoffe, dass...	I hope that...
-16	Ich freue mich auf Ihre Antwort	I look forward to your reply
-16	Vielen Dank im Voraus für Ihre Mühe	Thank you in advance for your effort
-16	Es tut mir (furchtbar) leid, aber	I'm (awfully) sorry, but
-16	Ich möchte mich dafür entschuldigen, dass...	I would like to apologise that...
-16	Ich möchte mich für [mein Fehlen] entschuldigen.	I apologise for [my absence]
-16	Leider kann ich nicht...	Unfortunately I cannot...
-16	Leider ist es mir nicht möglich,...	Unfortunately it is not possible for me to...
-17	Das wird nicht wieder vorkommen.	It will not happen again.
-17	Ich bitte vielmals um Entschuldigung, aber	I must apologise, but
-17	Entschuldigen Sie für die Unannehmlichkeiten	Apologies for the inconvenience
-17	Würden Sie bitte...	Would you please...
-17	Wäre es (Ihnen) möglich, dass	Would it be possible (for you)
-17	Wäre es möglich, einen (neuen) Termin zu bekommen?	Would it be possible to get a (new) appointment?
-17	Es wäre sehr nett, wenn Sie...	It would be very nice if you...
-18	einen Termin ausmachen / vereinbaren	to make / arrange an appointment
-18	ich hätte eine Bitte / Frage an Sie	I would have a request / question for you
-18	Ich möchte mich erkundigen, ob...	I would like to enquire whether...
-18	Ich möchte gerne wissen, ob...	I would like to know whether...
-18	Der Grund für mein Schreiben ist...	The reason for my writing is...
-18	wegen eines dringenden Arztbesuchs	due to an urgent doctor visit
-18	wegen einer (dringenden) Familienangelegenheit	due to an (urgent) family matter
-19	aufgrund / wegen einer Familienfeier	due to a family celebration
-19	aufgrund von Krankheit	due to illness
-19	wegen eines Wettbewerbs	due to a competition
-19	ich wende mich an Sie, weil ich ein Problem habe	I am contacting you because I have a problem
-19	um mit Ihnen persönlich darüber zu sprechen	in order to speak to you personally
-19	ein Anliegen	a request/concern
-20	Ich bedanke mich sehr für Ihre Einladung	Thank you for your invitation
-20	vielen Dank für die Einladung zu einem Gespräch	Thank you for the invitation to an interview
-20	Ich nehme Ihre Einladung mit großer Freude an	I accept your invitation with pleasure
-20	Es würde mich sehr freuen, wenn	I should be delighted if
-20	Leider kann ich Ihre Einladung nicht annehmen	Unfortunately I can't accept your invitation
-20	Ich bedaure es sehr,	I regret very much
-21	Wäre ein anderer Termin möglich?	Would another date be possible?
-21	es würde (mir) Spaß machen	it would be fun
-21	Ich möchte mich über ... beschweren	I would like to complain about...
-21	Ich bin mit ... nicht zufrieden	I am not satisfied with...
-21	Ich erwarte eine Lösung / Rückerstattung	I expect a solution / refund
-21	Könnten Sie mir bitte die Erlaubnis dafür geben?	Could you give me permission?
-22	Wäre es Ihnen Recht, wenn ich um 16:00 Uhr komme?	Would it be all right if I came at 4pm?
-22	mir Informationen senden / zusenden	to send information
-22	Wäre es möglich, dass Sie mir die Unterlagen schicken?	Could you send me the documents?
-22	Bitte senden Sie mir alle Informationen per Email	Please send all information via email
-22	Ich würde mich gerne bei Ihnen vorstellen.	I would like to introduce myself
-22	Über eine baldige Rückmeldung würde ich mich freuen	I would appreciate an early reply
-23	Ich bedanke mich bei Ihnen für Ihre Hilfe	I thank you for your help
-23	Ich bedanke mich bei Ihnen für Ihr Verständnis	I thank you for your understanding
-23	Sie erreichen mich telefonisch unter der Nummer...	You can reach me at this number
-23	Meine E-Mail Adresse lautet	My email address is:
-23	Ich hoffe, Sie nehmen es mir nicht übel, aber	I hope you don't take offence
-23	frei haben / Zeit haben	to be free / to have time
+15	Sehr geehrte Damen und Herren,	Dear Sir or Madam, [FORMAL]
+15	Sehr geehrte Frau NAME, / Sehr geehrter Herr NAME,	Dear Ms NAME, / Dear Mr NAME, [FORMAL]
+15	Mit freundlichen Grüßen	With kind regards [FORMAL]
+15	Ich schreibe Ihnen, weil...	I am writing to you because... [FORMAL]
+15	Ich möchte Ihnen mitteilen, dass	I would like to inform you that [FORMAL]
+15	Könnten Sie bitte...	Could you please... [FORMAL]
+15	Ich hoffe, dass...	I hope that... [FORMAL]
+16	Ich freue mich auf Ihre Antwort	I look forward to your reply [FORMAL]
+16	Vielen Dank im Voraus für Ihre Mühe	Thank you in advance for your effort [FORMAL]
+16	Es tut mir (furchtbar) leid, aber	I'm (awfully) sorry, but [FORMAL]
+16	Ich möchte mich dafür entschuldigen, dass...	I would like to apologise that... [FORMAL]
+16	Ich möchte mich für [mein Fehlen] entschuldigen.	I apologise for [my absence] [FORMAL]
+16	Leider kann ich nicht...	Unfortunately I cannot... [FORMAL]
+16	Leider ist es mir nicht möglich,...	Unfortunately it is not possible for me to... [FORMAL]
+17	Das wird nicht wieder vorkommen.	It will not happen again. [FORMAL]
+17	Ich bitte vielmals um Entschuldigung, aber	I sincerely apologise, but [FORMAL]
+17	Entschuldigen Sie für die Unannehmlichkeiten	Please excuse the inconvenience [FORMAL]
+17	Würden Sie bitte...	Would you please... [FORMAL]
+17	Wäre es (Ihnen) möglich, dass	Would it be possible (for you) that... [FORMAL]
+17	Wäre es möglich, einen (neuen) Termin zu bekommen?	Would it be possible to get a (new) appointment? [FORMAL]
+17	Es wäre sehr nett, wenn Sie...	It would be very nice if you... [FORMAL]
+18	einen Termin ausmachen / vereinbaren	to make / arrange an appointment [FORMAL]
+18	ich hätte eine Bitte / Frage an Sie	I have a request / question for you [FORMAL]
+18	Ich möchte mich erkundigen, ob...	I would like to enquire whether... [FORMAL]
+18	Ich möchte gerne wissen, ob...	I would like to know whether... [FORMAL]
+18	Der Grund für mein Schreiben ist...	The reason for my writing is... [FORMAL]
+18	wegen eines dringenden Arztbesuchs	due to an urgent doctor visit [FORMAL]
+18	wegen einer (dringenden) Familienangelegenheit	due to an (urgent) family matter [FORMAL]
+19	aufgrund / wegen einer Familienfeier	due to a family celebration [FORMAL]
+19	aufgrund von Krankheit	due to illness [FORMAL]
+19	wegen eines Wettbewerbs	due to a competition [FORMAL]
+19	ich wende mich an Sie, weil ich ein Problem habe	I am contacting you because I have a problem [FORMAL]
+19	um mit Ihnen persönlich darüber zu sprechen	in order to speak to you personally [FORMAL]
+19	ein Anliegen	a request/concern [FORMAL]
+20	Ich bedanke mich sehr für Ihre Einladung	I would like to thank you very much for your invitation [FORMAL]
+20	vielen Dank für die Einladung zu einem Gespräch	Many thanks for the invitation to a meeting / interview [FORMAL]
+20	Ich nehme Ihre Einladung mit großer Freude an	I accept your invitation with pleasure [FORMAL]
+20	Es würde mich sehr freuen, wenn	I would be very pleased if [FORMAL]
+20	Leider kann ich Ihre Einladung nicht annehmen	Unfortunately I can't accept your invitation [FORMAL]
+20	Ich bedaure es sehr,	I regret very much [FORMAL]
+21	Wäre ein anderer Termin möglich?	Would another date be possible? [FORMAL]
+21	es würde (mir) Spaß machen	it would be fun [FORMAL]
+21	Ich möchte mich über ... beschweren	I would like to complain about... [FORMAL]
+21	Ich bin mit ... nicht zufrieden	I am not satisfied with... [FORMAL]
+21	Ich erwarte eine Lösung / Rückerstattung	I expect a solution / refund [FORMAL]
+21	Könnten Sie mir bitte die Erlaubnis dafür geben?	Could you give me permission? [FORMAL]
+22	Wäre es Ihnen Recht, wenn ich um 16:00 Uhr komme?	Would it be all right if I came at 4pm? [FORMAL]
+22	mir Informationen senden / zusenden	to send information [FORMAL]
+22	Wäre es möglich, dass Sie mir die Unterlagen schicken?	Could you send me the documents? [FORMAL]
+22	Bitte senden Sie mir alle Informationen per Email	Please send all information via email [FORMAL]
+22	Ich würde mich gerne bei Ihnen vorstellen.	I would like to introduce myself [FORMAL]
+22	Über eine baldige Rückmeldung würde ich mich freuen	I would appreciate an early reply [FORMAL]
+23	Ich bedanke mich bei Ihnen für Ihre Hilfe	I thank you for your help [FORMAL]
+23	Ich bedanke mich bei Ihnen für Ihr Verständnis	I thank you for your understanding [FORMAL]
+23	Sie erreichen mich telefonisch unter der Nummer...	You can reach me at this number [FORMAL]
+23	Meine E-Mail Adresse lautet	My email address is: [FORMAL]
+23	Ich hoffe, Sie nehmen es mir nicht übel, aber	I hope you don't take offence [FORMAL]
+23	frei haben / Zeit haben	to be free / to have time [FORMAL]
 `;
