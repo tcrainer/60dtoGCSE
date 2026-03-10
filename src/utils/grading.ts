@@ -172,3 +172,27 @@ export function checkAnswer(
     message: wrongGenderMessage || undefined,
   };
 }
+
+// For writing phrases, commas are part of the grammar not synonym separators.
+// Only split on / to allow either option (e.g. "Liebe NAME / Lieber NAME").
+export function checkWritingAnswer(userInput: string, target: string) {
+  const targetOptions = target
+    .split("/")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const userNorm = normalizeText(removeParentheses(userInput));
+
+  for (const option of targetOptions) {
+    const optNorm = normalizeText(removeParentheses(option));
+    if (userNorm === optNorm) {
+      return { isCorrect: true, points: 10 };
+    }
+    // Allow small typos (1 character) for longer phrases
+    const maxDist = optNorm.length > 10 ? 1 : 0;
+    if (levenshtein(userNorm, optNorm) <= maxDist) {
+      return { isCorrect: true, points: 10 };
+    }
+  }
+  return { isCorrect: false, points: 0 };
+}
