@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
+import { getLevel, getStreakBonus, getStreakFlames } from "../store/useStore";
 import { vocabulary, topics } from "../data/vocabulary";
 import { differenceInDays, isBefore, startOfDay } from "date-fns";
 import {
@@ -19,6 +20,8 @@ import {
   ChevronRight,
   Zap,
   Plus,
+  Flame,
+  Trophy,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -215,54 +218,93 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Header & Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <div className="p-4 bg-indigo-50 text-indigo-600 rounded-2xl">
-            <Star className="w-8 h-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1">
-              <p className="text-sm font-medium text-gray-500">Total Points</p>
-              <button 
-                onClick={() => setShowPointsInfo(true)}
-                className="text-gray-400 hover:text-indigo-600 transition-colors"
-              >
-                <HelpCircle className="w-3 h-3" />
-              </button>
+      {(() => {
+        const level = getLevel(stats.points);
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shrink-0">
+                <Star className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <p className="text-xs font-medium text-gray-500 truncate">Points</p>
+                  <button onClick={() => setShowPointsInfo(true)} className="text-gray-400 hover:text-indigo-600 transition-colors shrink-0">
+                    <HelpCircle className="w-3 h-3" />
+                  </button>
+                </div>
+                <p className="text-xl font-bold text-gray-900">{stats.points}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.points}</p>
+
+            {/* Level card */}
+            <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-5 rounded-3xl shadow-sm flex items-center gap-3 col-span-1">
+              <div className="p-3 bg-white/20 text-white rounded-2xl shrink-0">
+                <Trophy className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-amber-100 uppercase tracking-wider">Level {level.level}</p>
+                <p className="text-sm font-black text-white truncate">{level.name}</p>
+                <div className="mt-1 w-full bg-white/30 rounded-full h-1">
+                  <div className="h-1 rounded-full bg-white transition-all" style={{ width: `${level.progress}%` }} />
+                </div>
+                {level.nextLevel && (
+                  <p className="text-[10px] text-amber-100 mt-0.5">{level.nextLevel.minPoints - stats.points} pts to Lv{level.level + 1}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Streak card */}
+            <div className={`p-5 rounded-3xl shadow-sm border flex items-center gap-3 ${stats.streak >= 3 ? "bg-gradient-to-br from-orange-50 to-red-50 border-orange-200" : "bg-white border-gray-100"}`}>
+              <div className={`p-3 rounded-2xl shrink-0 ${stats.streak >= 3 ? "bg-orange-100 text-orange-600" : "bg-slate-100 text-slate-500"}`}>
+                <Flame className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-gray-500">Streak</p>
+                <p className="text-xl font-bold text-gray-900">{stats.streak} {stats.streak === 1 ? "day" : "days"}</p>
+                <p className="text-sm">{getStreakFlames(stats.streak)}</p>
+                <p className="text-[10px] font-bold text-amber-600">+{getStreakBonus(stats.streak)} pts/day bonus</p>
+                {(stats.jokers ?? 0) > 0 && (
+                  <p className="text-[10px] text-blue-500 font-bold mt-0.5">🃏 {stats.jokers} joker{stats.jokers > 1 ? "s" : ""} saved</p>
+                )}
+                {stats.streak > 0 && stats.streak % 7 === 0 && (
+                  <p className="text-[10px] text-purple-500 font-bold">🎉 7-day streak!</p>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shrink-0">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500">Time Spent</p>
+                <p className="text-xl font-bold text-gray-900">{formatTime(stats.timeSpent)}</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl shrink-0">
+                <Target className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500">Mastered</p>
+                <p className="text-xl font-bold text-gray-900">{boxCounts[6]}</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl shrink-0">
+                <RefreshCw className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500">To Revise</p>
+                <p className="text-xl font-bold text-gray-900">{toReviseCount}</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
-            <Clock className="w-8 h-8" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">Time Spent</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {formatTime(stats.timeSpent)}
-            </p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl">
-            <Target className="w-8 h-8" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">Words Mastered</p>
-            <p className="text-2xl font-bold text-gray-900">{boxCounts[6]}</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl">
-            <RefreshCw className="w-8 h-8" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">To Revise</p>
-            <p className="text-2xl font-bold text-gray-900">{toReviseCount}</p>
-          </div>
-        </div>
-      </div>
+        );
+      })()}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Actions */}
@@ -720,10 +762,22 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               const isToday = i === 0;
 
               return (
-                <div key={dayNum} className={`p-4 rounded-2xl border transition-all ${isToday ? "bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200" : "bg-slate-50 border-slate-100"}`}>
+                <div
+                  key={dayNum}
+                  onClick={() => {
+                    const unlearnedDayWords = dayWords.filter(w => !userWords[w.id] || userWords[w.id].box === 0);
+                    if (unlearnedDayWords.length > 0) {
+                      onStartSession("learn", unlearnedDayWords);
+                    } else if (!isCompleted) {
+                      onStartSession("practice", dayWords);
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer group ${isToday ? "bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200 hover:bg-indigo-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
+                >
                   <div className="flex justify-between items-center mb-2">
-                    <span className={`text-sm font-bold ${isToday ? "text-indigo-600" : "text-gray-500"}`}>
-                      {isToday ? "Today" : `Day ${dayNum}`}
+                    <span className={`text-sm font-bold flex items-center gap-1 ${isToday ? "text-indigo-600" : "text-gray-500"}`}>
+                      {isToday ? "⭐ Today" : `Day ${dayNum}`}
+                      {!isCompleted && <span className="text-[10px] font-normal opacity-60 group-hover:opacity-100 transition-opacity">(tap to start)</span>}
                     </span>
                     {isCompleted && <CheckCircle className="w-5 h-5 text-emerald-500" />}
                   </div>
@@ -740,7 +794,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                     )}
                   </div>
                   <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
-                    <div 
+                    <div
                       className={`h-1.5 rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-indigo-500"}`}
                       style={{ width: `${(learnedCount / dayWords.length) * 100}%` }}
                     ></div>
@@ -771,10 +825,22 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               const isToday = i === 0;
 
               return (
-                <div key={dayNum} className={`p-4 rounded-2xl border transition-all ${isToday ? "bg-blue-50 border-blue-200 ring-1 ring-blue-200" : "bg-slate-50 border-slate-100"}`}>
+                <div
+                  key={dayNum}
+                  onClick={() => {
+                    const unlearnedDayWords = dayWords.filter(w => !userWords[w.id] || userWords[w.id].box === 0);
+                    if (unlearnedDayWords.length > 0) {
+                      onStartSession("learn", unlearnedDayWords);
+                    } else if (!isCompleted) {
+                      onStartSession("practice", dayWords);
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer group ${isToday ? "bg-blue-50 border-blue-200 ring-1 ring-blue-200 hover:bg-blue-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
+                >
                   <div className="flex justify-between items-center mb-2">
-                    <span className={`text-sm font-bold ${isToday ? "text-blue-600" : "text-gray-500"}`}>
-                      {isToday ? "Today" : `Day ${dayNum}`}
+                    <span className={`text-sm font-bold flex items-center gap-1 ${isToday ? "text-blue-600" : "text-gray-500"}`}>
+                      {isToday ? "⭐ Today" : `Day ${dayNum}`}
+                      {!isCompleted && <span className="text-[10px] font-normal opacity-60 group-hover:opacity-100 transition-opacity">(tap to start)</span>}
                     </span>
                     {isCompleted && <CheckCircle className="w-5 h-5 text-emerald-500" />}
                   </div>
@@ -791,7 +857,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                     )}
                   </div>
                   <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
-                    <div 
+                    <div
                       className={`h-1.5 rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-blue-500"}`}
                       style={{ width: `${(learnedCount / dayWords.length) * 100}%` }}
                     ></div>
