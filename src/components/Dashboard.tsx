@@ -22,6 +22,7 @@ import {
   Plus,
   Flame,
   Trophy,
+  Timer,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -32,11 +33,18 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onStartSession }: DashboardProps) {
-  const { userWords, stats, dailyStats, awardBonus } = useStore();
+  const { userWords, stats, dailyStats, awardBonus, recordTimedResult } = useStore();
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPointsInfo, setShowPointsInfo] = useState(false);
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   const [showStreakInfo, setShowStreakInfo] = useState(false);
+  const [showTimedRevise, setShowTimedRevise] = useState(false);
+  const [timedRevisePhase, setTimedRevisePhase] = useState<"pick" | "running" | "done">("pick");
+  const [timedDuration, setTimedDuration] = useState(0); // seconds
+  const [timedSecondsLeft, setTimedSecondsLeft] = useState(0);
+  const [timedWords, setTimedWords] = useState<any[]>([]);
+  const [timedDoneCount, setTimedDoneCount] = useState(0);
+  const [timedIsPB, setTimedIsPB] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
   const [selectedWordsToRevise, setSelectedWordsToRevise] = useState<
@@ -83,12 +91,19 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   // Calculate box counts
   const boxCounts = [0, 0, 0, 0, 0, 0, 0];
   let toReviseCount = 0;
+  let overduePastCount = 0;   // due before today (missed days)
+  let dueTodayCount = 0;      // due today
+  let dueTomorrowCount = 0;   // due tomorrow
 
   Object.values(userWords).forEach((uw) => {
     boxCounts[uw.box]++;
-    if (uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today)) {
-      toReviseCount++;
-    }
+    if (!uw.nextReviewDate || uw.box === 0 || uw.box === 6) return;
+    const dueDay = startOfDay(new Date(uw.nextReviewDate));
+    const todayDay = startOfDay(today);
+    const tomorrowDay = startOfDay(new Date(today.getTime() + 86400000));
+    if (dueDay < todayDay) { overduePastCount++; toReviseCount++; }
+    else if (dueDay.getTime() === todayDay.getTime()) { dueTodayCount++; toReviseCount++; }
+    else if (dueDay.getTime() === tomorrowDay.getTime()) { dueTomorrowCount++; }
   });
 
   const gcseTopics = topics.filter(t => !t.id.startsWith('B1') && !t.id.startsWith('S'));
@@ -209,6 +224,26 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
   const handleChooseOwn = () => {
     setShowTopicSelector(true);
+  };
+
+  const handleStartTimedRevise = (durationSecs: number) => {
+    // Sort due words by most overdue first (longest waiting)
+    const dueWords = vocabulary
+      .filter((w) => {
+        const uw = userWords[w.id];
+        return uw && uw.nextReviewDate && uw.box > 1 && uw.box < 6 &&
+          startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+      })
+      .sort((a, b) => {
+        const aDate = new Date(userWords[a.id]!.nextReviewDate!).getTime();
+        const bDate = new Date(userWords[b.id]!.nextReviewDate!).getTime();
+        return aDate - bDate; // most overdue first
+      });
+    setTimedWords(dueWords);
+    setTimedDuration(durationSecs);
+    setTimedSecondsLeft(durationSecs);
+    setTimedDoneCount(0);
+    setTimedRevisePhase("running");
   };
 
   const formatTime = (seconds: number) => {
@@ -334,9 +369,12 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl shrink-0">
                 <RefreshCw className="w-6 h-6" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs font-medium text-gray-500">To Revise</p>
                 <p className="text-xl font-bold text-gray-900">{toReviseCount}</p>
+                {overduePastCount > 0 && <p className="text-[10px] text-rose-500 font-bold">⚠ {overduePastCount} overdue</p>}
+                {dueTodayCount > 0 && <p className="text-[10px] text-amber-600 font-bold">📅 {dueTodayCount} today</p>}
+                {dueTomorrowCount > 0 && <p className="text-[10px] text-gray-400">→ {dueTomorrowCount} tomorrow</p>}
               </div>
             </div>
           </div>
@@ -537,6 +575,26 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               </button>
 
               <button
+                onClick={() => { setTimedRevisePhase("pick"); setShowTimedRevise(true); }}
+                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Timer className="w-8 h-8 text-violet-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">Timed Revise</h3>
+                  <p className="text-violet-200 text-sm">
+                    {toReviseCount > 0 ? `Race the clock — ${toReviseCount} words due` : "Choose a time, revise as many as possible"}
+                  </p>
+                  {(() => {
+                    const best2 = (stats.timedBests || []).filter(r => r.duration === 120).sort((a,b)=>b.words-a.words)[0];
+                    return best2 ? <p className="text-violet-300 text-[11px] mt-1">🏅 2min PB: {best2.words} words</p> : null;
+                  })()}
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Timer className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
                 onClick={handleChooseOwn}
                 className="group relative overflow-hidden bg-slate-800 p-6 rounded-2xl text-left hover:bg-slate-900 transition-colors sm:col-span-2"
               >
@@ -593,6 +651,43 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 <span className="text-gray-600">Points Earnt</span>
                 <span className="font-bold text-gray-900">{stats.points}</span>
               </div>
+              {(() => {
+                const testTime = stats.testTimeSpent ?? 0;
+                const reviseTime = stats.reviseTimeSpent ?? 0;
+                const totalWords = stats.wordsLearnt + stats.wordsRevised;
+                const fmtPer10 = (secs: number, words: number) => {
+                  if (words < 5 || secs < 5) return null;
+                  const s = Math.round((secs / words) * 10);
+                  const m = Math.floor(s / 60);
+                  return m > 0 ? `~${m}m ${s % 60}s` : `~${s}s`;
+                };
+                const testAvg   = fmtPer10(testTime,   stats.wordsLearnt);
+                const reviseAvg = fmtPer10(reviseTime, stats.wordsRevised);
+                const totalAvg  = fmtPer10(stats.timeSpent, totalWords);
+                if (!totalAvg) return null;
+                return (
+                  <div className="space-y-1.5 pt-1">
+                    {testAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 (testing)</span>
+                        <span className="font-bold text-indigo-600">{testAvg}</span>
+                      </div>
+                    )}
+                    {reviseAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 (revising)</span>
+                        <span className="font-bold text-emerald-600">{reviseAvg}</span>
+                      </div>
+                    )}
+                    {!testAvg && !reviseAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 words</span>
+                        <span className="font-bold text-indigo-600">{totalAvg}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               <div className="pt-4 border-t border-gray-100 space-y-3">
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-gray-500">Box 1 (New)</span>
@@ -1107,6 +1202,206 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           </div>
         </div>
       )}
+
+      {/* Timed Revise Modal */}
+      {showTimedRevise && (() => {
+        const DURATIONS = [
+          { label: "2 min",  secs: 120, emoji: "⚡" },
+          { label: "3 min",  secs: 180, emoji: "🔥" },
+          { label: "5 min",  secs: 300, emoji: "💪" },
+          { label: "7 min",  secs: 420, emoji: "🦁" },
+        ];
+
+        if (timedRevisePhase === "pick") {
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+              <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-2xl font-bold text-gray-900">⏱ Timed Revise</h2>
+                  <button onClick={() => setShowTimedRevise(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
+                </div>
+                <p className="text-sm text-gray-500 mb-2">
+                  {toReviseCount > 0
+                    ? `${toReviseCount} words due — programme picks the most overdue first.`
+                    : "No words currently due. Try practice mode instead."}
+                </p>
+                <p className="text-xs text-gray-400 mb-6">How long do you have?</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {DURATIONS.map(d => {
+                    const pb = (stats.timedBests || []).filter(r => r.duration === d.secs).sort((a,b)=>b.words-a.words)[0];
+                    return (
+                      <button
+                        key={d.secs}
+                        onClick={() => toReviseCount > 0 && handleStartTimedRevise(d.secs)}
+                        disabled={toReviseCount === 0}
+                        className={`p-4 rounded-2xl border-2 text-left transition-all ${toReviseCount > 0 ? "border-violet-200 hover:border-violet-500 hover:bg-violet-50 cursor-pointer" : "border-gray-100 opacity-40 cursor-not-allowed"}`}
+                      >
+                        <p className="text-2xl mb-1">{d.emoji}</p>
+                        <p className="font-black text-gray-900">{d.label}</p>
+                        {pb ? <p className="text-[11px] text-violet-600 font-bold mt-1">🏅 PB: {pb.words} words</p> : <p className="text-[11px] text-gray-400 mt-1">No record yet</p>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (timedRevisePhase === "running") {
+          // This is rendered as a stateful sub-component via a trick:
+          // We use a React key trick — the timer is managed via useEffect in a wrapper
+          const TimerRunner = () => {
+            const [secsLeft, setSecsLeft] = React.useState(timedDuration);
+            const [doneCount, setDoneCount] = React.useState(0);
+            const [currentIdx, setCurrentIdx] = React.useState(0);
+            const [input, setInput] = React.useState("");
+            const [flash, setFlash] = React.useState<"correct"|"wrong"|null>(null);
+            const inputRef = React.useRef<HTMLInputElement>(null);
+
+            React.useEffect(() => {
+              if (secsLeft <= 0) {
+                const bests = (stats.timedBests || []).filter(r => r.duration === timedDuration).sort((a,b)=>b.words-a.words);
+                const isPB = bests.length === 0 || doneCount > bests[0].words;
+                recordTimedResult(timedDuration, doneCount);
+                setTimedDoneCount(doneCount);
+                setTimedIsPB(isPB);
+                setTimedRevisePhase("done");
+                return;
+              }
+              const t = setInterval(() => setSecsLeft(s => s - 1), 1000);
+              return () => clearInterval(t);
+            }, [secsLeft]);
+
+            React.useEffect(() => { inputRef.current?.focus(); }, [currentIdx]);
+
+            const currentWord = timedWords[currentIdx];
+            const mins = Math.floor(secsLeft / 60);
+            const secs = secsLeft % 60;
+            const pct = (secsLeft / timedDuration) * 100;
+
+            const handleSubmit = (e: React.FormEvent) => {
+              e.preventDefault();
+              if (!currentWord) return;
+              const target = currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+              const norm = (s: string) => s.toLowerCase().replace(/[.,?!…]/g,"").trim();
+              const isCorrect = norm(input) === norm(target) ||
+                target.split("/").map((s: string) => norm(s.trim())).includes(norm(input));
+              setFlash(isCorrect ? "correct" : "wrong");
+              setTimeout(() => {
+                setFlash(null);
+                if (isCorrect) setDoneCount(c => c + 1);
+                setCurrentIdx(i => i + 1);
+                setInput("");
+              }, 400);
+            };
+
+            if (!currentWord) {
+              return (
+                <div className="text-center py-8">
+                  <p className="text-4xl mb-4">🎉</p>
+                  <p className="text-xl font-bold text-gray-900">All due words done!</p>
+                  <p className="text-gray-500 text-sm mt-2">{doneCount} correct with {Math.floor(secsLeft/60)}m {secsLeft%60}s left</p>
+                  <button onClick={() => { setTimedDoneCount(doneCount); setTimedIsPB(false); recordTimedResult(timedDuration, doneCount); setTimedRevisePhase("done"); }}
+                    className="mt-6 px-8 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700">See results</button>
+                </div>
+              );
+            }
+
+            return (
+              <div>
+                {/* Timer bar */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-gray-500">{doneCount} correct</span>
+                    <span className={`text-2xl font-black tabular-nums ${secsLeft <= 10 ? "text-red-600 animate-pulse" : "text-gray-900"}`}>
+                      {mins}:{String(secs).padStart(2,"0")}
+                    </span>
+                    <span className="text-xs text-gray-500">{timedWords.length - currentIdx} left</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className={`h-2 rounded-full transition-all ${secsLeft <= 10 ? "bg-red-500" : "bg-violet-500"}`} style={{width: `${pct}%`}} />
+                  </div>
+                </div>
+
+                {/* Card */}
+                <div className={`rounded-2xl p-6 text-center mb-4 transition-colors ${flash === "correct" ? "bg-emerald-50 border-2 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-2 border-rose-300" : "bg-indigo-50 border-2 border-indigo-100"}`}>
+                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Translate to English</p>
+                  <p className="text-3xl font-black text-gray-900">{currentWord.german}</p>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    placeholder="Type English translation..."
+                    className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
+                    autoComplete="off"
+                  />
+                  <button type="submit" className="w-full mt-3 py-3 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700">Check →</button>
+                </form>
+              </div>
+            );
+          };
+
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+              <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-bold text-gray-900">⏱ Timed Revise</h2>
+                  <button onClick={() => { setShowTimedRevise(false); setTimedRevisePhase("pick"); }} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
+                </div>
+                <TimerRunner key={timedDuration} />
+              </div>
+            </div>
+          );
+        }
+
+        if (timedRevisePhase === "done") {
+          const DURATIONS = [
+            { label: "2 min", secs: 120 },
+            { label: "3 min", secs: 180 },
+            { label: "5 min", secs: 300 },
+            { label: "7 min", secs: 420 },
+          ];
+          const dLabel = DURATIONS.find(d => d.secs === timedDuration)?.label ?? `${timedDuration}s`;
+          const allBests = (stats.timedBests || []).filter(r => r.duration === timedDuration).sort((a,b)=>b.words-a.words);
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+              <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+                <p className="text-5xl mb-4">{timedIsPB ? "🏅" : "✅"}</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">{timedIsPB ? "New Personal Best!" : "Session done!"}</h2>
+                <p className="text-gray-500 text-sm mb-6">{dLabel} timed revise</p>
+                <div className="bg-violet-50 rounded-2xl p-6 mb-6">
+                  <p className="text-5xl font-black text-violet-700">{timedDoneCount}</p>
+                  <p className="text-sm text-violet-500 font-bold uppercase tracking-wider">words correct</p>
+                </div>
+                {allBests.length > 0 && (
+                  <div className="text-left mb-6">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your top sessions ({dLabel})</p>
+                    <div className="space-y-1">
+                      {allBests.slice(0,7).map((b,i) => (
+                        <div key={i} className={`flex justify-between items-center px-3 py-2 rounded-xl text-sm ${i === 0 ? "bg-amber-50 border border-amber-200" : "bg-gray-50"}`}>
+                          <span className="text-gray-500">{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}.`} {b.date}</span>
+                          <span className={`font-bold ${i === 0 ? "text-amber-600" : "text-gray-700"}`}>{b.words} words</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <button onClick={() => { setTimedRevisePhase("pick"); }} className="flex-1 py-3 border-2 border-violet-200 text-violet-700 rounded-2xl font-bold hover:bg-violet-50">Go again</button>
+                  <button onClick={() => { setShowTimedRevise(false); setTimedRevisePhase("pick"); }} className="flex-1 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800">Done</button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return null;
+      })()}
 
       {/* Level Info Modal */}
       {showLevelInfo && (() => {
