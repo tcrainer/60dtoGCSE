@@ -480,6 +480,19 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </button>
                 )}
               </h2>
+              {currentWord.topicId.startsWith("S") && !showResult && (() => {
+                // Show underscores for each word in the expected German answer
+                const firstOption = currentWord.german.split("/")[0].trim();
+                const wordCount = firstOption.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean).length;
+                return (
+                  <p className="mt-2 text-blue-300 tracking-widest text-lg font-bold select-none">
+                    {Array.from({ length: wordCount }).map((_, i) => (
+                      <span key={i} className="inline-block border-b-2 border-blue-300 w-8 mx-1">&nbsp;</span>
+                    ))}
+                    <span className="text-xs font-normal text-blue-400 ml-2 tracking-normal">{wordCount} word{wordCount !== 1 ? "s" : ""}</span>
+                  </p>
+                );
+              })()}
               {currentWord.isVerb && (
                 <div className="mt-2 flex gap-4 justify-center text-sm font-medium text-blue-600">
                   <span>{currentWord.englishImperfekt}</span>
@@ -579,7 +592,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               </button>
             </>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full">
               <div
                 className={`p-4 rounded-2xl flex items-center justify-between ${isCorrect ? "bg-emerald-50 border border-emerald-200" : "bg-rose-50 border border-rose-200"}`}
               >
