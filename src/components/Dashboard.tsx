@@ -39,6 +39,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   const [showStreakInfo, setShowStreakInfo] = useState(false);
   const [showTimedRevise, setShowTimedRevise] = useState(false);
+  const [showReviseCount, setShowReviseCount] = useState(false);
   const [timedRevisePhase, setTimedRevisePhase] = useState<"pick" | "running" | "done">("pick");
   const [timedDuration, setTimedDuration] = useState(0); // seconds
   const [timedSecondsLeft, setTimedSecondsLeft] = useState(0);
@@ -169,56 +170,17 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   };
 
   const handleLearn = () => {
-    // Learn: words in Box 1
-    const learnWords = vocabulary
-      .filter((w) => userWords[w.id]?.box === 1)
-      .slice(0, 20);
-    if (learnWords.length > 0) {
-      onStartSession("learn", learnWords);
-    } else {
-      alert("Well done! Box 1 is empty. You've learned all your daily words well!");
-    }
-  };
-
-  const handleRevise = () => {
-    // Revise: words whose time is up
-    const reviseWords = vocabulary
+    const difficultWords = vocabulary
       .filter((w) => {
         const uw = userWords[w.id];
-        return (
-          uw &&
-          uw.nextReviewDate &&
-          startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today) &&
-          uw.box > 1 &&
-          uw.box < 6
-        );
-      });
-
-    if (reviseWords.length > 0) {
-      onStartSession("revise", reviseWords.slice(0, 20));
-    } else {
-      alert("No words to revise right now!");
-    }
-  };
-
-  const handleReviseRandomly = () => {
-    const reviseWords = vocabulary
-      .filter((w) => {
-        const uw = userWords[w.id];
-        return (
-          uw &&
-          uw.nextReviewDate &&
-          startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today) &&
-          uw.box > 1 &&
-          uw.box < 6
-        );
+        return uw && (uw.consecutiveWrong ?? 0) >= 3;
       })
-      .sort(() => Math.random() - 0.5);
-
-    if (reviseWords.length > 0) {
-      onStartSession("revise", reviseWords.slice(0, 20));
+      .sort((a, b) => (userWords[b.id]?.consecutiveWrong ?? 0) - (userWords[a.id]?.consecutiveWrong ?? 0))
+      .slice(0, 20);
+    if (difficultWords.length > 0) {
+      onStartSession("learn", difficultWords);
     } else {
-      alert("No words to revise right now!");
+      alert("No persistently difficult words yet! Words appear here after 3 consecutive wrong answers.");
     }
   };
 
@@ -381,9 +343,9 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         );
       })()}
 
+      {/* Row 1: Leitner Boxes + Exam Countdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Actions */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2">
           {/* Leitner Boxes */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -479,260 +441,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Learning Actions
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={handleTestGcse}
-                className="group relative overflow-hidden bg-indigo-600 p-6 rounded-2xl text-left hover:bg-indigo-700 transition-colors"
-              >
-                <div className="relative z-10">
-                  <Play className="w-8 h-8 text-indigo-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Test New Words GCSE
-                  </h3>
-                  <p className="text-indigo-200 text-sm">
-                    Learn priority words for today
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <Play className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleTestB1}
-                className="group relative overflow-hidden bg-blue-600 p-6 rounded-2xl text-left hover:bg-blue-700 transition-colors"
-              >
-                <div className="relative z-10">
-                  <Play className="w-8 h-8 text-blue-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Test New Words B1
-                  </h3>
-                  <p className="text-blue-200 text-sm">
-                    Learn priority words for today
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <Play className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleLearn}
-                className="group relative overflow-hidden bg-rose-500 p-6 rounded-2xl text-left hover:bg-rose-600 transition-colors"
-              >
-                <div className="relative z-10">
-                  <Brain className="w-8 h-8 text-rose-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Keep Learn Mistakes
-                  </h3>
-                  <p className="text-rose-200 text-sm">
-                    {boxCounts[1]} words need attention
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <Brain className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleRevise}
-                className="group relative overflow-hidden bg-emerald-500 p-6 rounded-2xl text-left hover:bg-emerald-600 transition-colors"
-              >
-                <div className="relative z-10">
-                  <RefreshCw className="w-8 h-8 text-emerald-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Revise Due
-                  </h3>
-                  <p className="text-emerald-200 text-sm">
-                    {toReviseCount} words ready for review
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <RefreshCw className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleReviseRandomly}
-                className="group relative overflow-hidden bg-teal-600 p-6 rounded-2xl text-left hover:bg-teal-700 transition-colors"
-              >
-                <div className="relative z-10">
-                  <RefreshCw className="w-8 h-8 text-teal-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Revise Randomly
-                  </h3>
-                  <p className="text-teal-200 text-sm">
-                    Shuffle all due words
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <RefreshCw className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={() => { setTimedRevisePhase("pick"); setShowTimedRevise(true); }}
-                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors"
-              >
-                <div className="relative z-10">
-                  <Timer className="w-8 h-8 text-violet-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">Timed Revise</h3>
-                  <p className="text-violet-200 text-sm">
-                    {toReviseCount > 0 ? `Race the clock — ${toReviseCount} words due` : "Choose a time, revise as many as possible"}
-                  </p>
-                  {(() => {
-                    const best2 = (stats.timedBests || []).filter(r => r.duration === 120).sort((a,b)=>b.words-a.words)[0];
-                    return best2 ? <p className="text-violet-300 text-[11px] mt-1">🏅 2min PB: {best2.words} words</p> : null;
-                  })()}
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <Timer className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleChooseOwn}
-                className="group relative overflow-hidden bg-slate-800 p-6 rounded-2xl text-left hover:bg-slate-900 transition-colors sm:col-span-2"
-              >
-                <div className="relative z-10">
-                  <BookOpen className="w-8 h-8 text-slate-400 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Choose Topic
-                  </h3>
-                  <p className="text-slate-400 text-sm">
-                    Focus on specific areas
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <BookOpen className="w-32 h-32 text-white" />
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* Leitner Boxes was here */}
         </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Snapshot Widget */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Snapshot</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Time Spent</span>
-                <span className="font-bold text-gray-900">
-                  {formatTime(stats.timeSpent)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Words Learnt</span>
-                <span className="font-bold text-gray-900">
-                  {stats.wordsLearnt}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Words Revised</span>
-                <span className="font-bold text-gray-900">
-                  {stats.wordsRevised}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Words Finished</span>
-                <span className="font-bold text-gray-900">
-                  {stats.wordsFinished}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Points Earnt</span>
-                <span className="font-bold text-gray-900">{stats.points}</span>
-              </div>
-              {(() => {
-                const testTime = stats.testTimeSpent ?? 0;
-                const reviseTime = stats.reviseTimeSpent ?? 0;
-                const totalWords = stats.wordsLearnt + stats.wordsRevised;
-                const fmtPer10 = (secs: number, words: number) => {
-                  if (words < 5 || secs < 5) return null;
-                  const s = Math.round((secs / words) * 10);
-                  const m = Math.floor(s / 60);
-                  return m > 0 ? `~${m}m ${s % 60}s` : `~${s}s`;
-                };
-                const testAvg   = fmtPer10(testTime,   stats.wordsLearnt);
-                const reviseAvg = fmtPer10(reviseTime, stats.wordsRevised);
-                const totalAvg  = fmtPer10(stats.timeSpent, totalWords);
-                if (!totalAvg) return null;
-                return (
-                  <div className="space-y-1.5 pt-1">
-                    {testAvg && (
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">⏱ Avg per 10 (testing)</span>
-                        <span className="font-bold text-indigo-600">{testAvg}</span>
-                      </div>
-                    )}
-                    {reviseAvg && (
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">⏱ Avg per 10 (revising)</span>
-                        <span className="font-bold text-emerald-600">{reviseAvg}</span>
-                      </div>
-                    )}
-                    {!testAvg && !reviseAvg && (
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">⏱ Avg per 10 words</span>
-                        <span className="font-bold text-indigo-600">{totalAvg}</span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-              <div className="pt-4 border-t border-gray-100 space-y-3">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Box 1 (New)</span>
-                  <span className="font-bold text-red-600">{boxCounts[1]}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Box 6 (Mastered)</span>
-                  <span className="font-bold text-purple-600">{boxCounts[6]}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Daily Progress Widget */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Daily Progress</h2>
-            <div className="space-y-6">
-              {Object.entries(dailyStats)
-                .sort((a, b) => b[0].localeCompare(a[0]))
-                .slice(0, 7)
-                .map(([date, dayStat]) => (
-                  <div key={date} className="border-b border-gray-50 pb-4 last:border-0 last:pb-0">
-                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">{date}</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-indigo-600">{dayStat.wordsTested}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">Tested</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-emerald-600">{dayStat.wordsRevised}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">Revised</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-amber-600">{dayStat.points}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">Points</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              {Object.keys(dailyStats).length === 0 && (
-                <p className="text-sm text-gray-400 text-center italic">No activity recorded yet.</p>
-              )}
-            </div>
-          </div>
-
+        <div>
           {/* Calendar Widget */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-6">
@@ -876,11 +586,248 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               )}
             </div>
           </div>
-
-          {/* Topics Overview removed from sidebar */}
         </div>
       </div>
 
+      {/* Row 2: Learning Actions */}
+      <div>
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Learning Actions
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                onClick={handleTestGcse}
+                className="group relative overflow-hidden bg-indigo-600 p-6 rounded-2xl text-left hover:bg-indigo-700 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Play className="w-8 h-8 text-indigo-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Test New Words GCSE
+                  </h3>
+                  <p className="text-indigo-200 text-sm">
+                    Learn priority words for today
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Play className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
+                onClick={handleTestB1}
+                className="group relative overflow-hidden bg-blue-600 p-6 rounded-2xl text-left hover:bg-blue-700 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Play className="w-8 h-8 text-blue-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Test New Words B1
+                  </h3>
+                  <p className="text-blue-200 text-sm">
+                    Learn priority words for today
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Play className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
+                onClick={handleLearn}
+                className="group relative overflow-hidden bg-rose-500 p-6 rounded-2xl text-left hover:bg-rose-600 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Brain className="w-8 h-8 text-rose-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    My Difficult Words
+                  </h3>
+                  <p className="text-rose-200 text-sm">
+{(() => { const difficultCount = vocabulary.filter(w => userWords[w.id] && (userWords[w.id].consecutiveWrong ?? 0) >= 3).length; return `${difficultCount} persistently tricky word${difficultCount !== 1 ? 's' : ''}`; })()}
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Brain className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
+                onClick={() => setShowReviseCount(true)}
+                className="group relative overflow-hidden bg-emerald-500 p-6 rounded-2xl text-left hover:bg-emerald-600 transition-colors"
+              >
+                <div className="relative z-10">
+                  <RefreshCw className="w-8 h-8 text-emerald-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Revise
+                  </h3>
+                  <p className="text-emerald-200 text-sm">
+                    {toReviseCount > 0 ? `${toReviseCount} words due — pick how many` : "No words due right now"}
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <RefreshCw className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
+                onClick={() => { setTimedRevisePhase("pick"); setShowTimedRevise(true); }}
+                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Timer className="w-8 h-8 text-violet-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">Timed Revise</h3>
+                  <p className="text-violet-200 text-sm">
+                    {toReviseCount > 0 ? `Race the clock — ${toReviseCount} words due` : "Choose a time, revise as many as possible"}
+                  </p>
+                  {(() => {
+                    const best2 = (stats.timedBests || []).filter(r => r.duration === 120).sort((a,b)=>b.words-a.words)[0];
+                    return best2 ? <p className="text-violet-300 text-[11px] mt-1">🏅 2min PB: {best2.words} words</p> : null;
+                  })()}
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Timer className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
+              <button
+                onClick={handleChooseOwn}
+                className="group relative overflow-hidden bg-slate-800 p-6 rounded-2xl text-left hover:bg-slate-900 transition-colors sm:col-span-2"
+              >
+                <div className="relative z-10">
+                  <BookOpen className="w-8 h-8 text-slate-400 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Choose Topic
+                  </h3>
+                  <p className="text-slate-400 text-sm">
+                    Focus on specific areas
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <BookOpen className="w-32 h-32 text-white" />
+                </div>
+              </button>
+            </div>
+          </div>
+      </div>
+
+      {/* Row 3: Snapshot + Daily Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div>
+          {/* Snapshot Widget */}
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Snapshot</h2>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Time Spent</span>
+                <span className="font-bold text-gray-900">
+                  {formatTime(stats.timeSpent)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Words Learnt</span>
+                <span className="font-bold text-gray-900">
+                  {stats.wordsLearnt}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Words Revised</span>
+                <span className="font-bold text-gray-900">
+                  {stats.wordsRevised}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Words Finished</span>
+                <span className="font-bold text-gray-900">
+                  {stats.wordsFinished}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Points Earnt</span>
+                <span className="font-bold text-gray-900">{stats.points}</span>
+              </div>
+              {(() => {
+                const testTime = stats.testTimeSpent ?? 0;
+                const reviseTime = stats.reviseTimeSpent ?? 0;
+                const totalWords = stats.wordsLearnt + stats.wordsRevised;
+                const fmtPer10 = (secs: number, words: number) => {
+                  if (words < 5 || secs < 5) return null;
+                  const s = Math.round((secs / words) * 10);
+                  const m = Math.floor(s / 60);
+                  return m > 0 ? `~${m}m ${s % 60}s` : `~${s}s`;
+                };
+                const testAvg   = fmtPer10(testTime,   stats.wordsLearnt);
+                const reviseAvg = fmtPer10(reviseTime, stats.wordsRevised);
+                const totalAvg  = fmtPer10(stats.timeSpent, totalWords);
+                if (!totalAvg) return null;
+                return (
+                  <div className="space-y-1.5 pt-1">
+                    {testAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 (testing)</span>
+                        <span className="font-bold text-indigo-600">{testAvg}</span>
+                      </div>
+                    )}
+                    {reviseAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 (revising)</span>
+                        <span className="font-bold text-emerald-600">{reviseAvg}</span>
+                      </div>
+                    )}
+                    {!testAvg && !reviseAvg && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">⏱ Avg per 10 words</span>
+                        <span className="font-bold text-indigo-600">{totalAvg}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+              <div className="pt-4 border-t border-gray-100 space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Box 1 (New)</span>
+                  <span className="font-bold text-red-600">{boxCounts[1]}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Box 6 (Mastered)</span>
+                  <span className="font-bold text-purple-600">{boxCounts[6]}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="lg:col-span-2">
+          {/* Daily Progress Widget */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <h2 className="text-base font-bold text-gray-900 mb-3">Daily Progress</h2>
+            <div className="overflow-y-auto max-h-64">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-gray-400 border-b border-gray-100">
+                    <th className="text-left py-1.5 pr-2 font-medium">Date</th>
+                    <th className="text-right py-1.5 px-1 font-medium text-indigo-500">Tested</th>
+                    <th className="text-right py-1.5 px-1 font-medium text-emerald-500">Revised</th>
+                    <th className="text-right py-1.5 pl-1 font-medium text-amber-500">Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(dailyStats)
+                    .sort((a, b) => b[0].localeCompare(a[0]))
+                    .map(([date, dayStat]) => (
+                      <tr key={date} className="border-b border-gray-50 last:border-0">
+                        <td className="py-1.5 pr-2 text-gray-500 whitespace-nowrap">{date}</td>
+                        <td className="py-1.5 px-1 text-right font-bold text-indigo-600">{dayStat.wordsTested}</td>
+                        <td className="py-1.5 px-1 text-right font-bold text-emerald-600">{dayStat.wordsRevised}</td>
+                        <td className="py-1.5 pl-1 text-right font-bold text-amber-600">{dayStat.points}</td>
+                      </tr>
+                    ))}
+                  {Object.keys(dailyStats).length === 0 && (
+                    <tr><td colSpan={4} className="py-4 text-center text-gray-400 italic">No activity yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* 5-Day Preview Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* GCSE Preview */}
@@ -1203,6 +1150,50 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         </div>
       )}
 
+      {/* Revise Count Picker Modal */}
+      {showReviseCount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-2xl font-bold text-gray-900">🔄 Revise</h2>
+              <button onClick={() => setShowReviseCount(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
+            </div>
+            <p className="text-sm text-gray-500 mb-6">
+              {toReviseCount > 0 ? `${toReviseCount} words due. How many do you want to do?` : "No words currently due for revision."}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {[10, 20, 30, "All"].map((count) => {
+                const n = count === "All" ? toReviseCount : count as number;
+                const disabled = toReviseCount === 0 || n === 0;
+                return (
+                  <button
+                    key={count}
+                    disabled={disabled}
+                    onClick={() => {
+                      setShowReviseCount(false);
+                      const reviseWords = vocabulary
+                        .filter((w) => {
+                          const uw = userWords[w.id];
+                          return uw && uw.nextReviewDate && uw.box > 1 && uw.box < 6 &&
+                            startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+                        })
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, n);
+                      if (reviseWords.length > 0) onStartSession("revise", reviseWords);
+                      else alert("No words due right now!");
+                    }}
+                    className={`p-5 rounded-2xl border-2 text-center font-black text-2xl transition-all ${disabled ? "opacity-30 cursor-not-allowed border-gray-100 text-gray-400" : "border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50 text-emerald-700 cursor-pointer"}`}
+                  >
+                    {count}
+                    {typeof count === "number" && <p className="text-[10px] font-normal text-gray-400 mt-0.5">{Math.min(count, toReviseCount) === count ? `${count} words` : `only ${toReviseCount} due`}</p>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Timed Revise Modal */}
       {showTimedRevise && (() => {
         const DURATIONS = [
@@ -1283,7 +1274,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
             const handleSubmit = (e: React.FormEvent) => {
               e.preventDefault();
               if (!currentWord) return;
-              const target = currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+              const target = currentWord.german;
               const norm = (s: string) => s.toLowerCase().replace(/[.,?!…]/g,"").trim();
               const isCorrect = norm(input) === norm(target) ||
                 target.split("/").map((s: string) => norm(s.trim())).includes(norm(input));
@@ -1326,8 +1317,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
                 {/* Card */}
                 <div className={`rounded-2xl p-6 text-center mb-4 transition-colors ${flash === "correct" ? "bg-emerald-50 border-2 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-2 border-rose-300" : "bg-indigo-50 border-2 border-indigo-100"}`}>
-                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Translate to English</p>
-                  <p className="text-3xl font-black text-gray-900">{currentWord.german}</p>
+                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Translate to German</p>
+                  <p className="text-3xl font-black text-gray-900">{currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")}</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -1336,7 +1327,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                     type="text"
                     value={input}
                     onChange={e => setInput(e.target.value)}
-                    placeholder="Type English translation..."
+                    placeholder="Type German translation..."
                     className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
                     autoComplete="off"
                   />
