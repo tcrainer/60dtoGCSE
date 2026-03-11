@@ -294,7 +294,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               }}
               onKeyDown={(e) => handleKeyDown(e, "germanInf")}
               placeholder="Infinitive..."
-              className="w-full px-4 py-3 text-base border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition-all bg-white"
+              className="w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
               autoFocus
               autoComplete="off"
             />
@@ -311,7 +311,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               onKeyDown={(e) => handleKeyDown(e, "german3rd")}
               placeholder={currentWord.german3rdPerson === "—" ? "—" : "3rd Person..."}
               disabled={currentWord.german3rdPerson === "—"}
-              className={`w-full px-4 py-3 text-base border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition-all ${currentWord.german3rdPerson === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
+              className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.german3rdPerson === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
               autoComplete="off"
             />
           </div>
@@ -327,7 +327,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               onKeyDown={(e) => handleKeyDown(e, "germanImp")}
               placeholder={currentWord.germanImperfekt === "—" ? "—" : "Imperfekt..."}
               disabled={currentWord.germanImperfekt === "—"}
-              className={`w-full px-4 py-3 text-base border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition-all ${currentWord.germanImperfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
+              className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.germanImperfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
               autoComplete="off"
             />
           </div>
@@ -343,12 +343,12 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               onKeyDown={(e) => handleKeyDown(e, "germanPerf")}
               placeholder={currentWord.germanPerfekt === "—" ? "—" : "Perfekt..."}
               disabled={currentWord.germanPerfekt === "—"}
-              className={`w-full px-4 py-3 text-base border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition-all ${currentWord.germanPerfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
+              className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.germanPerfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
               autoComplete="off"
             />
           </div>
           {hint && (
-            <div className="sm:col-span-2 text-center text-sm font-bold text-red-500 animate-pulse">
+            <div className="sm:col-span-2 text-center text-sm font-bold text-yellow-600 animate-pulse">
               Hint: Starts with "{hint}"
             </div>
           )}
@@ -410,13 +410,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
           <span className="absolute top-4 left-4 text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
             English
             {currentWord.topicId === "S1" && (
-              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">✉ Informal</span>
+              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">✉ Informal letter</span>
             )}
             {currentWord.topicId === "S2" && (
-              <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion</span>
+              <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion piece</span>
             )}
             {currentWord.topicId === "S3" && (
-              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal</span>
+              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal letter</span>
             )}
           </span>
           {!askGerman && !showResult ? (
@@ -470,8 +470,8 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         </div>
 
         {/* Bottom Half - Light Red - German */}
-        <div className="flex-1 bg-red-50 p-8 flex flex-col justify-center items-center min-h-[220px] relative">
-          <span className="absolute top-4 left-4 text-xs font-bold text-red-400 uppercase tracking-wider">
+        <div className="flex-1 bg-yellow-50 p-8 flex flex-col justify-center items-center min-h-[220px] relative">
+          <span className="absolute top-4 left-4 text-xs font-bold text-yellow-600 uppercase tracking-wider">
             Deutsch
           </span>
           {askGerman && !showResult ? (
@@ -486,13 +486,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder="Type German translation..."
-                  className="w-full px-6 py-4 text-lg border-2 border-red-200 rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition-all bg-white"
+                  className="w-full px-6 py-4 text-lg border-2 border-yellow-200 rounded-2xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
                   autoFocus
                   autoComplete="off"
                 />
               )}
               {hint && (
-                <div className="mt-2 text-sm font-bold text-red-500 animate-pulse">
+                <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">
                   Hint: Starts with "{hint}"
                 </div>
               )}
@@ -500,13 +500,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
             </div>
           ) : (
             <div className="text-center space-y-2">
-              <h2 className="text-4xl font-bold text-red-900 flex items-center gap-2">
+              <h2 className="text-4xl font-bold text-yellow-900 flex items-center gap-2">
                 {currentWord.german}
                 {!showResult && (
                   <button
                     type="button"
                     onClick={handleHint}
-                    className="p-1 hover:bg-red-100 rounded-full transition-colors text-red-400"
+                    className="p-1 hover:bg-yellow-100 rounded-full transition-colors text-yellow-600"
                     title="Hint"
                   >
                     <HelpCircle className="w-6 h-6" />
@@ -516,17 +516,17 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               {currentWord.isVerb && (
                 <div className="flex flex-wrap gap-3 justify-center">
                   {currentWord.german3rdPerson && currentWord.german3rdPerson !== "—" && (
-                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
                       {currentWord.german3rdPerson}
                     </span>
                   )}
                   {currentWord.germanImperfekt && currentWord.germanImperfekt !== "—" && (
-                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
                       {currentWord.germanImperfekt}
                     </span>
                   )}
                   {currentWord.germanPerfekt && currentWord.germanPerfekt !== "—" && (
-                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
                       {currentWord.germanPerfekt}
                     </span>
                   )}
