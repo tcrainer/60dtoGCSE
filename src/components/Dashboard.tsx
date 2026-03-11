@@ -461,10 +461,14 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                     key={box}
                     onClick={() => {
                       setSelectedBox(box);
-                      const wordsInBox = vocabulary.filter((w) => {
-                        return userWords[w.id]?.box === box;
-                      });
-                      setSelectedWordsToRevise(new Set(wordsInBox.map(w => w.id)));
+                      const wordsInBox = vocabulary.filter((w) => userWords[w.id]?.box === box);
+                      const toSelect = box >= 2 && box <= 5
+                        ? wordsInBox.filter(w => {
+                            const uw = userWords[w.id];
+                            return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+                          })
+                        : wordsInBox;
+                      setSelectedWordsToRevise(new Set(toSelect.map(w => w.id)));
                     }}
                     className={`min-w-[140px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-all snap-start ${
                       selectedBox === box ? "ring-2 ring-indigo-500 ring-offset-2 scale-105" : ""
@@ -716,75 +720,26 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         <div>
           {/* Calendar Widget (inline) */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-gray-900">Exam Countdown</h2>
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
-              >
-                <Calendar className="w-4 h-4" />
-              </button>
-            </div>
+            <h2 className="text-base font-bold text-gray-900 mb-4">Exam Countdown</h2>
             <div className="space-y-4">
-              {showCalendar ? (
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-slate-500 mb-1">
-                    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-                  </div>
-                  <div className="grid grid-cols-7 gap-0.5 mb-3">
-                    {Array.from({ length: 60 }).map((_, i) => {
-                      const day = i + 1;
-                      const isPast = day < currentDay;
-                      const isToday = day === currentDay;
-                      const dayWords = vocabulary.filter(w => compareDays(w.day, day));
-                      const hasWords = dayWords.length > 0;
-                      const someTested = hasWords && dayWords.some(w => userWords[w.id] && userWords[w.id].box > 0);
-                      const allTested = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box > 0);
-                      const allMastered = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box === 6);
-                      let bgColor = isPast ? "bg-indigo-100 text-indigo-400" : "bg-white border border-slate-200 text-slate-400";
-                      if (day === 60) bgColor = isPast ? "bg-red-100 text-red-500 font-bold" : "bg-red-50 border border-red-200 text-red-600 font-bold";
-                      if (allMastered) bgColor = "bg-amber-400 text-white font-bold";
-                      else if (allTested) bgColor = "bg-amber-300 text-amber-900 font-bold";
-                      else if (someTested) bgColor = "bg-emerald-400 text-white font-bold";
-                      if (isToday && !allMastered && !allTested) bgColor = "bg-indigo-600 text-white font-bold";
-                      else if (isToday) bgColor += " ring-2 ring-indigo-600 ring-offset-1";
-                      return (
-                        <div key={i} className={`aspect-square rounded flex items-center justify-center text-[10px] ${bgColor}`}>
-                          {day}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 justify-center">
-                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-400 inline-block"></span>Some</span>
-                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-amber-300 inline-block"></span>All done</span>
-                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"></span>Mastered</span>
-                  </div>
-                  <p className="text-center text-[10px] text-slate-400 mt-2">60 Days to Paper 2</p>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-medium text-gray-500">GCSE Paper 2</span>
+                  <span className="font-black text-indigo-700 text-lg">{daysLeftGCSE} days</span>
                 </div>
-              ) : (
-                <>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="font-medium text-gray-500">GCSE Paper 2</span>
-                      <span className="font-bold text-gray-900">{daysLeftGCSE}d</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                      <div className="h-1.5 bg-indigo-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((totalDaysGCSE - daysLeftGCSE) / totalDaysGCSE) * 100))}%` }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="font-medium text-gray-500">B1 Exam</span>
-                      <span className="font-bold text-gray-900">{daysLeftB1}d</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                      <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((60 - daysLeftB1) / 60) * 100))}%` }} />
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-gray-400 text-center mt-1">Tap 📅 for day grid</p>
-                </>
-              )}
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="h-2 bg-indigo-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((totalDaysGCSE - daysLeftGCSE) / totalDaysGCSE) * 100))}%` }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-medium text-gray-500">B1 Exam</span>
+                  <span className="font-black text-blue-700 text-lg">{daysLeftB1} days</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="h-2 bg-blue-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((60 - daysLeftB1) / 60) * 100))}%` }} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1342,7 +1297,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
                 {/* Wrong answer feedback */}
                 {timedWrongFeedback ? (
-                  <div className="space-y-2 mb-3">
+                  <form onSubmit={e => { e.preventDefault(); handleTimedNext(); }} className="space-y-2 mb-3">
                     <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
                       <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
                       <p className="font-bold text-rose-700">{timedWrongFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
@@ -1351,10 +1306,10 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
                       <p className="font-bold text-emerald-700">{timedWrongFeedback.correct}</p>
                     </div>
-                    <button onClick={handleTimedNext} className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
+                    <button type="submit" autoFocus className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
                       Next word →
                     </button>
-                  </div>
+                  </form>
                 ) : (
                   <form onSubmit={handleTimedSubmit}>
                     <input
@@ -1444,16 +1399,21 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               </div>
               <div className="space-y-2">
                 {[
-                  { level: 1,  name: "Rookie",            minPoints: 0     },
-                  { level: 2,  name: "Schüler",           minPoints: 100   },
-                  { level: 3,  name: "Lernender",         minPoints: 300   },
-                  { level: 4,  name: "Fortgeschrittener", minPoints: 700   },
-                  { level: 5,  name: "Sprachprofi",       minPoints: 1500  },
-                  { level: 6,  name: "Wortmeister",       minPoints: 3000  },
-                  { level: 7,  name: "Deutschheld",       minPoints: 6000  },
-                  { level: 8,  name: "Sprachgenie",       minPoints: 12000 },
-                  { level: 9,  name: "Deutschmeister",    minPoints: 25000 },
-                  { level: 10, name: "Sprachlegende",     minPoints: 50000 },
+                  { level: 1,  name: "Neuling",           minPoints: 0      },
+                  { level: 2,  name: "Anfänger",          minPoints: 50     },
+                  { level: 3,  name: "Schüler",           minPoints: 150    },
+                  { level: 4,  name: "Lernender",         minPoints: 350    },
+                  { level: 5,  name: "Fortgeschrittener", minPoints: 700    },
+                  { level: 6,  name: "Sprachprofi",       minPoints: 1200   },
+                  { level: 7,  name: "Wortmeister",       minPoints: 2200   },
+                  { level: 8,  name: "Deutschheld",       minPoints: 4000   },
+                  { level: 9,  name: "Sprachgenie",       minPoints: 7000   },
+                  { level: 10, name: "Sprachexperte",     minPoints: 11000  },
+                  { level: 11, name: "Deutschmeister",    minPoints: 18000  },
+                  { level: 12, name: "Prüfungsprofi",     minPoints: 30000  },
+                  { level: 13, name: "Deutschgenie",      minPoints: 50000  },
+                  { level: 14, name: "Sprachlegende ★",  minPoints: 75000  },
+                  { level: 15, name: "Sprachlegende",     minPoints: 100000 },
                 ].map(l => {
                   const isCurrent = l.level === level.level;
                   const isNext = !!(level.nextLevel && l.level === level.level + 1);
@@ -1635,74 +1595,91 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
-            <div className="overflow-y-auto flex-1 space-y-2 mb-6 pr-2">
-              {vocabulary
-                .filter((w) => {
-                  if (selectedBox === 0) return !userWords[w.id];
-                  return userWords[w.id]?.box === selectedBox;
-                })
-                .map((w) => {
-                  const isSelected = selectedWordsToRevise.has(w.id);
-                  return (
-                    <div
-                      key={w.id}
-                      className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer border-2 transition-colors ${isSelected ? "border-indigo-500 bg-indigo-50" : "border-transparent bg-slate-50 hover:bg-slate-100"}`}
-                      onClick={() => {
-                        const next = new Set(selectedWordsToRevise);
-                        if (next.has(w.id)) next.delete(w.id);
-                        else next.add(w.id);
-                        setSelectedWordsToRevise(next);
-                      }}
-                    >
-                      <div
-                        className={`w-6 h-6 shrink-0 rounded border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-gray-300 bg-white"}`}
-                      >
-                        {isSelected && <Check className="w-4 h-4" />}
+            {(() => {
+              const wordsInBox = vocabulary.filter((w) => {
+                if (selectedBox === 0) return !userWords[w.id];
+                return userWords[w.id]?.box === selectedBox;
+              });
+              const dueWordsInBox = selectedBox >= 2 && selectedBox <= 5
+                ? wordsInBox.filter(w => {
+                    const uw = userWords[w.id];
+                    return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+                  })
+                : wordsInBox;
+              const noDueWords = selectedBox >= 2 && selectedBox <= 5 && wordsInBox.length > 0 && dueWordsInBox.length === 0;
+              return (
+                <>
+                  <div className="overflow-y-auto flex-1 space-y-2 mb-6 pr-2">
+                    {noDueWords ? (
+                      <div className="flex flex-col items-center justify-center py-12 gap-3">
+                        <span className="text-6xl">😊</span>
+                        <p className="text-center font-bold text-gray-700">All caught up!</p>
+                        <p className="text-center text-sm text-gray-400">No words due today in this box.<br/>Come back later!</p>
                       </div>
-                      <div>
-                        <p className="font-bold text-gray-900">{w.german}</p>
-                        <p className="text-sm text-gray-600">{w.english}</p>
-                      </div>
-                      {selectedBox > 0 && selectedBox < 6 && (
-                        <div className="ml-auto text-right">
-                          <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                            !userWords[w.id]?.nextReviewDate 
-                              ? "bg-gray-100 text-gray-600"
-                              : differenceInDays(startOfDay(new Date(userWords[w.id].nextReviewDate || "")), startOfDay(today)) <= 0
-                                ? "bg-rose-100 text-rose-700"
-                                : "bg-emerald-100 text-emerald-700"
-                          }`}>
-                            {getDaysUntilReview(userWords[w.id]?.nextReviewDate || null)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              {boxCounts[selectedBox] === 0 && (
-                <p className="text-center text-gray-500 py-8">
-                  No words in this box.
-                </p>
-              )}
-            </div>
-            <button
-              disabled={selectedWordsToRevise.size === 0}
-              onClick={() => {
-                const wordsToRevise = vocabulary.filter((w) =>
-                  selectedWordsToRevise.has(w.id),
-                );
-                let mode: "test" | "learn" | "revise" | "practice" = "practice";
-                if (selectedBox === 1) mode = "learn";
-                else if (selectedBox > 1 && selectedBox < 6) mode = "revise";
-                
-                onStartSession(mode, wordsToRevise);
-                setSelectedBox(null);
-                setSelectedWordsToRevise(new Set());
-              }}
-              className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition-colors"
-            >
-              {selectedBox === 1 || (selectedBox > 1 && selectedBox < 6) ? "Test yourself" : "Practice Selected"} ({selectedWordsToRevise.size})
-            </button>
+                    ) : (
+                      wordsInBox.map((w) => {
+                        const uw = userWords[w.id];
+                        const isDue = !uw?.nextReviewDate || startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+                        const isSelected = selectedWordsToRevise.has(w.id);
+                        const isNotDue = selectedBox >= 2 && selectedBox <= 5 && !isDue;
+                        return (
+                          <div
+                            key={w.id}
+                            className={`flex items-center gap-4 p-3 rounded-xl border-2 transition-colors ${isNotDue ? "opacity-40 cursor-not-allowed border-transparent bg-slate-50" : isSelected ? "border-indigo-500 bg-indigo-50 cursor-pointer" : "border-transparent bg-slate-50 hover:bg-slate-100 cursor-pointer"}`}
+                            onClick={() => {
+                              if (isNotDue) return;
+                              const next = new Set(selectedWordsToRevise);
+                              if (next.has(w.id)) next.delete(w.id);
+                              else next.add(w.id);
+                              setSelectedWordsToRevise(next);
+                            }}
+                          >
+                            <div className={`w-6 h-6 shrink-0 rounded border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-gray-300 bg-white"}`}>
+                              {isSelected && <Check className="w-4 h-4" />}
+                            </div>
+                            <div>
+                              <p className="font-bold text-gray-900">{w.german}</p>
+                              <p className="text-sm text-gray-600">{w.english}</p>
+                            </div>
+                            {selectedBox > 0 && selectedBox < 6 && (
+                              <div className="ml-auto text-right">
+                                <span className={`text-xs font-bold px-2 py-1 rounded-md ${
+                                  !uw?.nextReviewDate
+                                    ? "bg-gray-100 text-gray-600"
+                                    : isDue
+                                      ? "bg-rose-100 text-rose-700"
+                                      : "bg-emerald-100 text-emerald-700"
+                                }`}>
+                                  {getDaysUntilReview(uw?.nextReviewDate || null)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                    {wordsInBox.length === 0 && (
+                      <p className="text-center text-gray-500 py-8">No words in this box.</p>
+                    )}
+                  </div>
+                  <button
+                    disabled={selectedWordsToRevise.size === 0}
+                    onClick={() => {
+                      const wordsToRevise = vocabulary.filter((w) => selectedWordsToRevise.has(w.id));
+                      let mode: "test" | "learn" | "revise" | "practice" = "practice";
+                      if (selectedBox === 1) mode = "learn";
+                      else if (selectedBox > 1 && selectedBox < 6) mode = "revise";
+                      onStartSession(mode, wordsToRevise);
+                      setSelectedBox(null);
+                      setSelectedWordsToRevise(new Set());
+                    }}
+                    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition-colors"
+                  >
+                    {selectedBox === 1 || (selectedBox > 1 && selectedBox < 6) ? "Test yourself" : "Practice Selected"} ({selectedWordsToRevise.size})
+                  </button>
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
