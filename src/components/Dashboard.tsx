@@ -200,7 +200,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     const dueWords = vocabulary
       .filter((w) => {
         const uw = userWords[w.id];
-        return uw && uw.nextReviewDate && uw.box > 1 && uw.box < 6 &&
+        return uw && uw.nextReviewDate && uw.box >= 1 && uw.box < 6 &&
           startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
       })
       .sort((a, b) => {
@@ -1170,7 +1170,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       const reviseWords = vocabulary
                         .filter((w) => {
                           const uw = userWords[w.id];
-                          return uw && uw.nextReviewDate && uw.box > 1 && uw.box < 6 &&
+                          return uw && uw.nextReviewDate && uw.box >= 1 && uw.box < 6 &&
                             startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
                         })
                         .sort(() => Math.random() - 0.5)
