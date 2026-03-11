@@ -52,6 +52,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const [timedFlash, setTimedFlash] = useState<"correct"|"wrong"|null>(null);
   const [timedWrongFeedback, setTimedWrongFeedback] = useState<{typed: string; correct: string}|null>(null);
   const [timedShowHint, setTimedShowHint] = useState(false);
+  const timedInputRef = React.useRef<HTMLInputElement>(null);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
   const [selectedWordsToRevise, setSelectedWordsToRevise] = useState<
@@ -1202,43 +1203,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
         if (timedRevisePhase === "running") {
           // State lives at Dashboard level so re-renders don't reset progress
-          const timedInputRef = React.useRef<HTMLInputElement>(null);
           const currentWord = timedWords[timedCurrentIdx];
           const secsLeft = timedSecondsLeft;
           const mins = Math.floor(secsLeft / 60);
           const secs = secsLeft % 60;
           const pct = (secsLeft / timedDuration) * 100;
-
-          // Timer effect — runs once while phase is "running"
-          React.useEffect(() => {
-            if (timedRevisePhase !== "running") return;
-            if (timedSecondsLeft <= 0) {
-              const bests = (stats.timedBests || []).filter((r: any) => r.duration === timedDuration).sort((a: any,b: any)=>b.words-a.words);
-              const isPB = bests.length === 0 || timedDoneCount > bests[0].words;
-              recordTimedResult(timedDuration, timedDoneCount);
-              setTimedIsPB(isPB);
-              setTimedRevisePhase("done");
-              return;
-            }
-            const t = setInterval(() => setTimedSecondsLeft(s => s - 1), 1000);
-            return () => clearInterval(t);
-          }, [timedSecondsLeft, timedRevisePhase]);
-
-          React.useEffect(() => {
-            if (!timedWrongFeedback) timedInputRef.current?.focus();
-          }, [timedCurrentIdx, timedWrongFeedback]);
-
-          // Key handler for hint (?)
-          React.useEffect(() => {
-            const handleKey = (e: KeyboardEvent) => {
-              if (e.key === "?" || e.key === "/") {
-                e.preventDefault();
-                setTimedShowHint(true);
-              }
-            };
-            window.addEventListener("keydown", handleKey);
-            return () => window.removeEventListener("keydown", handleKey);
-          }, []);
 
           const insertChar = (char: string) => setTimedInput(prev => prev + char);
 
@@ -1743,3 +1712,38 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     </div>
   );
 }
+  // Timed revise: countdown timer
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    if (timedSecondsLeft <= 0) {
+      const bests = (stats.timedBests || []).filter((r: any) => r.duration === timedDuration).sort((a: any,b: any) => b.words - a.words);
+      const isPB = bests.length === 0 || timedDoneCount > bests[0].words;
+      recordTimedResult(timedDuration, timedDoneCount);
+      setTimedIsPB(isPB);
+      setTimedRevisePhase("done");
+      return;
+    }
+    const t = setInterval(() => setTimedSecondsLeft(s => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [timedSecondsLeft, timedRevisePhase]);
+
+  // Timed revise: auto-focus input after each word
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    if (!timedWrongFeedback) timedInputRef.current?.focus();
+  }, [timedCurrentIdx, timedWrongFeedback, timedRevisePhase]);
+
+  // Timed revise: hint key handler
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "?" || e.key === "/") {
+        e.preventDefault();
+        setTimedShowHint(true);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [timedRevisePhase]);
+
+
