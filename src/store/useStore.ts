@@ -271,16 +271,15 @@ export const useStore = create<StoreState>()(
           let effectiveMode = mode;
 
           if (effectiveMode === "test") {
-            newBox = isCorrect ? 4 : 1;
+            // New word: correct → box 5 (review in 12 days), wrong → box 1 (review today)
+            newBox = isCorrect ? 5 : 1;
           } else if (effectiveMode === "learn") {
-            newBox = isCorrect ? 2 : 1;
+            // Difficult words already in a box — move up naturally, don't force back to box 2
+            newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
           } else if (effectiveMode === "revise") {
-            const isDue = !currentWord.nextReviewDate || startOfDay(new Date(currentWord.nextReviewDate)) <= startOfDay(new Date());
-            if (isDue) {
-              newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
-            } else {
-              effectiveMode = "practice";
-            }
+            // Always advance/drop — Revise button pre-filters to due words,
+            // and Leitner box clicks should always allow progression.
+            newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
           }
 
           const nextReviewDate = effectiveMode === "practice" ? currentWord.nextReviewDate : getNextReviewDate(newBox);
