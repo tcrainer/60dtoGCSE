@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
 import { getLevel, getStreakBonus, getStreakFlames } from "../store/useStore";
+import { checkAnswer, checkWritingAnswer } from "../utils/grading";
 import { vocabulary, topics } from "../data/vocabulary";
 import { differenceInDays, isBefore, startOfDay } from "date-fns";
 import {
@@ -33,7 +34,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onStartSession }: DashboardProps) {
-  const { userWords, stats, dailyStats, awardBonus, recordTimedResult } = useStore();
+  const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints } = useStore();
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPointsInfo, setShowPointsInfo] = useState(false);
   const [showLevelInfo, setShowLevelInfo] = useState(false);
@@ -468,7 +469,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Learning Actions
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button
                 onClick={handleTestGcse}
                 className="group relative overflow-hidden bg-indigo-600 p-6 rounded-2xl text-left hover:bg-indigo-700 transition-colors"
@@ -502,27 +503,6 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
                 <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
                   <Play className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleLearn}
-                className="group relative overflow-hidden bg-rose-500 p-6 rounded-2xl text-left hover:bg-rose-600 transition-colors"
-              >
-                <div className="relative z-10">
-                  <Brain className="w-8 h-8 text-rose-200 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    My Difficult Words
-                  </h3>
-                  <p className="text-rose-200 text-sm">
-{(() => { const difficultCount = vocabulary.filter(w => userWords[w.id] && (userWords[w.id].consecutiveWrong ?? 0) >= 3).length; return `${difficultCount} persistently tricky word${difficultCount !== 1 ? 's' : ''}`; })()}
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <Brain className="w-32 h-32 text-white" />
-                </div>
-              </button>
-
                 </div>
               </button>
 
@@ -564,7 +544,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
               <button
                 onClick={() => { setTimedRevisePhase("pick"); setShowTimedRevise(true); }}
-                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors sm:col-span-2"
+                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors"
               >
                 <div className="relative z-10">
                   <Timer className="w-8 h-8 text-violet-200 mb-4" />
@@ -582,6 +562,23 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
               </button>
 
+              <button
+                onClick={handleLearn}
+                className="group relative overflow-hidden bg-rose-500 p-6 rounded-2xl text-left hover:bg-rose-600 transition-colors"
+              >
+                <div className="relative z-10">
+                  <Brain className="w-8 h-8 text-rose-200 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    My Difficult Words
+                  </h3>
+                  <p className="text-rose-200 text-sm">
+                    {(() => { const difficultCount = vocabulary.filter(w => userWords[w.id] && (userWords[w.id].consecutiveWrong ?? 0) >= 3).length; return `${difficultCount} persistently tricky word${difficultCount !== 1 ? "s" : ""}`; })()}
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <Brain className="w-32 h-32 text-white" />
+                </div>
+              </button>
             </div>
           </div>
       </div>
@@ -910,7 +907,10 @@ export function Dashboard({ onStartSession }: DashboardProps) {
       </div>
       <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold text-gray-900">GCSE Topics & Priority Group</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">GCSE Topics grouped by Priority</h2>
+            <p className="text-sm text-gray-500 mt-1">Groups 1–15 contain the highest-frequency exam vocabulary, with importance gradually decreasing in later groups.</p>
+          </div>
           {selectedTopicDays.some(td => !td.topicId.startsWith('B1')) && (() => {
             const wordsToTest = vocabulary.filter(w => 
               !w.topicId.startsWith('B1') && selectedTopicDays.some(td => td.topicId === w.topicId && compareDays(td.day, w.day)) && !userWords[w.id]
@@ -1193,14 +1193,13 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         }
 
         if (timedRevisePhase === "running") {
-          // This is rendered as a stateful sub-component via a trick:
-          // We use a React key trick — the timer is managed via useEffect in a wrapper
           const TimerRunner = () => {
             const [secsLeft, setSecsLeft] = React.useState(timedDuration);
             const [doneCount, setDoneCount] = React.useState(0);
             const [currentIdx, setCurrentIdx] = React.useState(0);
             const [input, setInput] = React.useState("");
             const [flash, setFlash] = React.useState<"correct"|"wrong"|null>(null);
+            const [wrongFeedback, setWrongFeedback] = React.useState<{typed: string; correct: string} | null>(null);
             const inputRef = React.useRef<HTMLInputElement>(null);
 
             React.useEffect(() => {
@@ -1217,27 +1216,55 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               return () => clearInterval(t);
             }, [secsLeft]);
 
-            React.useEffect(() => { inputRef.current?.focus(); }, [currentIdx]);
+            React.useEffect(() => {
+              if (!wrongFeedback) inputRef.current?.focus();
+            }, [currentIdx, wrongFeedback]);
 
             const currentWord = timedWords[currentIdx];
             const mins = Math.floor(secsLeft / 60);
             const secs = secsLeft % 60;
             const pct = (secsLeft / timedDuration) * 100;
 
+            const insertChar = (char: string) => setInput(prev => prev + char);
+
             const handleSubmit = (e: React.FormEvent) => {
               e.preventDefault();
-              if (!currentWord) return;
+              if (!currentWord || wrongFeedback) return;
+
+              const isWritingTopic = currentWord.topicId?.startsWith("S");
               const target = currentWord.german;
-              const norm = (s: string) => s.toLowerCase().replace(/[.,?!…]/g,"").trim();
-              const isCorrect = norm(input) === norm(target) ||
-                target.split("/").map((s: string) => norm(s.trim())).includes(norm(input));
+              const cleanTarget = target.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+
+              const result = isWritingTopic
+                ? checkWritingAnswer(input, cleanTarget)
+                : checkAnswer(input, cleanTarget, true);
+
+              const isCorrect = result.isCorrect;
+
+              // Update the Leitner box
+              updateWord(currentWord.id, isCorrect, "revise");
+              if (isCorrect && result.points) addPoints(result.points);
+
               setFlash(isCorrect ? "correct" : "wrong");
-              setTimeout(() => {
-                setFlash(null);
-                if (isCorrect) setDoneCount(c => c + 1);
-                setCurrentIdx(i => i + 1);
-                setInput("");
-              }, 400);
+
+              if (isCorrect) {
+                setTimeout(() => {
+                  setFlash(null);
+                  setDoneCount(c => c + 1);
+                  setCurrentIdx(i => i + 1);
+                  setInput("");
+                }, 500);
+              } else {
+                // Show wrong answer feedback — student must press Next to continue
+                setWrongFeedback({ typed: input, correct: cleanTarget });
+                setTimeout(() => setFlash(null), 500);
+              }
+            };
+
+            const handleNext = () => {
+              setWrongFeedback(null);
+              setCurrentIdx(i => i + 1);
+              setInput("");
             };
 
             if (!currentWord) {
@@ -1251,6 +1278,10 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
               );
             }
+
+            const isWritingTopic = currentWord.topicId?.startsWith("S");
+            const cleanEnglish = currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+            const tagLabel = currentWord.topicId === "S1" ? "✉ Informal" : currentWord.topicId === "S2" ? "💬 Opinion" : currentWord.topicId === "S3" ? "📋 Formal" : null;
 
             return (
               <div>
@@ -1269,27 +1300,57 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
 
                 {/* Card */}
-                <div className={`rounded-2xl p-6 text-center mb-4 transition-colors ${flash === "correct" ? "bg-emerald-50 border-2 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-2 border-rose-300" : "bg-indigo-50 border-2 border-indigo-100"}`}>
-                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Translate to German</p>
-                  <p className="text-3xl font-black text-gray-900">{currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")}</p>
-                  <p className="text-sm text-indigo-300 mt-2">
+                <div className={`rounded-2xl p-5 text-center mb-3 transition-colors border-2 ${flash === "correct" ? "bg-emerald-50 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-rose-300" : "bg-indigo-50 border-indigo-100"}`}>
+                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Translate to German</p>
+                  {tagLabel && <span className="text-[11px] font-bold text-gray-500 block mb-1">{tagLabel}</span>}
+                  <p className="text-2xl font-black text-gray-900">{cleanEnglish}</p>
+                  <p className="text-sm text-indigo-300 mt-1.5">
                     starts with <span className="font-black text-indigo-500">{currentWord.german[0]}</span>
-                    {currentWord.german.includes(" ") && <span> · {currentWord.german.split(" ").length} words</span>}
+                    {currentWord.german.replace(/\[.*?\]/g,"").trim().includes(" ") && (
+                      <span> · {currentWord.german.replace(/\[.*?\]/g,"").trim().split(" ").length} words</span>
+                    )}
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    placeholder="Type German translation..."
-                    className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
-                    autoComplete="off"
-                  />
-                  <button type="submit" className="w-full mt-3 py-3 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700">Check →</button>
-                </form>
+                {/* Wrong answer feedback */}
+                {wrongFeedback ? (
+                  <div className="space-y-2 mb-3">
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
+                      <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
+                      <p className="font-bold text-rose-700">{wrongFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
+                    </div>
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                      <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
+                      <p className="font-bold text-emerald-700">{wrongFeedback.correct}</p>
+                    </div>
+                    <button onClick={handleNext} className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
+                      Next word →
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit}>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={e => setInput(e.target.value)}
+                      placeholder="Type German translation..."
+                      className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
+                      autoComplete="off"
+                    />
+                    {/* Special character buttons */}
+                    <div className="flex gap-1.5 justify-center mt-2 mb-2">
+                      {[{k:"1",c:"ä"},{k:"2",c:"ö"},{k:"3",c:"ü"},{k:"4",c:"ß"},{k:"5",c:"Ä"},{k:"6",c:"Ö"},{k:"7",c:"Ü"}].map(({k,c}) => (
+                        <button key={k} type="button" onClick={() => insertChar(c)}
+                          className="px-2 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 text-gray-700 font-medium text-xs flex flex-col items-center gap-0.5 transition-colors">
+                          <span className="text-[9px] text-gray-400">{k}</span>
+                          <span className="text-base leading-none">{c}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button type="submit" className="w-full py-3 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700">Check →</button>
+                  </form>
+                )}
               </div>
             );
           };
