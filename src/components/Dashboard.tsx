@@ -343,9 +343,9 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         );
       })()}
 
-      {/* Row 1: Leitner Boxes + Exam Countdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      {/* Row 1: Leitner Boxes – full width */}
+      <div>
+        <div>
           {/* Leitner Boxes */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -391,7 +391,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               {[1, 2, 3, 4, 5, 6].map((box) => {
                 const boxNames = [
                   "",
-                  "Box 1 - revise me every day",
+                  "Box 1 - empty me every day!",
                   "Box 2 - see you tomorrow!",
                   "Box 3 - see you in a few days",
                   "Box 4 - see you in a week!",
@@ -435,157 +435,30 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                     <p className="text-2xl font-bold">
                       {box === 1 && boxCounts[box] === 0 ? "😊" : boxCounts[box]}
                     </p>
+                    {box >= 2 && box <= 5 && (() => {
+                      const todayCount = vocabulary.filter(w => {
+                        const uw = userWords[w.id];
+                        return uw?.box === box && uw.nextReviewDate &&
+                          startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(today).getTime();
+                      }).length;
+                      const tomorrowCount = vocabulary.filter(w => {
+                        const uw = userWords[w.id];
+                        return uw?.box === box && uw.nextReviewDate &&
+                          startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(new Date(today.getTime() + 86400000)).getTime();
+                      }).length;
+                      return (
+                        <div className="mt-1 space-y-0.5">
+                          {todayCount > 0 && <p className="text-[10px] font-bold opacity-90">📅 {todayCount} today</p>}
+                          {tomorrowCount > 0 && <p className="text-[10px] opacity-70">→ {tomorrowCount} tmrw</p>}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
             </div>
           </div>
 
-        </div>
-        <div>
-          {/* Calendar Widget */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Exam Countdown
-              </h2>
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
-              >
-                <Calendar className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {showCalendar ? (
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-slate-500 mb-2">
-                    <div>M</div>
-                    <div>T</div>
-                    <div>W</div>
-                    <div>T</div>
-                    <div>F</div>
-                    <div>S</div>
-                    <div>S</div>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 mb-4">
-                    {Array.from({ length: 60 }).map((_, i) => {
-                      const day = i + 1;
-                      const isPast = day < currentDay;
-                      const isToday = day === currentDay;
-                      
-                      const dayWords = vocabulary.filter(w => compareDays(w.day, day));
-                      const hasWords = dayWords.length > 0;
-                      const someTested = hasWords && dayWords.some(w => userWords[w.id] && userWords[w.id].box > 0);
-                      const allTested = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box > 0);
-                      const allMastered = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box === 6);
-
-                      let bgColor = isPast
-                        ? "bg-indigo-100 text-indigo-400"
-                        : "bg-white border border-slate-200 text-slate-400";
-
-                      if (day === 60) {
-                        bgColor = isPast 
-                          ? "bg-red-100 text-red-500 font-bold" 
-                          : "bg-red-50 border border-red-200 text-red-600 font-bold";
-                      }
-
-                      if (allMastered) {
-                        bgColor = "bg-amber-400 text-white font-bold border-amber-500";
-                      } else if (allTested) {
-                        bgColor = "bg-amber-300 text-amber-900 font-bold border-amber-400";
-                      } else if (someTested) {
-                        bgColor = "bg-emerald-400 text-white font-bold border-emerald-500";
-                      }
-
-                      if (isToday) {
-                        if (!allMastered && !allTested) {
-                          bgColor = "bg-indigo-600 text-white font-bold";
-                        } else {
-                          bgColor += " ring-2 ring-indigo-600 ring-offset-1";
-                        }
-                      }
-
-                      return (
-                        <div
-                          key={i}
-                          className={`aspect-square rounded-md flex flex-col items-center justify-center text-xs relative ${bgColor}`}
-                        >
-                          <span>{day}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className="text-center text-xs text-slate-500 mt-4">
-                    60 Days to Paper 2
-                  </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 justify-center">
-                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-emerald-400 inline-block"></span>Some done</span>
-                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-amber-300 inline-block"></span>All done</span>
-                    <span className="flex items-center gap-1 text-[10px] text-slate-500"><span className="w-3 h-3 rounded-sm bg-amber-400 inline-block"></span>Mastered</span>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium text-gray-500">
-                        B1 Exam (Mar 25)
-                      </span>
-                      <span className="font-bold text-indigo-600">
-                        {daysLeftB1} days
-                      </span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium text-gray-500">
-                        GCSE Exam (May 7)
-                      </span>
-                      <span className="font-bold text-indigo-600">
-                        {daysLeftGCSE} days
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div
-                        className="bg-indigo-600 h-2 rounded-full"
-                        style={{
-                          width: `${Math.max(0, Math.min(100, (currentDay / totalDaysGCSE) * 100))}%`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {boxCounts[0] === 0 &&
-              boxCounts[1] === 0 &&
-              boxCounts[2] === 0 &&
-              boxCounts[3] === 0 &&
-              boxCounts[4] === 0 &&
-              boxCounts[5] === 0 &&
-              boxCounts[6] > 0 ? (
-                <div className="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-xl border border-amber-200">
-                  <Star className="w-6 h-6 fill-current" />
-                  <span className="font-bold">All topics mastered!</span>
-                </div>
-              ) : (
-                <div className="text-sm text-gray-600 text-center p-4 bg-slate-50 rounded-xl">
-                  You have{" "}
-                  <span className="font-bold text-gray-900">
-                    {toReviseCount + boxCounts[1]}
-                  </span>{" "}
-                  words to test yourself on and{" "}
-                  <span className="font-bold text-gray-900">
-                    {unlearnedGcseWords.filter((w) => Number(w.day) <= currentDay).length}
-                  </span>{" "}
-                  words to cover today's priority words.
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -650,6 +523,27 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
               </button>
 
+                </div>
+              </button>
+
+              <button
+                onClick={handleChooseOwn}
+                className="group relative overflow-hidden bg-slate-800 p-6 rounded-2xl text-left hover:bg-slate-900 transition-colors"
+              >
+                <div className="relative z-10">
+                  <BookOpen className="w-8 h-8 text-slate-400 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Choose Topic
+                  </h3>
+                  <p className="text-slate-400 text-sm">
+                    Focus on specific areas
+                  </p>
+                </div>
+                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
+                  <BookOpen className="w-32 h-32 text-white" />
+                </div>
+              </button>
+
               <button
                 onClick={() => setShowReviseCount(true)}
                 className="group relative overflow-hidden bg-emerald-500 p-6 rounded-2xl text-left hover:bg-emerald-600 transition-colors"
@@ -670,7 +564,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
               <button
                 onClick={() => { setTimedRevisePhase("pick"); setShowTimedRevise(true); }}
-                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors"
+                className="group relative overflow-hidden bg-violet-600 p-6 rounded-2xl text-left hover:bg-violet-700 transition-colors sm:col-span-2"
               >
                 <div className="relative z-10">
                   <Timer className="w-8 h-8 text-violet-200 mb-4" />
@@ -688,28 +582,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
               </button>
 
-              <button
-                onClick={handleChooseOwn}
-                className="group relative overflow-hidden bg-slate-800 p-6 rounded-2xl text-left hover:bg-slate-900 transition-colors sm:col-span-2"
-              >
-                <div className="relative z-10">
-                  <BookOpen className="w-8 h-8 text-slate-400 mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Choose Topic
-                  </h3>
-                  <p className="text-slate-400 text-sm">
-                    Focus on specific areas
-                  </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform">
-                  <BookOpen className="w-32 h-32 text-white" />
-                </div>
-              </button>
             </div>
           </div>
       </div>
 
-      {/* Row 3: Snapshot + Daily Progress */}
+      {/* Row 3: Snapshot + Calendar + Daily Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div>
           {/* Snapshot Widget */}
@@ -795,6 +672,82 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           </div>
         </div>
         <div className="lg:col-span-2">
+        </div>
+        <div>
+          {/* Calendar Widget (inline) */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-bold text-gray-900">Exam Countdown</h2>
+              <button
+                onClick={() => setShowCalendar(!showCalendar)}
+                className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+              >
+                <Calendar className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              {showCalendar ? (
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-slate-500 mb-1">
+                    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+                  </div>
+                  <div className="grid grid-cols-7 gap-0.5 mb-3">
+                    {Array.from({ length: 60 }).map((_, i) => {
+                      const day = i + 1;
+                      const isPast = day < currentDay;
+                      const isToday = day === currentDay;
+                      const dayWords = vocabulary.filter(w => compareDays(w.day, day));
+                      const hasWords = dayWords.length > 0;
+                      const someTested = hasWords && dayWords.some(w => userWords[w.id] && userWords[w.id].box > 0);
+                      const allTested = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box > 0);
+                      const allMastered = hasWords && dayWords.every(w => userWords[w.id] && userWords[w.id].box === 6);
+                      let bgColor = isPast ? "bg-indigo-100 text-indigo-400" : "bg-white border border-slate-200 text-slate-400";
+                      if (day === 60) bgColor = isPast ? "bg-red-100 text-red-500 font-bold" : "bg-red-50 border border-red-200 text-red-600 font-bold";
+                      if (allMastered) bgColor = "bg-amber-400 text-white font-bold";
+                      else if (allTested) bgColor = "bg-amber-300 text-amber-900 font-bold";
+                      else if (someTested) bgColor = "bg-emerald-400 text-white font-bold";
+                      if (isToday && !allMastered && !allTested) bgColor = "bg-indigo-600 text-white font-bold";
+                      else if (isToday) bgColor += " ring-2 ring-indigo-600 ring-offset-1";
+                      return (
+                        <div key={i} className={`aspect-square rounded flex items-center justify-center text-[10px] ${bgColor}`}>
+                          {day}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 justify-center">
+                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-400 inline-block"></span>Some</span>
+                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-amber-300 inline-block"></span>All done</span>
+                    <span className="flex items-center gap-1 text-[9px] text-slate-500"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"></span>Mastered</span>
+                  </div>
+                  <p className="text-center text-[10px] text-slate-400 mt-2">60 Days to Paper 2</p>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-gray-500">GCSE Paper 2</span>
+                      <span className="font-bold text-gray-900">{daysLeftGCSE}d</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                      <div className="h-1.5 bg-indigo-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((totalDaysGCSE - daysLeftGCSE) / totalDaysGCSE) * 100))}%` }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-gray-500">B1 Exam</span>
+                      <span className="font-bold text-gray-900">{daysLeftB1}d</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                      <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((60 - daysLeftB1) / 60) * 100))}%` }} />
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-400 text-center mt-1">Tap 📅 for day grid</p>
+                </>
+              )}
+            </div>
+          </div>
+        <div>
           {/* Daily Progress Widget */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <h2 className="text-base font-bold text-gray-900 mb-3">Daily Progress</h2>
@@ -831,14 +784,14 @@ export function Dashboard({ onStartSession }: DashboardProps) {
       {/* 5-Day Preview Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* GCSE Preview */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Zap className="w-6 h-6 text-amber-500" />
+        <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-500" />
               GCSE 5-Day Preview
             </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => {
               const dayNum = currentDay + i;
               const dayWords = gcseWords.filter(w => compareDays(w.day, dayNum));
@@ -859,7 +812,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       onStartSession("practice", dayWords);
                     }
                   }}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer group ${isToday ? "bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200 hover:bg-indigo-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
+                  className={`p-3 rounded-xl border transition-all cursor-pointer group ${isToday ? "bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200 hover:bg-indigo-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className={`text-sm font-bold flex items-center gap-1 ${isToday ? "text-indigo-600" : "text-gray-500"}`}>
@@ -880,7 +833,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
+                  <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
                     <div
                       className={`h-1.5 rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-indigo-500"}`}
                       style={{ width: `${(learnedCount / dayWords.length) * 100}%` }}
@@ -893,14 +846,14 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         </div>
 
         {/* B1 Preview */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Zap className="w-6 h-6 text-blue-500" />
               B1 5-Day Preview
             </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => {
               const dayNum = currentDay + i;
               if (dayNum > 15) return null; // B1 stops in 15 days
@@ -922,7 +875,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       onStartSession("practice", dayWords);
                     }
                   }}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer group ${isToday ? "bg-blue-50 border-blue-200 ring-1 ring-blue-200 hover:bg-blue-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
+                  className={`p-3 rounded-xl border transition-all cursor-pointer group ${isToday ? "bg-blue-50 border-blue-200 ring-1 ring-blue-200 hover:bg-blue-100" : "bg-slate-50 border-slate-100 hover:bg-slate-100"} ${isCompleted ? "opacity-70" : ""}`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className={`text-sm font-bold flex items-center gap-1 ${isToday ? "text-blue-600" : "text-gray-500"}`}>
@@ -943,7 +896,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
+                  <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
                     <div
                       className={`h-1.5 rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-blue-500"}`}
                       style={{ width: `${(learnedCount / dayWords.length) * 100}%` }}
@@ -955,7 +908,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           </div>
         </div>
       </div>
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+      <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <h2 className="text-2xl font-bold text-gray-900">GCSE Topics & Priority Group</h2>
           {selectedTopicDays.some(td => !td.topicId.startsWith('B1')) && (() => {
@@ -1031,7 +984,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
       </div>
 
       {/* B1 Topics & Priority Group Grid */}
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+      <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <h2 className="text-2xl font-bold text-gray-900">B1 Priority Group</h2>
           {selectedTopicDays.some(td => b1Topics.some(t => t.id === td.topicId)) && (() => {
@@ -1319,6 +1272,10 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 <div className={`rounded-2xl p-6 text-center mb-4 transition-colors ${flash === "correct" ? "bg-emerald-50 border-2 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-2 border-rose-300" : "bg-indigo-50 border-2 border-indigo-100"}`}>
                   <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Translate to German</p>
                   <p className="text-3xl font-black text-gray-900">{currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")}</p>
+                  <p className="text-sm text-indigo-300 mt-2">
+                    starts with <span className="font-black text-indigo-500">{currentWord.german[0]}</span>
+                    {currentWord.german.includes(" ") && <span> · {currentWord.german.split(" ").length} words</span>}
+                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -1510,7 +1467,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                 <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
                   <Star className="w-5 h-5" />
