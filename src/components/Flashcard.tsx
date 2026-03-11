@@ -79,10 +79,10 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
       window.removeEventListener("touchstart", handleActivity);
       clearInterval(interval);
       if (activeTimeRef.current > 0) {
-        addTime(activeTimeRef.current);
+        addTime(activeTimeRef.current, mode);
       }
     };
-  }, [addTime]);
+  }, [addTime, mode]);
 
   const handleNext = useCallback(() => {
     if (!showResult) return;
@@ -194,7 +194,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     updateWord(currentWord.id, correct, mode);
     setSessionResults(prev => [...prev, { wordId: currentWord.id, correct }]);
 
-    addTime(activeTimeRef.current);
+    addTime(activeTimeRef.current, mode);
     activeTimeRef.current = 0;
   }, [currentWord, askGerman, verbInputs, input, mode, addPoints, updateWord, addTime, showResult, handleNext]);
 
