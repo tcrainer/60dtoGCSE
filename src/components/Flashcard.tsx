@@ -405,7 +405,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   };
 
   if (!currentWord) {
-    return <SessionSummary results={sessionResults} onComplete={onComplete} />;
+    return <SessionSummary results={sessionResults} mode={mode} onComplete={onComplete} />;
   }
 
   return (
@@ -613,14 +613,14 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                 </div>
               </div>
               {!isCorrect && wrongAnswer && (
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
+                <div className="flex flex-col gap-2 text-sm w-full">
+                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 w-full">
                     <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
                     <p className="font-bold text-rose-700 break-words">
                       {wrongAnswer.typed || <span className="italic opacity-50">nothing</span>}
                     </p>
                   </div>
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 w-full">
                     <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
                     <p className="font-bold text-emerald-700 break-words">{wrongAnswer.correct}</p>
                   </div>
@@ -641,12 +641,20 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   );
 }
 
-function SessionSummary({ results, onComplete }: { results: { wordId: string; correct: boolean }[]; onComplete: () => void }) {
+function SessionSummary({ results, mode, onComplete }: { results: { wordId: string; correct: boolean }[]; mode: string; onComplete: () => void }) {
   const correctCount = results.filter(r => r.correct).length;
   const incorrectCount = results.length - correctCount;
-  const { stats } = useStore();
+  const { stats, awardBonus } = useStore();
   const streak = stats.streak;
   const jokers = stats.jokers ?? 0;
+  const correctCount2 = results.filter(r => r.correct).length;
+  const isRevise = mode === "revise";
+  const reviseBonus = isRevise ? Math.min(correctCount2 * 3, 50) : 0;
+  // Award revise bonus once per session (use timestamp as unique key)
+  const sessionKey = `revise_bonus_${results.map(r=>r.wordId).join("").slice(0,20)}`;
+  React.useEffect(() => {
+    if (isRevise && reviseBonus > 0) awardBonus(sessionKey, reviseBonus);
+  }, []);
 
   // Import helpers inline to avoid circular import issues
   const getStreakFlamesLocal = (s: number) => "🔥".repeat(Math.min(s, 5));
@@ -689,6 +697,15 @@ function SessionSummary({ results, onComplete }: { results: { wordId: string; co
           <p className="text-rose-800 text-xs font-medium uppercase tracking-wider">Incorrect</p>
         </div>
       </div>
+
+      {/* Revise session bonus */}
+      {isRevise && reviseBonus > 0 && (
+        <div className="w-full bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 mb-4 text-center">
+          <p className="text-2xl mb-1">✅</p>
+          <p className="text-sm font-bold text-emerald-700">Revise session bonus!</p>
+          <p className="text-xs text-emerald-600">+{reviseBonus} pts for {correctCount2} correct answers</p>
+        </div>
+      )}
 
       {/* Streak bonus panel */}
       {streak > 0 && (
