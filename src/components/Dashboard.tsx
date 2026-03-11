@@ -86,7 +86,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
   Object.values(userWords).forEach((uw) => {
     boxCounts[uw.box]++;
-    if (uw.nextReviewDate && isBefore(new Date(uw.nextReviewDate), today)) {
+    if (uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today)) {
       toReviseCount++;
     }
   });
@@ -173,7 +173,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         return (
           uw &&
           uw.nextReviewDate &&
-          isBefore(new Date(uw.nextReviewDate), today) &&
+          startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today) &&
           uw.box > 1 &&
           uw.box < 6
         );
@@ -193,7 +193,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         return (
           uw &&
           uw.nextReviewDate &&
-          isBefore(new Date(uw.nextReviewDate), today) &&
+          startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today) &&
           uw.box > 1 &&
           uw.box < 6
         );
