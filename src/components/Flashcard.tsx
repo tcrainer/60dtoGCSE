@@ -27,6 +27,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   const [askGerman, setAskGerman] = useState(true);
   const [sessionResults, setSessionResults] = useState<{ wordId: string; correct: boolean }[]>([]);
   const [hint, setHint] = useState<string | null>(null);
+  const [wrongAnswer, setWrongAnswer] = useState<{ typed: string; correct: string } | null>(null);
 
   const lastActivityRef = useRef(Date.now());
   const activeTimeRef = useRef(0);
@@ -108,6 +109,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     }
     setAskGerman(true);
     setHint(null);
+    setWrongAnswer(null);
     justAdvancedRef.current = true;
     setCurrentIndex((prev) => prev + 1);
   }, [currentIndex, words, showResult]);
@@ -186,6 +188,26 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     setPointsEarned(points);
     setGradingMessage(message);
     setShowResult(true);
+
+    if (!correct) {
+      // Build a human-readable "what you typed" for the comparison panel
+      let typed = "";
+      let correctAnswer = "";
+      if (currentWord.isVerb && askGerman) {
+        typed = [verbInputs.germanInf, verbInputs.german3rd, verbInputs.germanImp, verbInputs.germanPerf]
+          .filter(v => v && v !== "—").join(" / ");
+        correctAnswer = [currentWord.german, currentWord.german3rdPerson, currentWord.germanImperfekt, currentWord.germanPerfekt]
+          .filter(v => v && v !== "—").join(" / ");
+      } else if (currentWord.isVerb && !askGerman) {
+        typed = verbInputs.englishInf;
+        correctAnswer = currentWord.english;
+      } else {
+        typed = input;
+        correctAnswer = (askGerman ? currentWord.german : currentWord.english)
+          .replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+      }
+      setWrongAnswer({ typed, correct: correctAnswer });
+    }
 
     if (correct) {
       addPoints(points);
@@ -590,6 +612,20 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   )}
                 </div>
               </div>
+              {!isCorrect && wrongAnswer && (
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
+                    <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
+                    <p className="font-bold text-rose-700 break-words">
+                      {wrongAnswer.typed || <span className="italic opacity-50">nothing</span>}
+                    </p>
+                  </div>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                    <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
+                    <p className="font-bold text-emerald-700 break-words">{wrongAnswer.correct}</p>
+                  </div>
+                </div>
+              )}
               <button
                 type="submit"
                 autoFocus
