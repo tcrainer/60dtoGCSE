@@ -226,6 +226,40 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     return `${h}h ${m}m`;
   };
 
+  // Timed revise: countdown timer
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    if (timedSecondsLeft <= 0) {
+      const bests = (stats.timedBests || []).filter((r: any) => r.duration === timedDuration).sort((a: any,b: any) => b.words - a.words);
+      const isPB = bests.length === 0 || timedDoneCount > bests[0].words;
+      recordTimedResult(timedDuration, timedDoneCount);
+      setTimedIsPB(isPB);
+      setTimedRevisePhase("done");
+      return;
+    }
+    const t = setInterval(() => setTimedSecondsLeft(s => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [timedSecondsLeft, timedRevisePhase]);
+
+  // Timed revise: auto-focus input after each word
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    if (!timedWrongFeedback) timedInputRef.current?.focus();
+  }, [timedCurrentIdx, timedWrongFeedback, timedRevisePhase]);
+
+  // Timed revise: hint key handler
+  useEffect(() => {
+    if (timedRevisePhase !== "running") return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "?" || e.key === "/") {
+        e.preventDefault();
+        setTimedShowHint(true);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [timedRevisePhase]);
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Header & Stats */}
@@ -1712,38 +1746,3 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     </div>
   );
 }
-  // Timed revise: countdown timer
-  useEffect(() => {
-    if (timedRevisePhase !== "running") return;
-    if (timedSecondsLeft <= 0) {
-      const bests = (stats.timedBests || []).filter((r: any) => r.duration === timedDuration).sort((a: any,b: any) => b.words - a.words);
-      const isPB = bests.length === 0 || timedDoneCount > bests[0].words;
-      recordTimedResult(timedDuration, timedDoneCount);
-      setTimedIsPB(isPB);
-      setTimedRevisePhase("done");
-      return;
-    }
-    const t = setInterval(() => setTimedSecondsLeft(s => s - 1), 1000);
-    return () => clearInterval(t);
-  }, [timedSecondsLeft, timedRevisePhase]);
-
-  // Timed revise: auto-focus input after each word
-  useEffect(() => {
-    if (timedRevisePhase !== "running") return;
-    if (!timedWrongFeedback) timedInputRef.current?.focus();
-  }, [timedCurrentIdx, timedWrongFeedback, timedRevisePhase]);
-
-  // Timed revise: hint key handler
-  useEffect(() => {
-    if (timedRevisePhase !== "running") return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "?" || e.key === "/") {
-        e.preventDefault();
-        setTimedShowHint(true);
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [timedRevisePhase]);
-
-
