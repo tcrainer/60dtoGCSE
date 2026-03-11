@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { addDays } from "date-fns";
+import { addDays, startOfDay } from "date-fns";
 
 export interface UserWord {
   wordId: string;
@@ -152,11 +152,11 @@ interface StoreState {
 const getNextReviewDate = (box: number): string | null => {
   const now = new Date();
   switch (box) {
-    case 1: return now.toISOString();
-    case 2: return addDays(now, 1).toISOString();
-    case 3: return addDays(now, 3).toISOString();
-    case 4: return addDays(now, 7).toISOString();
-    case 5: return addDays(now, 12).toISOString();
+    case 1: return startOfDay(now).toISOString();           // due immediately (today)
+    case 2: return startOfDay(addDays(now, 1)).toISOString(); // due from midnight tonight
+    case 3: return startOfDay(addDays(now, 3)).toISOString();
+    case 4: return startOfDay(addDays(now, 7)).toISOString();
+    case 5: return startOfDay(addDays(now, 12)).toISOString();
     case 6: return null;
     default: return null;
   }
@@ -262,7 +262,7 @@ export const useStore = create<StoreState>()(
           } else if (effectiveMode === "learn") {
             newBox = isCorrect ? 2 : 1;
           } else if (effectiveMode === "revise") {
-            const isDue = !currentWord.nextReviewDate || new Date(currentWord.nextReviewDate) <= new Date();
+            const isDue = !currentWord.nextReviewDate || startOfDay(new Date(currentWord.nextReviewDate)) <= startOfDay(new Date());
             if (isDue) {
               newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
             } else {
