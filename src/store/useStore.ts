@@ -7,6 +7,7 @@ export interface UserWord {
   box: number;
   nextReviewDate: string | null;
   lastTestedDate: string | null;
+  consecutiveWrong: number; // count of consecutive wrong answers
 }
 
 export interface UserStats {
@@ -283,7 +284,8 @@ export const useStore = create<StoreState>()(
           }
 
           const nextReviewDate = effectiveMode === "practice" ? currentWord.nextReviewDate : getNextReviewDate(newBox);
-          const updatedWord: UserWord = { ...currentWord, box: newBox, nextReviewDate, lastTestedDate: now };
+          const consecutiveWrong = isCorrect ? 0 : (currentWord.consecutiveWrong ?? 0) + 1;
+          const updatedWord: UserWord = { ...currentWord, box: newBox, nextReviewDate, lastTestedDate: now, consecutiveWrong };
 
           const newStats = { ...state.stats };
           const today = getTodayKey();
