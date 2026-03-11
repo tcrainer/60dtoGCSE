@@ -34,16 +34,21 @@ export interface DayStats {
 
 // ── Level system ──────────────────────────────────────────────────────────────
 export const LEVELS = [
-  { level: 1,  name: "Rookie",             minPoints: 0     },
-  { level: 2,  name: "Schüler",            minPoints: 100   },
-  { level: 3,  name: "Lernender",          minPoints: 300   },
-  { level: 4,  name: "Fortgeschrittener",  minPoints: 700   },
-  { level: 5,  name: "Sprachprofi",        minPoints: 1500  },
-  { level: 6,  name: "Wortmeister",        minPoints: 3000  },
-  { level: 7,  name: "Deutschheld",        minPoints: 6000  },
-  { level: 8,  name: "Sprachgenie",        minPoints: 12000 },
-  { level: 9,  name: "Deutschmeister",     minPoints: 25000 },
-  { level: 10, name: "Sprachlegende",      minPoints: 50000 },
+  { level: 1,  name: "Neuling",            minPoints: 0      },
+  { level: 2,  name: "Anfänger",           minPoints: 50     },
+  { level: 3,  name: "Schüler",            minPoints: 150    },
+  { level: 4,  name: "Lernender",          minPoints: 350    },
+  { level: 5,  name: "Fortgeschrittener",  minPoints: 700    },
+  { level: 6,  name: "Sprachprofi",        minPoints: 1200   },
+  { level: 7,  name: "Wortmeister",        minPoints: 2200   },
+  { level: 8,  name: "Deutschheld",        minPoints: 4000   },
+  { level: 9,  name: "Sprachgenie",        minPoints: 7000   },
+  { level: 10, name: "Sprachexperte",      minPoints: 11000  },
+  { level: 11, name: "Deutschmeister",     minPoints: 18000  },
+  { level: 12, name: "Prüfungsprofi",      minPoints: 30000  },
+  { level: 13, name: "Deutschgenie",       minPoints: 50000  },
+  { level: 14, name: "Sprachlegende ★",   minPoints: 75000  },
+  { level: 15, name: "Sprachlegende",      minPoints: 100000 },
 ];
 
 export function getLevel(points: number) {
