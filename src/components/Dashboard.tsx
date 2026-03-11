@@ -668,8 +668,6 @@ export function Dashboard({ onStartSession }: DashboardProps) {
             </div>
           </div>
         </div>
-        <div className="lg:col-span-2">
-        </div>
         <div>
           {/* Calendar Widget (inline) */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-full">
@@ -744,8 +742,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               )}
             </div>
           </div>
+        </div>
         <div>
-          {/* Daily Progress Widget */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <h2 className="text-base font-bold text-gray-900 mb-3">Daily Progress</h2>
             <div className="overflow-y-auto max-h-64">
