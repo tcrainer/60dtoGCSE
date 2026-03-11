@@ -76,7 +76,7 @@ export const topicB1WritingVocab = `
 
 15	Sehr geehrte Damen und Herren,	Dear Sir or Madam, [FORMAL]
 15	Sehr geehrte Frau NAME, 	Dear Ms NAME, 
-15  Sehr geehrter Herr NAME,	Dear Mr NAME, [FORMAL]
+15	Sehr geehrter Herr NAME,	Dear Mr NAME, [FORMAL]
 15	Mit freundlichen Grüßen	With kind regards [FORMAL]
 15	Ich schreibe Ihnen, weil...	I am writing to you because... [FORMAL]
 15	Ich möchte Ihnen mitteilen, dass	I would like to inform you that [FORMAL]
