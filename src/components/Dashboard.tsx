@@ -42,11 +42,16 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const [showTimedRevise, setShowTimedRevise] = useState(false);
   const [showReviseCount, setShowReviseCount] = useState(false);
   const [timedRevisePhase, setTimedRevisePhase] = useState<"pick" | "running" | "done">("pick");
-  const [timedDuration, setTimedDuration] = useState(0); // seconds
+  const [timedDuration, setTimedDuration] = useState(0);
   const [timedSecondsLeft, setTimedSecondsLeft] = useState(0);
   const [timedWords, setTimedWords] = useState<any[]>([]);
   const [timedDoneCount, setTimedDoneCount] = useState(0);
   const [timedIsPB, setTimedIsPB] = useState(false);
+  const [timedCurrentIdx, setTimedCurrentIdx] = useState(0);
+  const [timedInput, setTimedInput] = useState("");
+  const [timedFlash, setTimedFlash] = useState<"correct"|"wrong"|null>(null);
+  const [timedWrongFeedback, setTimedWrongFeedback] = useState<{typed: string; correct: string}|null>(null);
+  const [timedShowHint, setTimedShowHint] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
   const [selectedWordsToRevise, setSelectedWordsToRevise] = useState<
@@ -206,6 +211,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     setTimedDuration(durationSecs);
     setTimedSecondsLeft(durationSecs);
     setTimedDoneCount(0);
+    setTimedCurrentIdx(0);
+    setTimedInput("");
+    setTimedFlash(null);
+    setTimedWrongFeedback(null);
+    setTimedShowHint(false);
     setTimedRevisePhase("running");
   };
 
@@ -1191,106 +1201,116 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         }
 
         if (timedRevisePhase === "running") {
-          const TimerRunner = () => {
-            const [secsLeft, setSecsLeft] = React.useState(timedDuration);
-            const [doneCount, setDoneCount] = React.useState(0);
-            const [currentIdx, setCurrentIdx] = React.useState(0);
-            const [input, setInput] = React.useState("");
-            const [flash, setFlash] = React.useState<"correct"|"wrong"|null>(null);
-            const [wrongFeedback, setWrongFeedback] = React.useState<{typed: string; correct: string} | null>(null);
-            const inputRef = React.useRef<HTMLInputElement>(null);
+          // State lives at Dashboard level so re-renders don't reset progress
+          const timedInputRef = React.useRef<HTMLInputElement>(null);
+          const currentWord = timedWords[timedCurrentIdx];
+          const secsLeft = timedSecondsLeft;
+          const mins = Math.floor(secsLeft / 60);
+          const secs = secsLeft % 60;
+          const pct = (secsLeft / timedDuration) * 100;
 
-            React.useEffect(() => {
-              if (secsLeft <= 0) {
-                const bests = (stats.timedBests || []).filter(r => r.duration === timedDuration).sort((a,b)=>b.words-a.words);
-                const isPB = bests.length === 0 || doneCount > bests[0].words;
-                recordTimedResult(timedDuration, doneCount);
-                setTimedDoneCount(doneCount);
-                setTimedIsPB(isPB);
-                setTimedRevisePhase("done");
-                return;
-              }
-              const t = setInterval(() => setSecsLeft(s => s - 1), 1000);
-              return () => clearInterval(t);
-            }, [secsLeft]);
-
-            React.useEffect(() => {
-              if (!wrongFeedback) inputRef.current?.focus();
-            }, [currentIdx, wrongFeedback]);
-
-            const currentWord = timedWords[currentIdx];
-            const mins = Math.floor(secsLeft / 60);
-            const secs = secsLeft % 60;
-            const pct = (secsLeft / timedDuration) * 100;
-
-            const insertChar = (char: string) => setInput(prev => prev + char);
-
-            const handleSubmit = (e: React.FormEvent) => {
-              e.preventDefault();
-              if (!currentWord || wrongFeedback) return;
-
-              const isWritingTopic = currentWord.topicId?.startsWith("S");
-              const target = currentWord.german;
-              const cleanTarget = target.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
-
-              const result = isWritingTopic
-                ? checkWritingAnswer(input, cleanTarget)
-                : checkAnswer(input, cleanTarget, true);
-
-              const isCorrect = result.isCorrect;
-
-              // Update the Leitner box
-              updateWord(currentWord.id, isCorrect, "revise");
-              if (isCorrect && result.points) addPoints(result.points);
-
-              setFlash(isCorrect ? "correct" : "wrong");
-
-              if (isCorrect) {
-                setTimeout(() => {
-                  setFlash(null);
-                  setDoneCount(c => c + 1);
-                  setCurrentIdx(i => i + 1);
-                  setInput("");
-                }, 500);
-              } else {
-                // Show wrong answer feedback — student must press Next to continue
-                setWrongFeedback({ typed: input, correct: cleanTarget });
-                setTimeout(() => setFlash(null), 500);
-              }
-            };
-
-            const handleNext = () => {
-              setWrongFeedback(null);
-              setCurrentIdx(i => i + 1);
-              setInput("");
-            };
-
-            if (!currentWord) {
-              return (
-                <div className="text-center py-8">
-                  <p className="text-4xl mb-4">🎉</p>
-                  <p className="text-xl font-bold text-gray-900">All due words done!</p>
-                  <p className="text-gray-500 text-sm mt-2">{doneCount} correct with {Math.floor(secsLeft/60)}m {secsLeft%60}s left</p>
-                  <button onClick={() => { setTimedDoneCount(doneCount); setTimedIsPB(false); recordTimedResult(timedDuration, doneCount); setTimedRevisePhase("done"); }}
-                    className="mt-6 px-8 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700">See results</button>
-                </div>
-              );
+          // Timer effect — runs once while phase is "running"
+          React.useEffect(() => {
+            if (timedRevisePhase !== "running") return;
+            if (timedSecondsLeft <= 0) {
+              const bests = (stats.timedBests || []).filter((r: any) => r.duration === timedDuration).sort((a: any,b: any)=>b.words-a.words);
+              const isPB = bests.length === 0 || timedDoneCount > bests[0].words;
+              recordTimedResult(timedDuration, timedDoneCount);
+              setTimedIsPB(isPB);
+              setTimedRevisePhase("done");
+              return;
             }
+            const t = setInterval(() => setTimedSecondsLeft(s => s - 1), 1000);
+            return () => clearInterval(t);
+          }, [timedSecondsLeft, timedRevisePhase]);
 
+          React.useEffect(() => {
+            if (!timedWrongFeedback) timedInputRef.current?.focus();
+          }, [timedCurrentIdx, timedWrongFeedback]);
+
+          // Key handler for hint (?)
+          React.useEffect(() => {
+            const handleKey = (e: KeyboardEvent) => {
+              if (e.key === "?" || e.key === "/") {
+                e.preventDefault();
+                setTimedShowHint(true);
+              }
+            };
+            window.addEventListener("keydown", handleKey);
+            return () => window.removeEventListener("keydown", handleKey);
+          }, []);
+
+          const insertChar = (char: string) => setTimedInput(prev => prev + char);
+
+          const handleTimedSubmit = (e: React.FormEvent) => {
+            e.preventDefault();
+            if (!currentWord || timedWrongFeedback) return;
             const isWritingTopic = currentWord.topicId?.startsWith("S");
-            const cleanEnglish = currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
-            const tagLabel = currentWord.topicId === "S1" ? "✉ Informal" : currentWord.topicId === "S2" ? "💬 Opinion" : currentWord.topicId === "S3" ? "📋 Formal" : null;
+            const target = currentWord.german;
+            const cleanTarget = target.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+            const result = isWritingTopic
+              ? checkWritingAnswer(timedInput, cleanTarget)
+              : checkAnswer(timedInput, cleanTarget, true);
+            const isCorrect = result.isCorrect;
+            updateWord(currentWord.id, isCorrect, "revise");
+            if (isCorrect && result.points) addPoints(result.points);
+            setTimedFlash(isCorrect ? "correct" : "wrong");
+            if (isCorrect) {
+              setTimeout(() => {
+                setTimedFlash(null);
+                setTimedDoneCount(c => c + 1);
+                setTimedCurrentIdx(i => i + 1);
+                setTimedInput("");
+                setTimedShowHint(false);
+              }, 500);
+            } else {
+              setTimedWrongFeedback({ typed: timedInput, correct: cleanTarget });
+              setTimeout(() => setTimedFlash(null), 500);
+            }
+          };
 
+          const handleTimedNext = () => {
+            setTimedWrongFeedback(null);
+            setTimedCurrentIdx(i => i + 1);
+            setTimedInput("");
+            setTimedShowHint(false);
+          };
+
+          if (!currentWord) {
             return (
-              <div>
+              <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+                <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+                  <div className="text-center py-8">
+                    <p className="text-4xl mb-4">🎉</p>
+                    <p className="text-xl font-bold text-gray-900">All due words done!</p>
+                    <p className="text-gray-500 text-sm mt-2">{timedDoneCount} correct with {mins}m {secs}s left</p>
+                    <button onClick={() => { recordTimedResult(timedDuration, timedDoneCount); setTimedIsPB(false); setTimedRevisePhase("done"); }}
+                      className="mt-6 px-8 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700">See results</button>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          const isWritingTopic = currentWord.topicId?.startsWith("S");
+          const cleanEnglish = currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+          const tagLabel = currentWord.topicId === "S1" ? "✉ Informal" : currentWord.topicId === "S2" ? "💬 Opinion" : currentWord.topicId === "S3" ? "📋 Formal" : null;
+
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+              <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-bold text-gray-900">⏱ Timed Revise</h2>
+                  <button onClick={() => { setShowTimedRevise(false); setTimedRevisePhase("pick"); }} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
+                </div>
                 {/* Timer bar */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-gray-500">{doneCount} correct</span>
+                    <span className="text-xs text-gray-500">{timedDoneCount} correct</span>
                     <span className={`text-2xl font-black tabular-nums ${secsLeft <= 10 ? "text-red-600 animate-pulse" : "text-gray-900"}`}>
                       {mins}:{String(secs).padStart(2,"0")}
                     </span>
-                    <span className="text-xs text-gray-500">{timedWords.length - currentIdx} left</span>
+                    <span className="text-xs text-gray-500">{timedWords.length - timedCurrentIdx} left</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className={`h-2 rounded-full transition-all ${secsLeft <= 10 ? "bg-red-500" : "bg-violet-500"}`} style={{width: `${pct}%`}} />
@@ -1298,45 +1318,51 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </div>
 
                 {/* Card */}
-                <div className={`rounded-2xl p-5 text-center mb-3 transition-colors border-2 ${flash === "correct" ? "bg-emerald-50 border-emerald-300" : flash === "wrong" ? "bg-rose-50 border-rose-300" : "bg-indigo-50 border-indigo-100"}`}>
+                <div className={`rounded-2xl p-5 text-center mb-3 transition-colors border-2 ${timedFlash === "correct" ? "bg-emerald-50 border-emerald-300" : timedFlash === "wrong" ? "bg-rose-50 border-rose-300" : "bg-indigo-50 border-indigo-100"}`}>
                   <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Translate to German</p>
                   {tagLabel && <span className="text-[11px] font-bold text-gray-500 block mb-1">{tagLabel}</span>}
                   <p className="text-2xl font-black text-gray-900">{cleanEnglish}</p>
-                  <p className="text-sm text-indigo-300 mt-1.5">
-                    starts with <span className="font-black text-indigo-500">{currentWord.german[0]}</span>
-                    {currentWord.german.replace(/\[.*?\]/g,"").trim().includes(" ") && (
-                      <span> · {currentWord.german.replace(/\[.*?\]/g,"").trim().split(" ").length} words</span>
-                    )}
-                  </p>
+                  {timedShowHint ? (
+                    <p className="text-sm text-indigo-500 font-bold mt-1.5 animate-pulse">
+                      starts with <span className="font-black">{currentWord.german[0]}</span>
+                      {currentWord.german.replace(/\[.*?\]/g,"").trim().includes(" ") && (
+                        <span> · {currentWord.german.replace(/\[.*?\]/g,"").trim().split(" ").length} words</span>
+                      )}
+                    </p>
+                  ) : (
+                    <button type="button" onClick={() => setTimedShowHint(true)}
+                      className="mt-1.5 text-xs text-indigo-300 hover:text-indigo-500 transition-colors">
+                      ? hint
+                    </button>
+                  )}
                 </div>
 
                 {/* Wrong answer feedback */}
-                {wrongFeedback ? (
+                {timedWrongFeedback ? (
                   <div className="space-y-2 mb-3">
                     <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
                       <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
-                      <p className="font-bold text-rose-700">{wrongFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
+                      <p className="font-bold text-rose-700">{timedWrongFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
                     </div>
                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
                       <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
-                      <p className="font-bold text-emerald-700">{wrongFeedback.correct}</p>
+                      <p className="font-bold text-emerald-700">{timedWrongFeedback.correct}</p>
                     </div>
-                    <button onClick={handleNext} className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
+                    <button onClick={handleTimedNext} className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
                       Next word →
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleTimedSubmit}>
                     <input
-                      ref={inputRef}
+                      ref={timedInputRef}
                       type="text"
-                      value={input}
-                      onChange={e => setInput(e.target.value)}
+                      value={timedInput}
+                      onChange={e => setTimedInput(e.target.value)}
                       placeholder="Type German translation..."
                       className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
                       autoComplete="off"
                     />
-                    {/* Special character buttons */}
                     <div className="flex gap-1.5 justify-center mt-2 mb-2">
                       {[{k:"1",c:"ä"},{k:"2",c:"ö"},{k:"3",c:"ü"},{k:"4",c:"ß"},{k:"5",c:"Ä"},{k:"6",c:"Ö"},{k:"7",c:"Ü"}].map(({k,c}) => (
                         <button key={k} type="button" onClick={() => insertChar(c)}
@@ -1350,22 +1376,9 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                   </form>
                 )}
               </div>
-            );
-          };
-
-          return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
-              <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold text-gray-900">⏱ Timed Revise</h2>
-                  <button onClick={() => { setShowTimedRevise(false); setTimedRevisePhase("pick"); }} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
-                </div>
-                <TimerRunner key={timedDuration} />
-              </div>
             </div>
           );
         }
-
         if (timedRevisePhase === "done") {
           const DURATIONS = [
             { label: "2 min", secs: 120 },
