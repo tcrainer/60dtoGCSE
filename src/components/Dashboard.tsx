@@ -1362,6 +1362,10 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       type="text"
                       value={timedInput}
                       onChange={e => setTimedInput(e.target.value)}
+                      onKeyDown={e => {
+                        const charMap: Record<string, string> = {"1":"ä","2":"ö","3":"ü","4":"ß","5":"Ä","6":"Ö","7":"Ü"};
+                        if (charMap[e.key]) { e.preventDefault(); setTimedInput(prev => prev + charMap[e.key]); }
+                      }}
                       placeholder="Type German translation..."
                       className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-violet-400 focus:ring-4 focus:ring-violet-100 outline-none"
                       autoComplete="off"
