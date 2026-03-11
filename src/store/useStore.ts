@@ -12,13 +12,16 @@ export interface UserWord {
 export interface UserStats {
   points: number;
   timeSpent: number;
+  testTimeSpent: number;   // seconds spent in test/learn mode
+  reviseTimeSpent: number; // seconds spent in revise mode
   wordsLearnt: number;
   wordsRevised: number;
   groupsLearnt: number;
   wordsFinished: number;
   streak: number;
   lastActiveDate: string | null;
-  jokers: number; // saved for missed days, 1 earned per 7-day streak
+  jokers: number;
+  timedBests: { duration: number; words: number; date: string }[];
 }
 
 export interface DayStats {
@@ -145,7 +148,8 @@ interface StoreState {
   updateWord: (wordId: string, isCorrect: boolean, mode: "test" | "learn" | "revise" | "practice") => void;
   addPoints: (points: number) => void;
   awardBonus: (bonusId: string, points: number) => void;
-  addTime: (seconds: number) => void;
+  addTime: (seconds: number, mode?: "test" | "learn" | "revise" | "practice") => void;
+  recordTimedResult: (duration: number, words: number) => void;
   resetProgress: () => void;
 }
 
@@ -169,6 +173,8 @@ export const useStore = create<StoreState>()(
       stats: {
         points: 0,
         timeSpent: 0,
+        testTimeSpent: 0,
+        reviseTimeSpent: 0,
         wordsLearnt: 0,
         wordsRevised: 0,
         groupsLearnt: 0,
@@ -176,6 +182,7 @@ export const useStore = create<StoreState>()(
         streak: 0,
         lastActiveDate: null,
         jokers: 0,
+        timedBests: [],
       },
       dailyStats: {},
 
@@ -244,9 +251,14 @@ export const useStore = create<StoreState>()(
         });
       },
 
-      addTime: (seconds) => {
+      addTime: (seconds, mode) => {
         set((state) => ({
-          stats: { ...state.stats, timeSpent: state.stats.timeSpent + seconds },
+          stats: {
+            ...state.stats,
+            timeSpent: state.stats.timeSpent + seconds,
+            testTimeSpent: (state.stats.testTimeSpent ?? 0) + (mode === "test" || mode === "learn" ? seconds : 0),
+            reviseTimeSpent: (state.stats.reviseTimeSpent ?? 0) + (mode === "revise" ? seconds : 0),
+          },
         }));
       },
 
@@ -302,12 +314,23 @@ export const useStore = create<StoreState>()(
         });
       },
 
+      recordTimedResult: (duration, words) => {
+        set((state) => {
+          const existing = (state.stats.timedBests || []).filter(r => r.duration === duration);
+          const updated = [...existing, { duration, words, date: getTodayKey() }]
+            .sort((a, b) => b.words - a.words) // best first
+            .slice(0, 7); // keep last 7
+          const allOthers = (state.stats.timedBests || []).filter(r => r.duration !== duration);
+          return { stats: { ...state.stats, timedBests: [...allOthers, ...updated] } };
+        });
+      },
+
       resetProgress: () => {
         set({
           userWords: {},
           stats: {
-            points: 0, timeSpent: 0, wordsLearnt: 0, wordsRevised: 0,
-            groupsLearnt: 0, wordsFinished: 0, streak: 0, lastActiveDate: null, jokers: 0,
+            points: 0, timeSpent: 0, testTimeSpent: 0, reviseTimeSpent: 0, wordsLearnt: 0, wordsRevised: 0,
+            groupsLearnt: 0, wordsFinished: 0, streak: 0, lastActiveDate: null, jokers: 0, timedBests: [],
           },
           dailyStats: {},
         });
