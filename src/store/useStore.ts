@@ -275,11 +275,15 @@ export const useStore = create<StoreState>()(
           const now = new Date().toISOString();
           let effectiveMode = mode;
 
-          if (effectiveMode === "test") {
-            // New word: correct → box 5 (review in 12 days), wrong → box 1 (review today)
+          if (currentWord.box === 0) {
+            // Brand-new word (never tested): correct → box 5, wrong → box 1
+            // This applies regardless of mode (test, learn, revise, practice)
             newBox = isCorrect ? 5 : 1;
+          } else if (effectiveMode === "test") {
+            // Re-testing a word already in a box — same as learn
+            newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
           } else if (effectiveMode === "learn") {
-            // Difficult words already in a box — move up naturally, don't force back to box 2
+            // Difficult words already in a box — move up naturally
             newBox = isCorrect ? Math.min(newBox + 1, 6) : 1;
           } else if (effectiveMode === "revise") {
             // Always advance/drop — Revise button pre-filters to due words,
