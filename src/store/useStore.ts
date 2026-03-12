@@ -157,6 +157,7 @@ interface StoreState {
   addTime: (seconds: number, mode?: "test" | "learn" | "revise" | "practice") => void;
   recordTimedResult: (duration: number, words: number) => void;
   resetProgress: () => void;
+  fixMisplacedWords: () => number;
 }
 
 const getNextReviewDate = (box: number): string | null => {
@@ -344,6 +345,28 @@ export const useStore = create<StoreState>()(
           },
           dailyStats: {},
         });
+      },
+
+      fixMisplacedWords: () => {
+        const state = get();
+        const updatedWords = { ...state.userWords };
+        let count = 0;
+        for (const [id, word] of Object.entries(updatedWords)) {
+          // Words in box 1 that were answered correctly (consecutiveWrong === 0)
+          // were misplaced by the old learn-mode logic — should be in box 5
+          if (word.box === 1 && (word.consecutiveWrong ?? 0) === 0) {
+            updatedWords[id] = {
+              ...word,
+              box: 5,
+              nextReviewDate: getNextReviewDate(5),
+            };
+            count++;
+          }
+        }
+        if (count > 0) {
+          set({ userWords: updatedWords });
+        }
+        return count;
       },
     }),
     { name: "vocab-storage" },
