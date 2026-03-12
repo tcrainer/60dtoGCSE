@@ -1318,6 +1318,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       value={timedInput}
                       onChange={e => setTimedInput(e.target.value)}
                       onKeyDown={e => {
+                        if (e.key === "Enter") { e.preventDefault(); handleTimedSubmit(e as any); return; }
                         const charMap: Record<string, string> = {"1":"ä","2":"ö","3":"ü","4":"ß","5":"Ä","6":"Ö","7":"Ü"};
                         if (charMap[e.key]) { e.preventDefault(); setTimedInput(prev => prev + charMap[e.key]); }
                       }}
