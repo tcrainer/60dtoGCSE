@@ -34,11 +34,12 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onStartSession }: DashboardProps) {
-  const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints } = useStore();
+  const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints, fixMisplacedWords } = useStore();
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPointsInfo, setShowPointsInfo] = useState(false);
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   const [showStreakInfo, setShowStreakInfo] = useState(false);
+  const [fixBannerDismissed, setFixBannerDismissed] = useState(false);
   const [showTimedRevise, setShowTimedRevise] = useState(false);
   const [showReviseCount, setShowReviseCount] = useState(false);
   const [timedRevisePhase, setTimedRevisePhase] = useState<"pick" | "running" | "done">("pick");
@@ -262,6 +263,39 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
+      {/* One-time fix banner for misplaced words */}
+      {!fixBannerDismissed && (() => {
+        const misplacedCount = Object.values(userWords).filter(
+          w => w.box === 1 && (w.consecutiveWrong ?? 0) === 0
+        ).length;
+        if (misplacedCount === 0) return null;
+        return (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <p className="font-bold text-amber-800">🔧 {misplacedCount} word{misplacedCount !== 1 ? "s" : ""} found in Box 1 that you answered correctly</p>
+              <p className="text-sm text-amber-600">These should have gone to Box 5. Tap the button to fix them.</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  const fixed = fixMisplacedWords();
+                  alert(`Done! Moved ${fixed} word${fixed !== 1 ? "s" : ""} from Box 1 → Box 5.`);
+                  setFixBannerDismissed(true);
+                }}
+                className="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition-colors text-sm"
+              >
+                Fix now
+              </button>
+              <button
+                onClick={() => setFixBannerDismissed(true)}
+                className="px-4 py-2 bg-white text-amber-700 border border-amber-300 rounded-xl font-bold hover:bg-amber-50 transition-colors text-sm"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        );
+      })()}
       {/* Header & Stats */}
       {(() => {
         const level = getLevel(stats.points);
