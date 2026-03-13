@@ -40,6 +40,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   const [showStreakInfo, setShowStreakInfo] = useState(false);
   const [fixBannerDismissed, setFixBannerDismissed] = useState(false);
+  const [showGroupColorHelp, setShowGroupColorHelp] = useState(false);
   const [showTimedRevise, setShowTimedRevise] = useState(false);
   const [showReviseCount, setShowReviseCount] = useState(false);
   const [timedRevisePhase, setTimedRevisePhase] = useState<"pick" | "running" | "done">("pick");
@@ -260,6 +261,22 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [timedRevisePhase]);
+
+  // Timed revise: Enter key advances past wrong-answer feedback
+  useEffect(() => {
+    if (timedRevisePhase !== "running" || !timedWrongFeedback) return;
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setTimedWrongFeedback(null);
+        setTimedCurrentIdx(i => i + 1);
+        setTimedInput("");
+        setTimedShowHint(false);
+      }
+    };
+    window.addEventListener("keydown", handleEnter);
+    return () => window.removeEventListener("keydown", handleEnter);
+  }, [timedRevisePhase, timedWrongFeedback]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
@@ -520,6 +537,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       {box === 1 && boxCounts[box] === 0 ? "😊" : boxCounts[box]}
                     </p>
                     {box >= 2 && box <= 5 && (() => {
+                      const overdueCount = vocabulary.filter(w => {
+                        const uw = userWords[w.id];
+                        return uw?.box === box && uw.nextReviewDate &&
+                          startOfDay(new Date(uw.nextReviewDate)) < startOfDay(today);
+                      }).length;
                       const todayCount = vocabulary.filter(w => {
                         const uw = userWords[w.id];
                         return uw?.box === box && uw.nextReviewDate &&
@@ -530,8 +552,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                         return uw?.box === box && uw.nextReviewDate &&
                           startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(new Date(today.getTime() + 86400000)).getTime();
                       }).length;
+                      const noDue = overdueCount === 0 && todayCount === 0 && boxCounts[box] > 0;
                       return (
                         <div className="mt-1 space-y-0.5">
+                          {noDue && <p className="text-lg leading-none">😊</p>}
+                          {overdueCount > 0 && <p className="text-[10px] font-bold text-rose-600 opacity-90">⚠ {overdueCount} overdue</p>}
                           {todayCount > 0 && <p className="text-[10px] font-bold opacity-90">📅 {todayCount} today</p>}
                           {tomorrowCount > 0 && <p className="text-[10px] opacity-70">→ {tomorrowCount} tmrw</p>}
                         </div>
@@ -753,7 +778,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         </div>
         <div>
           {/* Calendar Widget (inline) */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-full">
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-full flex flex-col">
             <h2 className="text-base font-bold text-gray-900 mb-4">Exam Countdown</h2>
             <div className="space-y-4">
               <div>
@@ -773,6 +798,61 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 <div className="w-full bg-gray-100 rounded-full h-2">
                   <div className="h-2 bg-blue-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, ((60 - daysLeftB1) / 60) * 100))}%` }} />
                 </div>
+              </div>
+            </div>
+
+            {/* GCSE Group overview */}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-1.5 mb-2">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">GCSE Groups</p>
+                <button onClick={() => setShowGroupColorHelp(true)} className="text-gray-400 hover:text-indigo-600 transition-colors">
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(() => {
+                  const uniqueDays = Array.from(new Set(gcseWords.map(w => w.day))).sort(sortDays);
+                  return uniqueDays.map(day => {
+                    const dayWords = gcseWords.filter(w => compareDays(w.day, day));
+                    const testedCount = dayWords.filter(w => userWords[w.id] && userWords[w.id].box > 0).length;
+                    const allTested = testedCount === dayWords.length;
+                    const allStrong = dayWords.length > 0 && dayWords.every(w => userWords[w.id] && userWords[w.id].box >= 4);
+                    const someStarted = testedCount > 0;
+
+                    let colorClass = "bg-gray-100 text-gray-500 hover:bg-gray-200"; // not started
+                    if (allStrong) colorClass = "bg-amber-400 text-white hover:bg-amber-500"; // gold - all box 4+
+                    else if (allTested) colorClass = "bg-yellow-300 text-yellow-800 hover:bg-yellow-400"; // yellow - all tested
+                    else if (someStarted) colorClass = "bg-blue-500 text-white hover:bg-blue-600"; // blue - started
+
+                    return (
+                      <button
+                        key={String(day)}
+                        onClick={() => {
+                          const untested = dayWords.filter(w => !userWords[w.id] || userWords[w.id].box === 0);
+                          if (untested.length > 0) {
+                            onStartSession("test", untested);
+                          } else {
+                            // All tested — start revise/practice session
+                            const dueWords = dayWords.filter(w => {
+                              const uw = userWords[w.id];
+                              return uw && uw.nextReviewDate && uw.box >= 1 && uw.box < 6 &&
+                                startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
+                            });
+                            if (dueWords.length > 0) {
+                              onStartSession("revise", dueWords);
+                            } else {
+                              onStartSession("practice", dayWords);
+                            }
+                          }
+                        }}
+                        className={`w-7 h-7 rounded text-[10px] font-bold flex items-center justify-center transition-all cursor-pointer ${colorClass}`}
+                        title={`Group ${day}: ${testedCount}/${dayWords.length} tested`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  });
+                })()}
               </div>
             </div>
           </div>
@@ -1144,7 +1224,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
               <button onClick={() => setShowReviseCount(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5 text-gray-500" /></button>
             </div>
             <p className="text-sm text-gray-500 mb-6">
-              {toReviseCount > 0 ? `${toReviseCount} words due. How many do you want to do?` : "No words currently due for revision."}
+              {toReviseCount > 0 ? `${toReviseCount} words due. Oldest-revised first. How many?` : "No words currently due for revision."}
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[10, 20, 30, "All"].map((count) => {
@@ -1162,7 +1242,11 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                           return uw && uw.nextReviewDate && uw.box >= 1 && uw.box < 6 &&
                             startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
                         })
-                        .sort(() => Math.random() - 0.5)
+                        .sort((a, b) => {
+                          const aDate = userWords[a.id]?.lastTestedDate ?? "";
+                          const bDate = userWords[b.id]?.lastTestedDate ?? "";
+                          return aDate.localeCompare(bDate); // oldest tested first
+                        })
                         .slice(0, n);
                       if (reviseWords.length > 0) onStartSession("revise", reviseWords);
                       else alert("No words due right now!");
@@ -1530,6 +1614,54 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           </div>
         );
       })()}
+
+      {/* Group Color Help Modal */}
+      {showGroupColorHelp && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Group Colours</h2>
+              <button onClick={() => setShowGroupColorHelp(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shrink-0">1</div>
+                <div>
+                  <p className="font-bold text-gray-700 text-sm">Grey — Not started</p>
+                  <p className="text-xs text-gray-500">No words tested yet in this group</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">2</div>
+                <div>
+                  <p className="font-bold text-gray-700 text-sm">Blue — Started</p>
+                  <p className="text-xs text-gray-500">Some words tested, not all</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-yellow-300 flex items-center justify-center text-[10px] font-bold text-yellow-800 shrink-0">3</div>
+                <div>
+                  <p className="font-bold text-gray-700 text-sm">Yellow — All tested</p>
+                  <p className="text-xs text-gray-500">Every word in this group has been tested</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-amber-400 flex items-center justify-center text-[10px] font-bold text-white shrink-0">4</div>
+                <div>
+                  <p className="font-bold text-gray-700 text-sm">Gold — Strong</p>
+                  <p className="text-xs text-gray-500">All words in Box 4 or higher</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-400 mt-4">Tap any group number to test or revise those words.</p>
+            <button onClick={() => setShowGroupColorHelp(false)} className="w-full mt-5 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors">
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Points Info Modal */}
       {showPointsInfo && (
