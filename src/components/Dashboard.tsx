@@ -253,33 +253,13 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   useEffect(() => {
     if (timedRevisePhase !== "running") return;
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "?" || e.key === "/") {
+      if ((e.key === "?" || e.key === "/") && !timedFeedback) {
         e.preventDefault();
         setTimedShowHint(true);
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [timedRevisePhase]);
-
-  // Timed revise: Enter key advances past feedback (correct or wrong)
-  useEffect(() => {
-    if (timedRevisePhase !== "running" || !timedFeedback) return;
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        if (timedFeedback.isCorrect) {
-          setTimedDoneCount(c => c + 1);
-        }
-        setTimedFeedback(null);
-        setTimedFlash(null);
-        setTimedCurrentIdx(i => i + 1);
-        setTimedInput("");
-        setTimedShowHint(false);
-      }
-    };
-    window.addEventListener("keydown", handleEnter);
-    return () => window.removeEventListener("keydown", handleEnter);
   }, [timedRevisePhase, timedFeedback]);
 
   return (
@@ -1454,7 +1434,6 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                       value={timedInput}
                       onChange={e => setTimedInput(e.target.value)}
                       onKeyDown={e => {
-                        if (e.key === "Enter") { e.preventDefault(); handleTimedSubmit(e as any); return; }
                         const charMap: Record<string, string> = {"1":"ä","2":"ö","3":"ü","4":"ß","5":"Ä","6":"Ö","7":"Ü"};
                         if (charMap[e.key]) { e.preventDefault(); setTimedInput(prev => prev + charMap[e.key]); }
                       }}
