@@ -52,7 +52,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const [timedCurrentIdx, setTimedCurrentIdx] = useState(0);
   const [timedInput, setTimedInput] = useState("");
   const [timedFlash, setTimedFlash] = useState<"correct"|"wrong"|null>(null);
-  const [timedWrongFeedback, setTimedWrongFeedback] = useState<{typed: string; correct: string}|null>(null);
+  const [timedFeedback, setTimedFeedback] = useState<{typed: string; correct: string; isCorrect: boolean; points: number}|null>(null);
   const [timedShowHint, setTimedShowHint] = useState(false);
   const timedInputRef = React.useRef<HTMLInputElement>(null);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
@@ -217,7 +217,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     setTimedCurrentIdx(0);
     setTimedInput("");
     setTimedFlash(null);
-    setTimedWrongFeedback(null);
+    setTimedFeedback(null);
     setTimedShowHint(false);
     setTimedRevisePhase("running");
   };
@@ -246,8 +246,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   // Timed revise: auto-focus input after each word
   useEffect(() => {
     if (timedRevisePhase !== "running") return;
-    if (!timedWrongFeedback) timedInputRef.current?.focus();
-  }, [timedCurrentIdx, timedWrongFeedback, timedRevisePhase]);
+    if (!timedFeedback) timedInputRef.current?.focus();
+  }, [timedCurrentIdx, timedFeedback, timedRevisePhase]);
 
   // Timed revise: hint key handler
   useEffect(() => {
@@ -262,13 +262,17 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [timedRevisePhase]);
 
-  // Timed revise: Enter key advances past wrong-answer feedback
+  // Timed revise: Enter key advances past feedback (correct or wrong)
   useEffect(() => {
-    if (timedRevisePhase !== "running" || !timedWrongFeedback) return;
+    if (timedRevisePhase !== "running" || !timedFeedback) return;
     const handleEnter = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        setTimedWrongFeedback(null);
+        if (timedFeedback.isCorrect) {
+          setTimedDoneCount(c => c + 1);
+        }
+        setTimedFeedback(null);
+        setTimedFlash(null);
         setTimedCurrentIdx(i => i + 1);
         setTimedInput("");
         setTimedShowHint(false);
@@ -276,7 +280,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
     };
     window.addEventListener("keydown", handleEnter);
     return () => window.removeEventListener("keydown", handleEnter);
-  }, [timedRevisePhase, timedWrongFeedback]);
+  }, [timedRevisePhase, timedFeedback]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
@@ -1320,7 +1324,7 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
           const handleTimedSubmit = (e: React.FormEvent) => {
             e.preventDefault();
-            if (!currentWord || timedWrongFeedback) return;
+            if (!currentWord || timedFeedback) return;
             const isWritingTopic = currentWord.topicId?.startsWith("S");
             const target = currentWord.german;
             const cleanTarget = target.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
@@ -1331,22 +1335,15 @@ export function Dashboard({ onStartSession }: DashboardProps) {
             updateWord(currentWord.id, isCorrect, "revise");
             if (isCorrect && result.points) addPoints(result.points);
             setTimedFlash(isCorrect ? "correct" : "wrong");
-            if (isCorrect) {
-              setTimeout(() => {
-                setTimedFlash(null);
-                setTimedDoneCount(c => c + 1);
-                setTimedCurrentIdx(i => i + 1);
-                setTimedInput("");
-                setTimedShowHint(false);
-              }, 500);
-            } else {
-              setTimedWrongFeedback({ typed: timedInput, correct: cleanTarget });
-              setTimeout(() => setTimedFlash(null), 500);
-            }
+            setTimedFeedback({ typed: timedInput, correct: cleanTarget, isCorrect, points: result.points || 0 });
           };
 
           const handleTimedNext = () => {
-            setTimedWrongFeedback(null);
+            if (timedFeedback?.isCorrect) {
+              setTimedDoneCount(c => c + 1);
+            }
+            setTimedFeedback(null);
+            setTimedFlash(null);
             setTimedCurrentIdx(i => i + 1);
             setTimedInput("");
             setTimedShowHint(false);
@@ -1413,17 +1410,38 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                   )}
                 </div>
 
-                {/* Wrong answer feedback */}
-                {timedWrongFeedback ? (
+                {/* Answer feedback */}
+                {timedFeedback ? (
                   <form onSubmit={e => { e.preventDefault(); handleTimedNext(); }} className="space-y-2 mb-3">
-                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
-                      <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
-                      <p className="font-bold text-rose-700">{timedWrongFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
-                    </div>
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
-                      <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
-                      <p className="font-bold text-emerald-700">{timedWrongFeedback.correct}</p>
-                    </div>
+                    {timedFeedback.isCorrect ? (
+                      <>
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+                          <p className="text-lg font-bold text-emerald-700">✅ Correct!{timedFeedback.points > 0 && <span className="ml-2 text-emerald-600">+{timedFeedback.points} pts</span>}</p>
+                        </div>
+                        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">You typed</p>
+                          <p className="font-bold text-gray-700">{timedFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
+                        </div>
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                          <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
+                          <p className="font-bold text-emerald-700">{timedFeedback.correct}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-center">
+                          <p className="text-lg font-bold text-rose-700">❌ Incorrect</p>
+                        </div>
+                        <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
+                          <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
+                          <p className="font-bold text-rose-700">{timedFeedback.typed || <span className="italic opacity-50">nothing</span>}</p>
+                        </div>
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                          <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
+                          <p className="font-bold text-emerald-700">{timedFeedback.correct}</p>
+                        </div>
+                      </>
+                    )}
                     <button type="submit" autoFocus className="w-full py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900">
                       Next word →
                     </button>
