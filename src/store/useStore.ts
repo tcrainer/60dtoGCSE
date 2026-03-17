@@ -2,6 +2,20 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { addDays, startOfDay } from "date-fns";
 
+export interface B1Settings {
+  /** 'askGerman' = shown English, type German (default).
+   *  'askEnglish' = shown German, type English.
+   *  Note: Writing topics (S*) always use askGerman regardless. */
+  languageDirection: "askGerman" | "askEnglish";
+  /** 'typing' = current default. 'reading' = reveal then self-report. */
+  studyMode: "typing" | "reading";
+}
+
+export const DEFAULT_B1_SETTINGS: B1Settings = {
+  languageDirection: "askGerman",
+  studyMode: "typing",
+};
+
 export interface UserWord {
   wordId: string;
   box: number;
@@ -156,6 +170,8 @@ interface StoreState {
   awardBonus: (bonusId: string, points: number) => void;
   addTime: (seconds: number, mode?: "test" | "learn" | "revise" | "practice") => void;
   recordTimedResult: (duration: number, words: number) => void;
+  b1Settings: B1Settings;
+  setB1Settings: (settings: Partial<B1Settings>) => void;
   resetProgress: () => void;
   fixMisplacedWords: () => number;
 }
@@ -192,6 +208,13 @@ export const useStore = create<StoreState>()(
         timedBests: [],
       },
       dailyStats: {},
+      b1Settings: DEFAULT_B1_SETTINGS,
+
+      setB1Settings: (settings) => {
+        set((state) => ({
+          b1Settings: { ...state.b1Settings, ...settings },
+        }));
+      },
 
       addPoints: (points) => {
         set((state) => {
