@@ -110,7 +110,6 @@ export function checkAnswer(
       const targetArticle = getArticle(normalizeText(rawTarget));
       const targetOptionals = extractParenthesesContent(rawTarget);
 
-      // Stricter distance: whole word must count (no typos allowed for base match)
       const maxDistance = 0;
 
       const isBaseMatch =
@@ -129,7 +128,6 @@ export function checkAnswer(
           }
         }
 
-        // Check optional content
         let bonus = 0;
         if (targetOptionals.length > 0) {
           const userFullText = normalizeText(rawUser);
@@ -175,13 +173,13 @@ export function checkAnswer(
 
 // For writing phrases, commas are part of the grammar not synonym separators.
 // Only split on / to allow either option (e.g. "Liebe NAME / Lieber NAME").
-// Returns true if formal pronouns (Sie/Ihnen/Ihr*) are correctly capitalised in user input
+// Students can type either side of the / and it counts as correct.
+// Students can also type "A / B" (both sides with slash) and it counts as correct.
 function checkFormalPronouns(userInput: string, target: string): boolean {
   const formalRe = /\b(Sie|Ihnen|Ihres|Ihrem|Ihren|Ihrer|Ihre|Ihr)\b/g;
   const targetMatches = [...target.matchAll(formalRe)].map(m => m[1]);
-  if (targetMatches.length === 0) return true; // no formal pronouns, no issue
+  if (targetMatches.length === 0) return true;
   for (const form of targetMatches) {
-    // user must include this form with correct capitalisation somewhere
     const re = new RegExp(`\\b${form}\\b`);
     if (!re.test(userInput)) return false;
   }
@@ -194,27 +192,35 @@ export function checkWritingAnswer(userInput: string, target: string) {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  // Normalize user: strip commas (grammatical not separators), strip brackets
-  const userNorm = normalizeText(removeParentheses(userInput));
+  // Allow user to type either side of a slash, or both sides with a slash.
+  // e.g. target "A / B": typing "A", "B", or "A / B" all count as correct.
+  const userOptions = userInput
+    .split("/")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
-  for (const option of targetOptions) {
-    // Try two forms of the target:
-    // 1. Without optional words: "einen Termin" (brackets stripped)
-    // 2. With optional words included: "einen neuen Termin" (brackets removed, content kept)
-    const optStripped  = normalizeText(removeParentheses(option));
-    const optExpanded  = normalizeText(option.replace(/\(([^)]+)\)/g, "$1"));
+  if (userOptions.length === 0) return { isCorrect: false, points: 0 };
 
-    for (const optNorm of [optStripped, optExpanded]) {
-      if (userNorm === optNorm) {
-        if (!checkFormalPronouns(userInput, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
-        return { isCorrect: true, points: 10 };
-      }
-      const maxDist = optNorm.length > 10 ? 1 : 0;
-      if (levenshtein(userNorm, optNorm) <= maxDist) {
-        if (!checkFormalPronouns(userInput, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
-        return { isCorrect: true, points: 10 };
+  for (const userOpt of userOptions) {
+    const userNorm = normalizeText(removeParentheses(userOpt));
+
+    for (const option of targetOptions) {
+      const optStripped  = normalizeText(removeParentheses(option));
+      const optExpanded  = normalizeText(option.replace(/\(([^)]+)\)/g, "$1"));
+
+      for (const optNorm of [optStripped, optExpanded]) {
+        if (userNorm === optNorm) {
+          if (!checkFormalPronouns(userOpt, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
+          return { isCorrect: true, points: 10 };
+        }
+        const maxDist = optNorm.length > 10 ? 1 : 0;
+        if (levenshtein(userNorm, optNorm) <= maxDist) {
+          if (!checkFormalPronouns(userOpt, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
+          return { isCorrect: true, points: 10 };
+        }
       }
     }
   }
+
   return { isCorrect: false, points: 0 };
 }
