@@ -24,6 +24,7 @@ import {
   Flame,
   Trophy,
   Timer,
+  Settings,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -34,7 +35,9 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onStartSession }: DashboardProps) {
-  const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints, fixMisplacedWords } = useStore();
+  const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints, fixMisplacedWords, b1Settings, setB1Settings } = useStore();
+  const [showB1Settings, setShowB1Settings] = useState(false);
+  const [selectedBoxContext, setSelectedBoxContext] = useState<"gcse" | "b1">("gcse");
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPointsInfo, setShowPointsInfo] = useState(false);
   const [showLevelInfo, setShowLevelInfo] = useState(false);
@@ -100,13 +103,21 @@ export function Dashboard({ onStartSession }: DashboardProps) {
 
   // Calculate box counts
   const boxCounts = [0, 0, 0, 0, 0, 0, 0];
+  const gcseBoxCounts = [0, 0, 0, 0, 0, 0, 0];
+  const b1BoxCounts   = [0, 0, 0, 0, 0, 0, 0];
   let toReviseCount = 0;
-  let overduePastCount = 0;   // due before today (missed days)
-  let dueTodayCount = 0;      // due today
-  let dueTomorrowCount = 0;   // due tomorrow
+  let overduePastCount = 0;
+  let dueTodayCount = 0;
+  let dueTomorrowCount = 0;
 
   Object.values(userWords).forEach((uw) => {
     boxCounts[uw.box]++;
+    const word = vocabulary.find(w => w.id === uw.wordId);
+    if (word) {
+      const isGcse = !word.topicId.startsWith("B1") && !word.topicId.startsWith("S");
+      if (isGcse) gcseBoxCounts[uw.box]++;
+      else b1BoxCounts[uw.box]++;
+    }
     if (!uw.nextReviewDate || uw.box === 0 || uw.box === 6) return;
     const dueDay = startOfDay(new Date(uw.nextReviewDate));
     const todayDay = startOfDay(today);
@@ -153,6 +164,8 @@ export function Dashboard({ onStartSession }: DashboardProps) {
   const untestedGcseCount = unlearnedGcseWords.length;
   const untestedB1Count = unlearnedB1Words.length;
   boxCounts[0] = untestedGcseCount + untestedB1Count;
+  gcseBoxCounts[0] = untestedGcseCount;
+  b1BoxCounts[0] = untestedB1Count;
 
   const handleTestGcse = () => {
     const topicOrder = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -415,134 +428,141 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         );
       })()}
 
-      {/* Row 1: Leitner Boxes – full width */}
-      <div>
+      {/* Row 1: Leitner Boxes – split into GCSE and B1 */}
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
+        <h2 className="text-2xl font-bold text-gray-900">Leitner Boxes</h2>
+
+        {/* ── GCSE Leitner Boxes ── */}
         <div>
-          {/* Leitner Boxes */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Leitner Boxes
-            </h2>
-            <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x">
-              <div
-                onClick={() => {
-                  setSelectedBox(0);
-                  setSelectedWordsToRevise(new Set(unlearnedGcseWords.map(w => w.id)));
-                }}
-                className="min-w-[120px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-colors snap-start bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
-              >
-                <p className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">
-                  Untested GCSE
-                </p>
-                <p className="text-2xl font-bold">
-                  {untestedGcseCount}
-                </p>
-                <p className="text-[10px] font-bold opacity-80 mt-1">
-                  {gcseWords.length - untestedGcseCount} tested
-                </p>
-              </div>
-
-              <div
-                onClick={() => {
-                  setSelectedBox(0);
-                  setSelectedWordsToRevise(new Set(unlearnedB1Words.map(w => w.id)));
-                }}
-                className="min-w-[120px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-colors snap-start bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
-              >
-                <p className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">
-                  Untested B1
-                </p>
-                <p className="text-2xl font-bold">
-                  {untestedB1Count}
-                </p>
-                <p className="text-[10px] font-bold opacity-80 mt-1">
-                  {b1Words.length - untestedB1Count} tested
-                </p>
-              </div>
-
-              {[1, 2, 3, 4, 5, 6].map((box) => {
-                const boxNames = [
-                  "",
-                  "Box 1 - empty me every day!",
-                  "Box 2 - see you tomorrow!",
-                  "Box 3 - see you in a few days",
-                  "Box 4 - see you in a week!",
-                  "Box 5 - see you in a fortnight!",
-                  "Box 6 - Mastered"
-                ];
-                const colors = [
-                  "", // 0: Untested (Gray) - handled above
-                  "bg-red-100 text-red-600 border-red-200 hover:bg-red-200", // 1: Box 1 (Red)
-                  "bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200", // 2: Box 2 (Orange)
-                  "bg-amber-100 text-amber-600 border-amber-200 hover:bg-amber-200", // 3: Box 3 (Yellow/Amber)
-                  "bg-green-100 text-green-600 border-green-200 hover:bg-green-200", // 4: Box 4 (Green)
-                  "bg-blue-100 text-blue-600 border-blue-200 hover:bg-blue-200", // 5: Box 5 (Blue)
-                  "bg-purple-100 text-purple-600 border-purple-200 hover:bg-purple-200", // 6: Mastered (Purple)
-                ];
-                
-                const [name, phrase] = boxNames[box].split(" - ");
-
-                return (
-                  <div
-                    key={box}
-                    onClick={() => {
-                      setSelectedBox(box);
-                      const wordsInBox = vocabulary.filter((w) => userWords[w.id]?.box === box);
-                      const toSelect = box >= 2 && box <= 5
-                        ? wordsInBox.filter(w => {
-                            const uw = userWords[w.id];
-                            return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
-                          })
-                        : wordsInBox;
-                      setSelectedWordsToRevise(new Set(toSelect.map(w => w.id)));
-                    }}
-                    className={`min-w-[140px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-all snap-start ${
-                      selectedBox === box ? "ring-2 ring-indigo-500 ring-offset-2 scale-105" : ""
-                    } ${colors[box]}`}
-                  >
-                    <p className="text-xs font-bold uppercase tracking-wider mb-1 opacity-90">
-                      {name}
-                    </p>
-                    {phrase && (
-                      <p className="text-[10px] font-medium lowercase opacity-70 mb-2 leading-tight block">
-                        {phrase}
-                      </p>
-                    )}
-                    <p className="text-2xl font-bold">
-                      {box === 1 && boxCounts[box] === 0 ? "😊" : boxCounts[box]}
-                    </p>
-                    {box >= 2 && box <= 5 && (() => {
-                      const overdueCount = vocabulary.filter(w => {
-                        const uw = userWords[w.id];
-                        return uw?.box === box && uw.nextReviewDate &&
-                          startOfDay(new Date(uw.nextReviewDate)) < startOfDay(today);
-                      }).length;
-                      const todayCount = vocabulary.filter(w => {
-                        const uw = userWords[w.id];
-                        return uw?.box === box && uw.nextReviewDate &&
-                          startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(today).getTime();
-                      }).length;
-                      const tomorrowCount = vocabulary.filter(w => {
-                        const uw = userWords[w.id];
-                        return uw?.box === box && uw.nextReviewDate &&
-                          startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(new Date(today.getTime() + 86400000)).getTime();
-                      }).length;
-                      const noDue = overdueCount === 0 && todayCount === 0 && boxCounts[box] > 0;
-                      return (
-                        <div className="mt-1 space-y-0.5">
-                          {noDue && <p className="text-lg leading-none">😊</p>}
-                          {overdueCount > 0 && <p className="text-[10px] font-bold text-rose-600 opacity-90">⚠ {overdueCount} overdue</p>}
-                          {todayCount > 0 && <p className="text-[10px] font-bold opacity-90">📅 {todayCount} today</p>}
-                          {tomorrowCount > 0 && <p className="text-[10px] opacity-70">→ {tomorrowCount} tmrw</p>}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                );
-              })}
+          <h3 className="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-3">GCSE Words</h3>
+          <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x">
+            {/* Untested GCSE */}
+            <div
+              onClick={() => { setSelectedBoxContext("gcse"); setSelectedBox(0); setSelectedWordsToRevise(new Set(unlearnedGcseWords.map(w => w.id))); }}
+              className="min-w-[120px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-colors snap-start bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+            >
+              <p className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">Untested</p>
+              <p className="text-2xl font-bold">{untestedGcseCount}</p>
+              <p className="text-[10px] font-bold opacity-80 mt-1">{gcseWords.length - untestedGcseCount} tested</p>
             </div>
-          </div>
 
+            {[1, 2, 3, 4, 5, 6].map((box) => {
+              const boxNames = ["","Box 1 - empty me every day!","Box 2 - see you tomorrow!","Box 3 - see you in a few days","Box 4 - see you in a week!","Box 5 - see you in a fortnight!","Box 6 - Mastered"];
+              const colors = ["","bg-red-100 text-red-600 border-red-200 hover:bg-red-200","bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200","bg-amber-100 text-amber-600 border-amber-200 hover:bg-amber-200","bg-green-100 text-green-600 border-green-200 hover:bg-green-200","bg-blue-100 text-blue-600 border-blue-200 hover:bg-blue-200","bg-purple-100 text-purple-600 border-purple-200 hover:bg-purple-200"];
+              const [name, phrase] = boxNames[box].split(" - ");
+              return (
+                <div key={`gcse-${box}`}
+                  onClick={() => {
+                    setSelectedBoxContext("gcse");
+                    setSelectedBox(box);
+                    const wordsInBox = gcseWords.filter(w => userWords[w.id]?.box === box);
+                    const toSelect = box >= 2 && box <= 5
+                      ? wordsInBox.filter(w => { const uw = userWords[w.id]; return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today); })
+                      : wordsInBox;
+                    setSelectedWordsToRevise(new Set(toSelect.map(w => w.id)));
+                  }}
+                  className={`min-w-[140px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-all snap-start ${selectedBox === box && selectedBoxContext === "gcse" ? "ring-2 ring-indigo-500 ring-offset-2 scale-105" : ""} ${colors[box]}`}
+                >
+                  <p className="text-xs font-bold uppercase tracking-wider mb-1 opacity-90">{name}</p>
+                  {phrase && <p className="text-[10px] font-medium lowercase opacity-70 mb-2 leading-tight block">{phrase}</p>}
+                  <p className="text-2xl font-bold">{box === 1 && gcseBoxCounts[box] === 0 ? "😊" : gcseBoxCounts[box]}</p>
+                  {box >= 2 && box <= 5 && (() => {
+                    const overdueCount = gcseWords.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) < startOfDay(today); }).length;
+                    const todayCount = gcseWords.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(today).getTime(); }).length;
+                    const tomorrowCount = gcseWords.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(new Date(today.getTime() + 86400000)).getTime(); }).length;
+                    const noDue = overdueCount === 0 && todayCount === 0 && gcseBoxCounts[box] > 0;
+                    return (
+                      <div className="mt-1 space-y-0.5">
+                        {noDue && <p className="text-lg leading-none">😊</p>}
+                        {overdueCount > 0 && <p className="text-[10px] font-bold text-rose-600 opacity-90">⚠ {overdueCount} overdue</p>}
+                        {todayCount > 0 && <p className="text-[10px] font-bold opacity-90">📅 {todayCount} today</p>}
+                        {tomorrowCount > 0 && <p className="text-[10px] opacity-70">→ {tomorrowCount} tmrw</p>}
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── B1 Leitner Boxes ── */}
+        <div>
+          <div className="flex items-center gap-3 mb-3">
+            <h3 className="text-sm font-bold text-blue-600 uppercase tracking-wider">B1 Words</h3>
+            <button
+              onClick={() => setShowB1Settings(true)}
+              className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full border border-blue-200 transition-colors text-xs font-bold"
+              title="B1 Study Settings"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              Settings
+              {(b1Settings.languageDirection !== "askGerman" || b1Settings.studyMode !== "typing") && (
+                <span className="w-2 h-2 rounded-full bg-blue-500 inline-block ml-0.5" title="Custom settings active" />
+              )}
+            </button>
+          </div>
+          {/* Active settings summary */}
+          {(b1Settings.languageDirection !== "askGerman" || b1Settings.studyMode !== "typing") && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {b1Settings.studyMode === "reading" && (
+                <span className="text-[11px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full font-bold">📖 Reading mode on</span>
+              )}
+              {b1Settings.languageDirection === "askEnglish" && (
+                <span className="text-[11px] bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-full font-bold">🔄 Shown German → Type English</span>
+              )}
+              <span className="text-[11px] text-gray-400">(Writing topics always: shown English → type German)</span>
+            </div>
+          )}
+          <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x">
+            {/* Untested B1 */}
+            <div
+              onClick={() => { setSelectedBoxContext("b1"); setSelectedBox(0); setSelectedWordsToRevise(new Set(unlearnedB1Words.map(w => w.id))); }}
+              className="min-w-[120px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-colors snap-start bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+            >
+              <p className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">Untested</p>
+              <p className="text-2xl font-bold">{untestedB1Count}</p>
+              <p className="text-[10px] font-bold opacity-80 mt-1">{b1Words.length - untestedB1Count} tested</p>
+            </div>
+
+            {[1, 2, 3, 4, 5, 6].map((box) => {
+              const boxNames = ["","Box 1 - empty me every day!","Box 2 - see you tomorrow!","Box 3 - see you in a few days","Box 4 - see you in a week!","Box 5 - see you in a fortnight!","Box 6 - Mastered"];
+              const colors = ["","bg-red-100 text-red-600 border-red-200 hover:bg-red-200","bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200","bg-amber-100 text-amber-600 border-amber-200 hover:bg-amber-200","bg-green-100 text-green-600 border-green-200 hover:bg-green-200","bg-blue-100 text-blue-600 border-blue-200 hover:bg-blue-200","bg-purple-100 text-purple-600 border-purple-200 hover:bg-purple-200"];
+              const [name, phrase] = boxNames[box].split(" - ");
+              return (
+                <div key={`b1-${box}`}
+                  onClick={() => {
+                    setSelectedBoxContext("b1");
+                    setSelectedBox(box);
+                    const wordsInBox = b1Words.filter(w => userWords[w.id]?.box === box);
+                    const toSelect = box >= 2 && box <= 5
+                      ? wordsInBox.filter(w => { const uw = userWords[w.id]; return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today); })
+                      : wordsInBox;
+                    setSelectedWordsToRevise(new Set(toSelect.map(w => w.id)));
+                  }}
+                  className={`min-w-[140px] shrink-0 p-4 rounded-2xl border text-center cursor-pointer transition-all snap-start ${selectedBox === box && selectedBoxContext === "b1" ? "ring-2 ring-blue-500 ring-offset-2 scale-105" : ""} ${colors[box]}`}
+                >
+                  <p className="text-xs font-bold uppercase tracking-wider mb-1 opacity-90">{name}</p>
+                  {phrase && <p className="text-[10px] font-medium lowercase opacity-70 mb-2 leading-tight block">{phrase}</p>}
+                  <p className="text-2xl font-bold">{box === 1 && b1BoxCounts[box] === 0 ? "😊" : b1BoxCounts[box]}</p>
+                  {box >= 2 && box <= 5 && (() => {
+                    const overdueCount = b1Words.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) < startOfDay(today); }).length;
+                    const todayCount = b1Words.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(today).getTime(); }).length;
+                    const tomorrowCount = b1Words.filter(w => { const uw = userWords[w.id]; return uw?.box === box && uw.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)).getTime() === startOfDay(new Date(today.getTime() + 86400000)).getTime(); }).length;
+                    const noDue = overdueCount === 0 && todayCount === 0 && b1BoxCounts[box] > 0;
+                    return (
+                      <div className="mt-1 space-y-0.5">
+                        {noDue && <p className="text-lg leading-none">😊</p>}
+                        {overdueCount > 0 && <p className="text-[10px] font-bold text-rose-600 opacity-90">⚠ {overdueCount} overdue</p>}
+                        {todayCount > 0 && <p className="text-[10px] font-bold opacity-90">📅 {todayCount} today</p>}
+                        {tomorrowCount > 0 && <p className="text-[10px] opacity-70">→ {tomorrowCount} tmrw</p>}
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -1730,54 +1750,40 @@ export function Dashboard({ onStartSession }: DashboardProps) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[80vh] flex flex-col">
             <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedBox === 0
-                    ? "Untested"
-                    : selectedBox === 6
-                      ? "Mastered"
-                      : `Box ${selectedBox}`}{" "}
-                  Words
-                </h2>
-                {boxCounts[selectedBox] > 0 && (
-                  <button
-                    onClick={() => {
-                      const wordsInBox = vocabulary.filter((w) => {
-                        if (selectedBox === 0) return !userWords[w.id];
-                        return userWords[w.id]?.box === selectedBox;
-                      });
-                      if (selectedWordsToRevise.size === wordsInBox.length) {
-                        setSelectedWordsToRevise(new Set());
-                      } else {
-                        setSelectedWordsToRevise(new Set(wordsInBox.map(w => w.id)));
-                      }
-                    }}
-                    className="text-sm font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full transition-colors"
-                  >
-                    {selectedWordsToRevise.size === boxCounts[selectedBox] ? "Deselect All" : "Select All"}
-                  </button>
-                )}
+              <div className="flex items-center gap-3 flex-wrap">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {selectedBox === 0 ? "Untested" : selectedBox === 6 ? "Mastered" : `Box ${selectedBox}`}{" "}Words
+                  </h2>
+                  <p className={`text-xs font-bold uppercase tracking-wider mt-0.5 ${selectedBoxContext === "b1" ? "text-blue-500" : "text-indigo-500"}`}>
+                    {selectedBoxContext === "b1" ? "B1 words" : "GCSE words"}
+                  </p>
+                </div>
+                {(() => {
+                  const ctxWords = selectedBoxContext === "b1" ? b1Words : gcseWords;
+                  const wordsInBox = ctxWords.filter(w => selectedBox === 0 ? !userWords[w.id] : userWords[w.id]?.box === selectedBox);
+                  return wordsInBox.length > 0 ? (
+                    <button
+                      onClick={() => {
+                        if (selectedWordsToRevise.size === wordsInBox.length) setSelectedWordsToRevise(new Set());
+                        else setSelectedWordsToRevise(new Set(wordsInBox.map(w => w.id)));
+                      }}
+                      className="text-sm font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full transition-colors"
+                    >
+                      {selectedWordsToRevise.size === wordsInBox.length ? "Deselect All" : "Select All"}
+                    </button>
+                  ) : null;
+                })()}
               </div>
-              <button
-                onClick={() => {
-                  setSelectedBox(null);
-                  setSelectedWordsToRevise(new Set());
-                }}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
+              <button onClick={() => { setSelectedBox(null); setSelectedWordsToRevise(new Set()); }} className="p-2 hover:bg-gray-100 rounded-full">
                 <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
             {(() => {
-              const wordsInBox = vocabulary.filter((w) => {
-                if (selectedBox === 0) return !userWords[w.id];
-                return userWords[w.id]?.box === selectedBox;
-              });
+              const ctxWords = selectedBoxContext === "b1" ? b1Words : gcseWords;
+              const wordsInBox = ctxWords.filter(w => selectedBox === 0 ? !userWords[w.id] : userWords[w.id]?.box === selectedBox);
               const dueWordsInBox = selectedBox >= 2 && selectedBox <= 5
-                ? wordsInBox.filter(w => {
-                    const uw = userWords[w.id];
-                    return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today);
-                  })
+                ? wordsInBox.filter(w => { const uw = userWords[w.id]; return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today); })
                 : wordsInBox;
               const noDueWords = selectedBox >= 2 && selectedBox <= 5 && wordsInBox.length > 0 && dueWordsInBox.length === 0;
               return (
@@ -1796,33 +1802,25 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                         const isSelected = selectedWordsToRevise.has(w.id);
                         const isNotDue = selectedBox >= 2 && selectedBox <= 5 && !isDue;
                         return (
-                          <div
-                            key={w.id}
+                          <div key={w.id}
                             className={`flex items-center gap-4 p-3 rounded-xl border-2 transition-colors ${isNotDue ? "opacity-40 cursor-not-allowed border-transparent bg-slate-50" : isSelected ? "border-indigo-500 bg-indigo-50 cursor-pointer" : "border-transparent bg-slate-50 hover:bg-slate-100 cursor-pointer"}`}
                             onClick={() => {
                               if (isNotDue) return;
                               const next = new Set(selectedWordsToRevise);
-                              if (next.has(w.id)) next.delete(w.id);
-                              else next.add(w.id);
+                              if (next.has(w.id)) next.delete(w.id); else next.add(w.id);
                               setSelectedWordsToRevise(next);
                             }}
                           >
                             <div className={`w-6 h-6 shrink-0 rounded border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-gray-300 bg-white"}`}>
                               {isSelected && <Check className="w-4 h-4" />}
                             </div>
-                            <div>
+                            <div className="flex-1 min-w-0">
                               <p className="font-bold text-gray-900">{w.german}</p>
                               <p className="text-sm text-gray-600">{w.english}</p>
                             </div>
                             {selectedBox > 0 && selectedBox < 6 && (
-                              <div className="ml-auto text-right">
-                                <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                                  !uw?.nextReviewDate
-                                    ? "bg-gray-100 text-gray-600"
-                                    : isDue
-                                      ? "bg-rose-100 text-rose-700"
-                                      : "bg-emerald-100 text-emerald-700"
-                                }`}>
+                              <div className="ml-auto text-right shrink-0">
+                                <span className={`text-xs font-bold px-2 py-1 rounded-md ${!uw?.nextReviewDate ? "bg-gray-100 text-gray-600" : isDue ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
                                   {getDaysUntilReview(uw?.nextReviewDate || null)}
                                 </span>
                               </div>
@@ -1831,18 +1829,16 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                         );
                       })
                     )}
-                    {wordsInBox.length === 0 && (
-                      <p className="text-center text-gray-500 py-8">No words in this box.</p>
-                    )}
+                    {wordsInBox.length === 0 && <p className="text-center text-gray-500 py-8">No words in this box.</p>}
                   </div>
                   <button
                     disabled={selectedWordsToRevise.size === 0}
                     onClick={() => {
-                      const wordsToRevise = vocabulary.filter((w) => selectedWordsToRevise.has(w.id));
-                      let mode: "test" | "learn" | "revise" | "practice" = "practice";
-                      if (selectedBox === 1) mode = "learn";
-                      else if (selectedBox > 1 && selectedBox < 6) mode = "revise";
-                      onStartSession(mode, wordsToRevise);
+                      const wordsToRevise = vocabulary.filter(w => selectedWordsToRevise.has(w.id));
+                      let sessionMode: "test" | "learn" | "revise" | "practice" = "practice";
+                      if (selectedBox === 1) sessionMode = "learn";
+                      else if (selectedBox > 1 && selectedBox < 6) sessionMode = "revise";
+                      onStartSession(sessionMode, wordsToRevise);
                       setSelectedBox(null);
                       setSelectedWordsToRevise(new Set());
                     }}
@@ -1853,6 +1849,122 @@ export function Dashboard({ onStartSession }: DashboardProps) {
                 </>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* ── B1 Settings Modal ───────────────────────────────────────────────── */}
+      {showB1Settings && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <Settings className="w-6 h-6 text-blue-500" /> B1 Study Settings
+              </h2>
+              <button onClick={() => setShowB1Settings(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mb-6">
+              These settings apply to <span className="font-bold text-blue-600">B1 vocabulary only</span>.
+              Writing topics (phrases) always show English → type German, regardless.
+            </p>
+
+            {/* Language Direction */}
+            <div className="mb-6">
+              <p className="text-sm font-bold text-gray-700 mb-3">🌐 Language direction</p>
+              <div className="grid grid-cols-1 gap-3">
+                <button
+                  onClick={() => setB1Settings({ languageDirection: "askGerman" })}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${b1Settings.languageDirection === "askGerman" ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`font-bold text-sm ${b1Settings.languageDirection === "askGerman" ? "text-blue-700" : "text-gray-700"}`}>
+                        Shown English → Type German
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">Default — matches exam format</p>
+                    </div>
+                    {b1Settings.languageDirection === "askGerman" && (
+                      <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+                <button
+                  onClick={() => setB1Settings({ languageDirection: "askEnglish" })}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${b1Settings.languageDirection === "askEnglish" ? "border-orange-400 bg-orange-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`font-bold text-sm ${b1Settings.languageDirection === "askEnglish" ? "text-orange-700" : "text-gray-700"}`}>
+                        Shown German → Type English
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">Reverse — good for extra practice</p>
+                    </div>
+                    {b1Settings.languageDirection === "askEnglish" && (
+                      <div className="w-5 h-5 rounded-full bg-orange-400 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Study Mode */}
+            <div className="mb-6">
+              <p className="text-sm font-bold text-gray-700 mb-3">📚 Study mode</p>
+              <div className="grid grid-cols-1 gap-3">
+                <button
+                  onClick={() => setB1Settings({ studyMode: "typing" })}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${b1Settings.studyMode === "typing" ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`font-bold text-sm ${b1Settings.studyMode === "typing" ? "text-blue-700" : "text-gray-700"}`}>
+                        ⌨️ Typing
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">Default — type the translation to check</p>
+                    </div>
+                    {b1Settings.studyMode === "typing" && (
+                      <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+                <button
+                  onClick={() => setB1Settings({ studyMode: "reading" })}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${b1Settings.studyMode === "reading" ? "border-teal-500 bg-teal-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`font-bold text-sm ${b1Settings.studyMode === "reading" ? "text-teal-700" : "text-gray-700"}`}>
+                        📖 Reading
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">See the word, reveal answer, mark if you knew it</p>
+                    </div>
+                    {b1Settings.studyMode === "reading" && (
+                      <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Writing topics note */}
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl mb-6">
+              <p className="text-xs font-bold text-amber-700">✏️ Writing topics (S1, S2, S3) are always:</p>
+              <p className="text-xs text-amber-600 mt-0.5">Shown English → Type German (typing mode). This cannot be changed as it matches the actual exam.</p>
+            </div>
+
+            <button onClick={() => setShowB1Settings(false)} className="w-full py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors">
+              Save &amp; Close
+            </button>
           </div>
         </div>
       )}
