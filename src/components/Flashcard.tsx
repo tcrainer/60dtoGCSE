@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Word } from "../data/vocabulary";
 import { checkAnswer, checkWritingAnswer, stripArticle, removeParentheses } from "../utils/grading";
 import { useStore } from "../store/useStore";
-import { ArrowRight, Check, X, HelpCircle } from "lucide-react";
+import { ArrowRight, Check, X, HelpCircle, ThumbsUp, ThumbsDown, Eye } from "lucide-react";
 
 interface FlashcardProps {
   words: Word[];
@@ -28,20 +28,42 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   const [sessionResults, setSessionResults] = useState<{ wordId: string; correct: boolean }[]>([]);
   const [hint, setHint] = useState<string | null>(null);
   const [wrongAnswer, setWrongAnswer] = useState<{ typed: string; correct: string } | null>(null);
+  // Reading mode state
+  const [readingPhase, setReadingPhase] = useState<"prompt" | "revealed">("prompt");
 
   const lastActivityRef = useRef(Date.now());
   const activeTimeRef = useRef(0);
 
-  const { addPoints, addTime, updateWord, stats } = useStore();
+  const { addPoints, addTime, updateWord, stats, b1Settings } = useStore();
 
   const lastSubmitTimeRef = useRef(0);
   const justAdvancedRef = useRef(false);
 
   const currentWord = words[currentIndex];
 
+  // Helpers: determine per-word behaviour
+  const isB1NonWriting = (w?: Word) => w ? w.topicId.startsWith("B1") : false;
+  const isWritingWord  = (w?: Word) => w ? w.topicId.startsWith("S") : false;
+
+  /** Whether reading mode applies to this word */
+  const useReadingMode = (w?: Word) =>
+    isB1NonWriting(w) && b1Settings.studyMode === "reading";
+
+  /** What language direction to use for this word */
+  const effectiveAskGerman = (w?: Word) => {
+    if (!w) return true;
+    if (isWritingWord(w)) return true;           // Writing: always type German
+    if (isB1NonWriting(w)) return b1Settings.languageDirection === "askGerman";
+    return true;                                   // GCSE: always type German
+  };
+
+  // Reset state on word change
   useEffect(() => {
-    setAskGerman(true);
+    const ag = effectiveAskGerman(currentWord);
+    setAskGerman(ag);
     setHint(null);
+    setReadingPhase("prompt");
+    setShowResult(false);
   }, [currentIndex]);
 
   useEffect(() => {
@@ -85,10 +107,10 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     };
   }, [addTime, mode]);
 
-  const handleNext = useCallback(() => {
-    if (!showResult) return;
+  const advanceToNext = useCallback(() => {
     setShowResult(false);
     setInput("");
+    setReadingPhase("prompt");
     const nextWord = words[currentIndex + 1];
     if (nextWord?.isVerb) {
       setVerbInputs({
@@ -99,24 +121,40 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         englishInf: "",
       });
     } else {
-      setVerbInputs({
-        germanInf: "",
-        german3rd: "",
-        germanImp: "",
-        germanPerf: "",
-        englishInf: "",
-      });
+      setVerbInputs({ germanInf: "", german3rd: "", germanImp: "", germanPerf: "", englishInf: "" });
     }
-    setAskGerman(true);
+    setAskGerman(effectiveAskGerman(nextWord));
     setHint(null);
     setWrongAnswer(null);
     justAdvancedRef.current = true;
     setCurrentIndex((prev) => prev + 1);
-  }, [currentIndex, words, showResult]);
+  }, [currentIndex, words]);
 
+  const handleNext = useCallback(() => {
+    if (!showResult) return;
+    advanceToNext();
+  }, [showResult, advanceToNext]);
+
+  // ── Reading mode handlers ──────────────────────────────────────────────────
+  const handleReadingCheck = useCallback(() => {
+    setReadingPhase("revealed");
+  }, []);
+
+  const handleReadingSelfReport = useCallback((knew: boolean) => {
+    if (!currentWord) return;
+    const points = knew ? 10 : 0;
+    if (knew) addPoints(points);
+    updateWord(currentWord.id, knew, mode);
+    setSessionResults(prev => [...prev, { wordId: currentWord.id, correct: knew }]);
+    addTime(activeTimeRef.current, mode);
+    activeTimeRef.current = 0;
+    advanceToNext();
+  }, [currentWord, mode, addPoints, updateWord, addTime, advanceToNext]);
+
+  // ── Typing mode submit ─────────────────────────────────────────────────────
   const handleSubmit = useCallback((e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    
+
     const now = Date.now();
     if (now - lastSubmitTimeRef.current < 400) return;
     lastSubmitTimeRef.current = now;
@@ -138,25 +176,18 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     if (currentWord.isVerb) {
       if (askGerman) {
         const infRes = checkAnswer(verbInputs.germanInf, currentWord.german, true);
-        
-        // 3rd person check
         let thirdRes = { isCorrect: true, points: 0 };
         if (currentWord.german3rdPerson && currentWord.german3rdPerson !== "—") {
           thirdRes = checkAnswer(verbInputs.german3rd, currentWord.german3rdPerson, true);
         }
-
-        // Imperfekt check
         let impRes = { isCorrect: true, points: 0 };
         if (currentWord.germanImperfekt && currentWord.germanImperfekt !== "—") {
           impRes = checkAnswer(verbInputs.germanImp, currentWord.germanImperfekt, true);
         }
-
-        // Perfekt check
         let perfRes = { isCorrect: true, points: 0 };
         if (currentWord.germanPerfekt && currentWord.germanPerfekt !== "—") {
           perfRes = checkAnswer(verbInputs.germanPerf, currentWord.germanPerfekt, true);
         }
-
         correct = infRes.isCorrect && thirdRes.isCorrect && impRes.isCorrect && perfRes.isCorrect;
         points = infRes.points + thirdRes.points + impRes.points + perfRes.points;
         if (!correct) {
@@ -190,7 +221,6 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     setShowResult(true);
 
     if (!correct) {
-      // Build a human-readable "what you typed" for the comparison panel
       let typed = "";
       let correctAnswer = "";
       if (currentWord.isVerb && askGerman) {
@@ -247,15 +277,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field?: keyof typeof verbInputs) => {
     if (e.key >= "1" && e.key <= "7") {
       e.preventDefault();
-      const charMap: Record<string, string> = {
-        "1": "ä",
-        "2": "ö",
-        "3": "ü",
-        "4": "ß",
-        "5": "Ä",
-        "6": "Ö",
-        "7": "Ü",
-      };
+      const charMap: Record<string, string> = { "1": "ä", "2": "ö", "3": "ü", "4": "ß", "5": "Ä", "6": "Ö", "7": "Ü" };
       const char = charMap[e.key];
       if (char) {
         if (field) {
@@ -278,13 +300,8 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
   const renderShortcuts = (field?: keyof typeof verbInputs) => (
     <div className="flex gap-2 justify-center mt-4">
       {[
-        { key: "1", char: "ä" },
-        { key: "2", char: "ö" },
-        { key: "3", char: "ü" },
-        { key: "4", char: "ß" },
-        { key: "5", char: "Ä" },
-        { key: "6", char: "Ö" },
-        { key: "7", char: "Ü" },
+        { key: "1", char: "ä" }, { key: "2", char: "ö" }, { key: "3", char: "ü" },
+        { key: "4", char: "ß" }, { key: "5", char: "Ä" }, { key: "6", char: "Ö" }, { key: "7", char: "Ü" },
       ].map(({ key, char }) => (
         <button
           key={key}
@@ -307,73 +324,40 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md">
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1">Infinitive</label>
-            <input
-              type="text"
-              value={verbInputs.germanInf}
-              onChange={(e) => {
-                setVerbInputs(prev => ({ ...prev, germanInf: e.target.value }));
-                justAdvancedRef.current = false;
-              }}
-              onKeyDown={(e) => handleKeyDown(e, "germanInf")}
-              placeholder="Infinitive..."
+            <input type="text" value={verbInputs.germanInf}
+              onChange={(e) => { setVerbInputs(prev => ({ ...prev, germanInf: e.target.value })); justAdvancedRef.current = false; }}
+              onKeyDown={(e) => handleKeyDown(e, "germanInf")} placeholder="Infinitive..."
               className="w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
-              autoFocus
-              autoComplete="off"
-            />
+              autoFocus autoComplete="off" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1">3rd person (er, sie, es)</label>
-            <input
-              type="text"
-              value={verbInputs.german3rd}
-              onChange={(e) => {
-                setVerbInputs(prev => ({ ...prev, german3rd: e.target.value }));
-                justAdvancedRef.current = false;
-              }}
-              onKeyDown={(e) => handleKeyDown(e, "german3rd")}
-              placeholder={currentWord.german3rdPerson === "—" ? "—" : "3rd Person..."}
+            <input type="text" value={verbInputs.german3rd}
+              onChange={(e) => { setVerbInputs(prev => ({ ...prev, german3rd: e.target.value })); justAdvancedRef.current = false; }}
+              onKeyDown={(e) => handleKeyDown(e, "german3rd")} placeholder={currentWord.german3rdPerson === "—" ? "—" : "3rd Person..."}
               disabled={currentWord.german3rdPerson === "—"}
               className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.german3rdPerson === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
-              autoComplete="off"
-            />
+              autoComplete="off" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1">Imperfekt (ich)</label>
-            <input
-              type="text"
-              value={verbInputs.germanImp}
-              onChange={(e) => {
-                setVerbInputs(prev => ({ ...prev, germanImp: e.target.value }));
-                justAdvancedRef.current = false;
-              }}
-              onKeyDown={(e) => handleKeyDown(e, "germanImp")}
-              placeholder={currentWord.germanImperfekt === "—" ? "—" : "Imperfekt..."}
+            <input type="text" value={verbInputs.germanImp}
+              onChange={(e) => { setVerbInputs(prev => ({ ...prev, germanImp: e.target.value })); justAdvancedRef.current = false; }}
+              onKeyDown={(e) => handleKeyDown(e, "germanImp")} placeholder={currentWord.germanImperfekt === "—" ? "—" : "Imperfekt..."}
               disabled={currentWord.germanImperfekt === "—"}
               className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.germanImperfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
-              autoComplete="off"
-            />
+              autoComplete="off" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1">Perfekt (ich)</label>
-            <input
-              type="text"
-              value={verbInputs.germanPerf}
-              onChange={(e) => {
-                setVerbInputs(prev => ({ ...prev, germanPerf: e.target.value }));
-                justAdvancedRef.current = false;
-              }}
-              onKeyDown={(e) => handleKeyDown(e, "germanPerf")}
-              placeholder={currentWord.germanPerfekt === "—" ? "—" : "Perfekt..."}
+            <input type="text" value={verbInputs.germanPerf}
+              onChange={(e) => { setVerbInputs(prev => ({ ...prev, germanPerf: e.target.value })); justAdvancedRef.current = false; }}
+              onKeyDown={(e) => handleKeyDown(e, "germanPerf")} placeholder={currentWord.germanPerfekt === "—" ? "—" : "Perfekt..."}
               disabled={currentWord.germanPerfekt === "—"}
               className={`w-full px-4 py-3 text-base border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all ${currentWord.germanPerfekt === "—" ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-white"}`}
-              autoComplete="off"
-            />
+              autoComplete="off" />
           </div>
-          {hint && (
-            <div className="sm:col-span-2 text-center text-sm font-bold text-yellow-600 animate-pulse">
-              Hint: Starts with "{hint}"
-            </div>
-          )}
+          {hint && <div className="sm:col-span-2 text-center text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
         </div>
       );
     } else {
@@ -381,24 +365,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         <div className="w-full max-w-md space-y-4">
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">Infinitive</label>
-            <input
-              type="text"
-              value={verbInputs.englishInf}
-              onChange={(e) => {
-                setVerbInputs(prev => ({ ...prev, englishInf: e.target.value }));
-                justAdvancedRef.current = false;
-              }}
+            <input type="text" value={verbInputs.englishInf}
+              onChange={(e) => { setVerbInputs(prev => ({ ...prev, englishInf: e.target.value })); justAdvancedRef.current = false; }}
               placeholder="English translation..."
               className="w-full px-6 py-4 text-lg border-2 border-blue-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all bg-white"
-              autoFocus
-              autoComplete="off"
-            />
+              autoFocus autoComplete="off" />
           </div>
-          {hint && (
-            <div className="text-center text-sm font-bold text-blue-500 animate-pulse">
-              Hint: Starts with "{hint}"
-            </div>
-          )}
+          {hint && <div className="text-center text-sm font-bold text-blue-500 animate-pulse">Hint: Starts with "{hint}"</div>}
         </div>
       );
     }
@@ -408,80 +381,163 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
     return <SessionSummary results={sessionResults} mode={mode} onComplete={onComplete} />;
   }
 
+  const inReadingMode = useReadingMode(currentWord);
+
+  // ── READING MODE RENDER ────────────────────────────────────────────────────
+  if (inReadingMode) {
+    // What to show as "prompt" (the question) and "answer"
+    // askGerman = true → prompt is English, answer is German
+    // askGerman = false → prompt is German, answer is English
+    const promptLang = askGerman ? "English" : "Deutsch";
+    const answerLang = askGerman ? "Deutsch" : "English";
+    const promptText = askGerman
+      ? currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")
+      : currentWord.german;
+    const answerText = askGerman ? currentWord.german : currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+
+    return (
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-sm font-medium text-gray-500">{currentIndex + 1} / {words.length}</div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">📖 Reading Mode</span>
+            <div className="text-lg font-bold text-indigo-600">{stats.points} pts</div>
+          </div>
+        </div>
+
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8">
+          <div className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+          {/* Prompt half */}
+          <div className={`flex-1 p-8 flex flex-col justify-center items-center min-h-[200px] border-b ${askGerman ? "bg-blue-50 border-blue-100" : "bg-yellow-50 border-yellow-100"}`}>
+            <span className={`text-xs font-bold uppercase tracking-wider mb-4 ${askGerman ? "text-blue-400" : "text-yellow-600"}`}>{promptLang}</span>
+            <h2 className={`text-3xl font-bold text-center ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>{promptText}</h2>
+          </div>
+
+          {/* Answer half */}
+          <div className={`flex-1 p-8 flex flex-col justify-center items-center min-h-[200px] ${askGerman ? "bg-yellow-50" : "bg-blue-50"}`}>
+            <span className={`text-xs font-bold uppercase tracking-wider mb-4 ${askGerman ? "text-yellow-600" : "text-blue-400"}`}>{answerLang}</span>
+            {readingPhase === "revealed" ? (
+              <div className="text-center space-y-2">
+                <h2 className={`text-4xl font-bold ${askGerman ? "text-yellow-900" : "text-blue-900"}`}>{answerText}</h2>
+                {currentWord.isVerb && askGerman && (
+                  <div className="flex flex-wrap gap-3 justify-center mt-2">
+                    {currentWord.german3rdPerson && currentWord.german3rdPerson !== "—" && (
+                      <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.german3rdPerson}</span>
+                    )}
+                    {currentWord.germanImperfekt && currentWord.germanImperfekt !== "—" && (
+                      <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.germanImperfekt}</span>
+                    )}
+                    {currentWord.germanPerfekt && currentWord.germanPerfekt !== "—" && (
+                      <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.germanPerfekt}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2">
+                <div className="text-4xl">🤔</div>
+                <p className={`text-sm font-medium ${askGerman ? "text-yellow-400" : "text-blue-400"}`}>Click Check to reveal</p>
+              </div>
+            )}
+          </div>
+
+          {/* Action area */}
+          <div className="p-6 bg-white border-t border-gray-100">
+            {readingPhase === "prompt" ? (
+              <button
+                onClick={handleReadingCheck}
+                className="w-full py-4 bg-indigo-600 text-white text-lg font-semibold rounded-2xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <Eye className="w-5 h-5" /> Check Answer
+              </button>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleReadingSelfReport(false)}
+                  className="flex-1 py-4 bg-rose-500 text-white text-base font-bold rounded-2xl hover:bg-rose-600 transition-colors flex items-center justify-center gap-2"
+                >
+                  <ThumbsDown className="w-5 h-5" /> I didn't know it
+                </button>
+                <button
+                  onClick={() => handleReadingSelfReport(true)}
+                  className="flex-1 py-4 bg-emerald-500 text-white text-base font-bold rounded-2xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+                >
+                  <ThumbsUp className="w-5 h-5" /> I knew it!
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── TYPING MODE RENDER (original, unchanged) ───────────────────────────────
+  // Label adjustments when direction is reversed (askGerman=false for B1)
+  const topLabel = askGerman ? "English" : "Deutsch";
+  const bottomLabel = askGerman ? "Deutsch" : "English";
+  const topColor = askGerman ? "bg-blue-50 border-blue-100" : "bg-yellow-50 border-yellow-100";
+  const bottomColor = askGerman ? "bg-yellow-50" : "bg-blue-50";
+  const topLabelColor = askGerman ? "text-blue-400" : "text-yellow-600";
+  const bottomLabelColor = askGerman ? "text-yellow-600" : "text-blue-400";
+
+  const topContent = askGerman
+    ? currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")
+    : currentWord.german;
+  const bottomContent = askGerman ? currentWord.german : currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "");
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <div className="text-sm font-medium text-gray-500">
-          {currentIndex + 1} / {words.length}
-        </div>
-        <div className="text-lg font-bold text-indigo-600">
-          {stats.points} pts
-        </div>
+        <div className="text-sm font-medium text-gray-500">{currentIndex + 1} / {words.length}</div>
+        <div className="text-lg font-bold text-indigo-600">{stats.points} pts</div>
       </div>
 
       <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8">
-        <div
-          className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        ></div>
+        <div className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
-        {/* Top Half - Light Blue - English */}
-        <div className="flex-1 bg-blue-50 p-8 flex flex-col justify-center items-center min-h-[220px] border-b border-blue-100 relative">
-          <span className="absolute top-4 left-4 text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
-            English
-            {currentWord.topicId === "S1" && (
-              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">✉ Informal letter</span>
-            )}
-            {currentWord.topicId === "S2" && (
-              <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion piece</span>
-            )}
-            {currentWord.topicId === "S3" && (
-              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal letter</span>
-            )}
+        {/* Top Half */}
+        <div className={`flex-1 ${topColor} p-8 flex flex-col justify-center items-center min-h-[220px] border-b relative`}>
+          <span className={`absolute top-4 left-4 text-xs font-bold ${topLabelColor} uppercase tracking-wider flex items-center gap-2`}>
+            {topLabel}
+            {currentWord.topicId === "S1" && <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">✉ Informal letter</span>}
+            {currentWord.topicId === "S2" && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion piece</span>}
+            {currentWord.topicId === "S3" && <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal letter</span>}
           </span>
-          {!askGerman && !showResult ? (
+          {/* If asking English (top is German → show it) OR asking German (top is English → show it) */}
+          {(askGerman ? false : true) && !showResult ? (
+            /* askGerman=false means top is Deutsch and is the input area */
             <div className="w-full">
               {currentWord.isVerb ? renderVerbInputs() : (
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    justAdvancedRef.current = false;
-                  }}
+                <input type="text" value={input}
+                  onChange={(e) => { setInput(e.target.value); justAdvancedRef.current = false; }}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type English translation..."
-                  className="w-full px-6 py-4 text-lg border-2 border-blue-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all bg-white"
-                  autoFocus
-                  autoComplete="off"
-                />
+                  placeholder="Type German translation..."
+                  className="w-full px-6 py-4 text-lg border-2 border-yellow-200 rounded-2xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
+                  autoFocus autoComplete="off" />
               )}
-              {hint && (
-                <div className="mt-2 text-sm font-bold text-blue-500 animate-pulse">
-                  Hint: Starts with "{hint}"
-                </div>
-              )}
+              {hint && <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
               {renderShortcuts()}
             </div>
           ) : (
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-blue-900 flex items-center gap-2">
-                {currentWord.english.replace(/\s*\[(?:INFORMAL|FORMAL|OPINION)\]/g, "")}
+              <h2 className={`text-3xl font-bold flex items-center gap-2 ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>
+                {topContent}
                 {!showResult && (
-                  <button
-                    type="button"
-                    onClick={handleHint}
-                    className="p-1 hover:bg-blue-100 rounded-full transition-colors text-blue-400"
-                    title="Hint"
-                  >
+                  <button type="button" onClick={handleHint}
+                    className={`p-1 rounded-full transition-colors ${askGerman ? "hover:bg-blue-100 text-blue-400" : "hover:bg-yellow-100 text-yellow-600"}`}
+                    title="Hint">
                     <HelpCircle className="w-5 h-5" />
                   </button>
                 )}
               </h2>
-              {currentWord.topicId.startsWith("S") && !showResult && (() => {
-                // Show underscores for each word in the expected German answer
+              {/* Word count underscores for writing topics (only when askGerman=true) */}
+              {askGerman && currentWord.topicId.startsWith("S") && !showResult && (() => {
                 const firstOption = currentWord.german.split("/")[0].trim();
                 const wordCount = firstOption.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean).length;
                 return (
@@ -493,57 +549,39 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </p>
                 );
               })()}
-              {currentWord.isVerb && (
+              {currentWord.isVerb && askGerman && (
                 <div className="mt-2 flex gap-4 justify-center text-sm font-medium text-blue-600">
-                  <span>{currentWord.englishImperfekt}</span>
-                  <span>•</span>
-                  <span>{currentWord.englishPerfekt}</span>
+                  <span>{currentWord.englishImperfekt}</span><span>•</span><span>{currentWord.englishPerfekt}</span>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Bottom Half - Light Red - German */}
-        <div className="flex-1 bg-yellow-50 p-8 flex flex-col justify-center items-center min-h-[220px] relative">
-          <span className="absolute top-4 left-4 text-xs font-bold text-yellow-600 uppercase tracking-wider">
-            Deutsch
-          </span>
+        {/* Bottom Half */}
+        <div className={`flex-1 ${bottomColor} p-8 flex flex-col justify-center items-center min-h-[220px] relative`}>
+          <span className={`absolute top-4 left-4 text-xs font-bold ${bottomLabelColor} uppercase tracking-wider`}>{bottomLabel}</span>
           {askGerman && !showResult ? (
             <div className="w-full">
               {currentWord.isVerb ? renderVerbInputs() : (
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    justAdvancedRef.current = false;
-                  }}
+                <input type="text" value={input}
+                  onChange={(e) => { setInput(e.target.value); justAdvancedRef.current = false; }}
                   onKeyDown={handleKeyDown}
                   placeholder="Type German translation..."
                   className="w-full px-6 py-4 text-lg border-2 border-yellow-200 rounded-2xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
-                  autoFocus
-                  autoComplete="off"
-                />
+                  autoFocus autoComplete="off" />
               )}
-              {hint && (
-                <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">
-                  Hint: Starts with "{hint}"
-                </div>
-              )}
+              {hint && <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
               {renderShortcuts()}
             </div>
           ) : (
             <div className="text-center space-y-2">
-              <h2 className="text-4xl font-bold text-yellow-900 flex items-center gap-2">
-                {currentWord.german}
+              <h2 className={`text-4xl font-bold flex items-center gap-2 ${askGerman ? "text-yellow-900" : "text-blue-900"}`}>
+                {bottomContent}
                 {!showResult && (
-                  <button
-                    type="button"
-                    onClick={handleHint}
-                    className="p-1 hover:bg-yellow-100 rounded-full transition-colors text-yellow-600"
-                    title="Hint"
-                  >
+                  <button type="button" onClick={handleHint}
+                    className={`p-1 rounded-full transition-colors ${askGerman ? "hover:bg-yellow-100 text-yellow-600" : "hover:bg-blue-100 text-blue-400"}`}
+                    title="Hint">
                     <HelpCircle className="w-6 h-6" />
                   </button>
                 )}
@@ -551,19 +589,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               {currentWord.isVerb && (
                 <div className="flex flex-wrap gap-3 justify-center">
                   {currentWord.german3rdPerson && currentWord.german3rdPerson !== "—" && (
-                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
-                      {currentWord.german3rdPerson}
-                    </span>
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.german3rdPerson}</span>
                   )}
                   {currentWord.germanImperfekt && currentWord.germanImperfekt !== "—" && (
-                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
-                      {currentWord.germanImperfekt}
-                    </span>
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.germanImperfekt}</span>
                   )}
                   {currentWord.germanPerfekt && currentWord.germanPerfekt !== "—" && (
-                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">
-                      {currentWord.germanPerfekt}
-                    </span>
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.germanPerfekt}</span>
                   )}
                 </div>
               )}
@@ -575,63 +607,36 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
         <div className="p-6 bg-white border-t border-gray-100 flex gap-4">
           {!showResult ? (
             <>
-              <button
-                type="button"
-                onClick={handleHint}
-                disabled={!!hint}
+              <button type="button" onClick={handleHint} disabled={!!hint}
                 className="px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                title="Hint (Shortcut: ?)"
-              >
+                title="Hint (Shortcut: ?)">
                 <HelpCircle className="w-5 h-5" />
               </button>
-              <button
-                type="submit"
-                className="flex-1 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-2xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
-              >
+              <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-2xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
                 Check Answer <ArrowRight className="w-5 h-5" />
               </button>
             </>
           ) : (
             <div className="flex flex-col gap-4 w-full">
-              <div
-                className={`p-4 rounded-2xl flex items-center justify-between ${isCorrect ? "bg-emerald-50 border border-emerald-200" : "bg-rose-50 border border-rose-200"}`}
-              >
+              <div className={`p-4 rounded-2xl flex items-center justify-between ${isCorrect ? "bg-emerald-50 border border-emerald-200" : "bg-rose-50 border border-rose-200"}`}>
                 <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-full ${isCorrect ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600"}`}
-                  >
-                    {isCorrect ? (
-                      <Check className="w-6 h-6" />
-                    ) : (
-                      <X className="w-6 h-6" />
-                    )}
+                  <div className={`p-2 rounded-full ${isCorrect ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600"}`}>
+                    {isCorrect ? <Check className="w-6 h-6" /> : <X className="w-6 h-6" />}
                   </div>
-                  <h3
-                    className={`text-lg font-bold ${isCorrect ? "text-emerald-800" : "text-rose-800"}`}
-                  >
-                    {isCorrect ? (isCorrect && !gradingMessage ? "Correct! 😊" : "Correct!") : "Incorrect"}
+                  <h3 className={`text-lg font-bold ${isCorrect ? "text-emerald-800" : "text-rose-800"}`}>
+                    {isCorrect ? (gradingMessage ? "Correct!" : "Correct! 😊") : "Incorrect"}
                   </h3>
                 </div>
                 <div className="text-right">
-                  {gradingMessage && (
-                    <p className="text-sm font-medium text-amber-600 mb-1">
-                      {gradingMessage}
-                    </p>
-                  )}
-                  {isCorrect && pointsEarned > 0 && (
-                    <span className="text-emerald-600 font-bold text-lg">
-                      +{pointsEarned} pts
-                    </span>
-                  )}
+                  {gradingMessage && <p className="text-sm font-medium text-amber-600 mb-1">{gradingMessage}</p>}
+                  {isCorrect && pointsEarned > 0 && <span className="text-emerald-600 font-bold text-lg">+{pointsEarned} pts</span>}
                 </div>
               </div>
               {!isCorrect && wrongAnswer && (
                 <div className="flex flex-col gap-2 text-sm w-full">
                   <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 w-full">
                     <p className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">You typed</p>
-                    <p className="font-bold text-rose-700 break-words">
-                      {wrongAnswer.typed || <span className="italic opacity-50">nothing</span>}
-                    </p>
+                    <p className="font-bold text-rose-700 break-words">{wrongAnswer.typed || <span className="italic opacity-50">nothing</span>}</p>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 w-full">
                     <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Correct answer</p>
@@ -639,11 +644,8 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </div>
                 </div>
               )}
-              <button
-                type="submit"
-                autoFocus
-                className="w-full py-4 bg-gray-900 text-white text-lg font-semibold rounded-2xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-              >
+              <button type="submit" autoFocus
+                className="w-full py-4 bg-gray-900 text-white text-lg font-semibold rounded-2xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
                 Next Word <ArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -660,29 +662,19 @@ function SessionSummary({ results, mode, onComplete }: { results: { wordId: stri
   const { stats, awardBonus } = useStore();
   const streak = stats.streak;
   const jokers = stats.jokers ?? 0;
-  const correctCount2 = results.filter(r => r.correct).length;
   const isRevise = mode === "revise";
-  const reviseBonus = isRevise ? Math.min(correctCount2 * 3, 50) : 0;
-  // Award revise bonus once per session (use timestamp as unique key)
-  const sessionKey = `revise_bonus_${results.map(r=>r.wordId).join("").slice(0,20)}`;
+  const reviseBonus = isRevise ? Math.min(correctCount * 3, 50) : 0;
+  const sessionKey = `revise_bonus_${results.map(r => r.wordId).join("").slice(0, 20)}`;
   React.useEffect(() => {
     if (isRevise && reviseBonus > 0) awardBonus(sessionKey, reviseBonus);
   }, []);
 
-  // Import helpers inline to avoid circular import issues
   const getStreakFlamesLocal = (s: number) => "🔥".repeat(Math.min(s, 5));
   const getStreakBonusLocal = (s: number) => {
-    if (s <= 0)  return 0;
-    if (s === 1) return 20;
-    if (s === 2) return 40;
-    if (s === 3) return 60;
-    if (s === 4) return 80;
-    if (s <= 9)  return 100;
-    if (s <= 19) return 150;
-    if (s <= 29) return 200;
-    if (s <= 39) return 250;
-    if (s <= 49) return 300;
-    return 400;
+    if (s <= 0) return 0; if (s === 1) return 20; if (s === 2) return 40;
+    if (s === 3) return 60; if (s === 4) return 80; if (s <= 9) return 100;
+    if (s <= 19) return 150; if (s <= 29) return 200; if (s <= 39) return 250;
+    if (s <= 49) return 300; return 400;
   };
   const newJokerEarned = streak > 0 && streak % 7 === 0;
 
@@ -691,13 +683,10 @@ function SessionSummary({ results, mode, onComplete }: { results: { wordId: stri
       <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
         <Check className="w-10 h-10 text-indigo-600" />
       </div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">
-        Session Complete!
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-900 mb-2">Session Complete!</h2>
       <p className="text-gray-500 mb-6 text-center">
         Great job! You've finished all the words in this session.
-        <br />
-        <span className="font-bold text-indigo-600 mt-2 block">Go to Box 1 to learn words you did not know.</span>
+        <br /><span className="font-bold text-indigo-600 mt-2 block">Go to Box 1 to learn words you did not know.</span>
       </p>
 
       <div className="grid grid-cols-2 gap-4 w-full mb-4">
@@ -711,34 +700,26 @@ function SessionSummary({ results, mode, onComplete }: { results: { wordId: stri
         </div>
       </div>
 
-      {/* Revise session bonus */}
       {isRevise && reviseBonus > 0 && (
         <div className="w-full bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 mb-4 text-center">
           <p className="text-2xl mb-1">✅</p>
           <p className="text-sm font-bold text-emerald-700">Revise session bonus!</p>
-          <p className="text-xs text-emerald-600">+{reviseBonus} pts for {correctCount2} correct answers</p>
+          <p className="text-xs text-emerald-600">+{reviseBonus} pts for {correctCount} correct answers</p>
         </div>
       )}
 
-      {/* Streak bonus panel */}
       {streak > 0 && (
         <div className="w-full bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-4 mb-4 text-center">
           <p className="text-2xl mb-1">{getStreakFlamesLocal(streak)}</p>
           <p className="text-sm font-bold text-orange-700">{streak}-day streak!</p>
           <p className="text-xs text-orange-600">Complete today's GCSE day to earn <span className="font-bold">+{getStreakBonusLocal(streak)} bonus pts</span></p>
-          {newJokerEarned && (
-            <p className="text-xs text-purple-600 font-bold mt-1">🃏 You earned a joker! ({jokers} total)</p>
-          )}
-          {jokers > 0 && !newJokerEarned && (
-            <p className="text-xs text-blue-500 mt-1">🃏 {jokers} joker{jokers > 1 ? "s" : ""} saved — miss a day without losing your streak!</p>
-          )}
+          {newJokerEarned && <p className="text-xs text-purple-600 font-bold mt-1">🃏 You earned a joker! ({jokers} total)</p>}
+          {jokers > 0 && !newJokerEarned && <p className="text-xs text-blue-500 mt-1">🃏 {jokers} joker{jokers > 1 ? "s" : ""} saved</p>}
         </div>
       )}
 
-      <button
-        onClick={onComplete}
-        className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
-      >
+      <button onClick={onComplete}
+        className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
         Return to Dashboard
       </button>
     </div>
