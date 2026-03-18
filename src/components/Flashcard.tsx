@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Word } from "../data/vocabulary";
 import { checkAnswer, checkWritingAnswer, stripArticle, removeParentheses } from "../utils/grading";
+import { createGappedSentence } from "../utils/sentenceGap";
 import { useStore } from "../store/useStore";
 import { ArrowRight, Check, X, HelpCircle, ThumbsUp, ThumbsDown, Eye } from "lucide-react";
 
@@ -526,7 +527,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
             </div>
           ) : (
             <div className="text-center">
-              <h2 className={`text-3xl font-bold flex items-center gap-2 ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>
+              <h2 className={`text-3xl font-bold flex items-center gap-2 justify-center ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>
                 {topContent}
                 {!showResult && (
                   <button type="button" onClick={handleHint}
@@ -536,6 +537,12 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </button>
                 )}
               </h2>
+              {/* Show English sentence when asking for German (topic A with sentences) */}
+              {askGerman && currentWord.englishSentence && (
+                <p className="mt-3 text-base text-blue-700 italic max-w-md leading-relaxed">
+                  {currentWord.englishSentence}
+                </p>
+              )}
               {/* Word count underscores for writing topics (only when askGerman=true) */}
               {askGerman && currentWord.topicId.startsWith("S") && !showResult && (() => {
                 const firstOption = currentWord.german.split("/")[0].trim();
@@ -573,10 +580,29 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
               )}
               {hint && <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
               {renderShortcuts()}
+              {/* Show gapped German sentence as context clue */}
+              {currentWord.germanSentence && (() => {
+                const gapped = createGappedSentence(currentWord.german, currentWord.germanSentence);
+                if (gapped && gapped !== currentWord.germanSentence) {
+                  return (
+                    <p className="mt-4 text-sm text-yellow-700 text-center leading-relaxed max-w-md mx-auto">
+                      {gapped.split('______').map((part, i, arr) => (
+                        <React.Fragment key={i}>
+                          {part}
+                          {i < arr.length - 1 && (
+                            <span className="inline-block border-b-2 border-yellow-400 w-16 mx-1 align-middle">&nbsp;</span>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  );
+                }
+                return null;
+              })()}
             </div>
           ) : (
             <div className="text-center space-y-2">
-              <h2 className={`text-4xl font-bold flex items-center gap-2 ${askGerman ? "text-yellow-900" : "text-blue-900"}`}>
+              <h2 className={`text-4xl font-bold flex items-center gap-2 justify-center ${askGerman ? "text-yellow-900" : "text-blue-900"}`}>
                 {bottomContent}
                 {!showResult && (
                   <button type="button" onClick={handleHint}
@@ -586,6 +612,12 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </button>
                 )}
               </h2>
+              {/* Show revealed German sentence after answering */}
+              {showResult && askGerman && currentWord.germanSentence && (
+                <p className="mt-2 text-sm text-yellow-800 italic max-w-md leading-relaxed">
+                  {currentWord.germanSentence}
+                </p>
+              )}
               {currentWord.isVerb && (
                 <div className="flex flex-wrap gap-3 justify-center">
                   {currentWord.german3rdPerson && currentWord.german3rdPerson !== "—" && (
