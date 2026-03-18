@@ -296,6 +296,15 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
     }
   }
   
+  // Handle optional prefix notation: "(un)zufrieden" → try "zufrieden" and "unzufrieden"
+  // "(gar) nicht" → try "gar nicht" and "nicht"
+  const optPrefixMatch = word.match(/^\(([^)]+)\)\s*(\S.*)$/);
+  if (optPrefixMatch) {
+    const [, prefix, rest] = optPrefixMatch;
+    // Add both variants: with and without the optional prefix
+    word = `${prefix}${rest}, ${rest}`;
+  }
+  
   // Handle alternatives - take first option for matching
   // e.g., "wechseln, umtauschen" → try "umtauschen" first (more likely in sentence), then "wechseln"
   const alternatives = word.split(/[/,]/).map(s => s.trim()).filter(Boolean);
