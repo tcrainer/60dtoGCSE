@@ -9,7 +9,7 @@
 
 const ARTICLES = ['der', 'die', 'das', 'dem', 'den', 'des', 'ein', 'eine', 'einem', 'einen', 'einer', 'eines'];
 const DICT_ARTICLES = ['der', 'die', 'das'];
-const SEPARABLE_PREFIXES = ['ab', 'an', 'auf', 'aus', 'bei', 'ein', 'fest', 'her', 'hin', 'los', 'mit', 'nach', 'um', 'vor', 'weg', 'zu', 'zurück'];
+const SEPARABLE_PREFIXES = ['ab', 'an', 'auf', 'aus', 'bei', 'durch', 'ein', 'fern', 'fest', 'her', 'herunter', 'herum', 'hin', 'hoch', 'los', 'mit', 'nach', 'um', 'voll', 'vor', 'weg', 'weiter', 'zu', 'zurück'];
 const REFLEXIVE_PRONOUNS = ['mich', 'dich', 'sich', 'uns', 'euch'];
 const BLANK = '______';
 
@@ -108,19 +108,15 @@ function blankWord(sentence: string, word: string): { result: string; found: boo
 
 /** Try to blank an article that appears before a blank in the sentence */
 function blankArticleBefore(sentence: string): string {
-  // Find the closest article before the FIRST blank (max 3 words before it)
-  // e.g., "in der Stadtmitte" → "der" before blank
-  // e.g., "in einer großen Stadt" → "einer" before blank
-  // Must NOT match unrelated articles earlier in the sentence
+  // Find the closest article before the FIRST blank (max 2 words before it)
+  // Only blank if words between article and blank are adjectives (lowercase in German)
+  // NOT if there's a capitalized noun between them (e.g., "in der Stadt als ______" — "der" belongs to "Stadt")
   const articlesPattern = ARTICLES.join('|');
-  // Match: article + up to 2 optional adjective/words + blank
-  // Use character class that includes German umlauts (ä, ö, ü, ß)
   const WORD = '[a-zA-ZäöüÄÖÜß]+';
   const pattern = new RegExp(
     `(?:^|\\s)(${articlesPattern})((?:\\s+${WORD}){0,2})\\s+${escapeRegex(BLANK)}`,
     'gi'
   );
-  // Find ALL matches and use the last one (closest to blank)
   let lastMatch: RegExpExecArray | null = null;
   let m: RegExpExecArray | null;
   while ((m = pattern.exec(sentence)) !== null) {
@@ -128,13 +124,22 @@ function blankArticleBefore(sentence: string): string {
   }
   if (lastMatch) {
     const article = lastMatch[1];
-    const middle = lastMatch[2]; // adjectives between article and blank
-    // Replace this specific occurrence: article + middle + blank → blank + middle + blank
+    const middle = lastMatch[2].trim(); // words between article and blank
+    
+    // Check: if any word between article and blank is capitalized, the article belongs
+    // to that noun, not to the blank — so don't blank it
+    if (middle) {
+      const middleWords = middle.split(/\s+/).filter(Boolean);
+      const hasNoun = middleWords.some(w => w[0] === w[0].toUpperCase() && w[0] !== w[0].toLowerCase());
+      if (hasNoun) return sentence; // article belongs to the noun, not our blank
+    }
+    
+    const middleWithSpace = lastMatch[2]; // preserve original spacing
     const toReplace = new RegExp(
-      `(^|\\s)${escapeRegex(article)}${escapeRegex(middle)}\\s+${escapeRegex(BLANK)}`,
+      `(^|\\s)${escapeRegex(article)}${escapeRegex(middleWithSpace)}\\s+${escapeRegex(BLANK)}`,
       'i'
     );
-    return sentence.replace(toReplace, `$1${BLANK}${middle} ${BLANK}`);
+    return sentence.replace(toReplace, `$1${BLANK}${middleWithSpace} ${BLANK}`);
   }
   return sentence;
 }
@@ -146,13 +151,14 @@ function handleSeparableVerb(sentence: string, infinitive: string): { result: st
     
     const stem = infinitive.substring(prefix.length); // e.g., "kommen" from "ankommen"
     
-    // Look for the prefix at end of sentence OR before a comma/clause boundary
+    // Look for the prefix at end of sentence, before comma, or before und/oder
     const prefixAtEnd = new RegExp(`\\b${escapeRegex(prefix)}\\s*([.,!?;:]*)\\s*$`, 'i');
-    const prefixAtClause = new RegExp(`\\b${escapeRegex(prefix)}\\s*,`, 'i');
+    const prefixAtClause = new RegExp(`\\b${escapeRegex(prefix)}\\s*[,]`, 'i');
+    const prefixBeforeConj = new RegExp(`\\b${escapeRegex(prefix)}\\s+(?:und|oder)\\b`, 'i');
     const prefixStandalone = new RegExp(`\\b${escapeRegex(prefix)}\\b`, 'i');
     
     const hasPrefixAtEnd = prefixAtEnd.test(sentence);
-    const hasPrefixAtClause = prefixAtClause.test(sentence);
+    const hasPrefixAtClause = prefixAtClause.test(sentence) || prefixBeforeConj.test(sentence);
     
     if (!hasPrefixAtEnd && !hasPrefixAtClause) continue;
     
@@ -257,6 +263,13 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   // e.g., "wechseln, umtauschen" → try "umtauschen" first (more likely in sentence), then "wechseln"
   const alternatives = word.split(/[/,]/).map(s => s.trim()).filter(Boolean);
   
+  // Also extract parenthesized content as alternatives
+  // e.g., "die DB (Deutsche Bahn)" → also try "Deutsche Bahn"
+  const parenMatch = word.match(/\(([^)]+)\)/);
+  if (parenMatch) {
+    alternatives.push(parenMatch[1].trim());
+  }
+  
   // Try each alternative
   for (const alt of alternatives) {
     const result = tryCreateGap(alt, sentence);
@@ -269,12 +282,28 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
     if (result !== sentence) return result;
   }
   
+  // Try adjective/adverb declension: strip trailing "s" and look for declined forms
+  // e.g., "links" → stem "link" → matches "linken" in sentence
+  for (const alt of alternatives) {
+    const [, stem] = stripDictArticle(alt);
+    const cleanStem = stem.replace(/\(.*?\)/g, '').trim().split(/\s+/)[0];
+    if (cleanStem.endsWith('s') && cleanStem.length >= 4) {
+      const adjBase = cleanStem.slice(0, -1); // "links" → "link"
+      const words = sentence.replace(/[.,!?;:!]/g, '').split(/\s+/);
+      for (const w of words) {
+        if (w.toLowerCase().startsWith(adjBase.toLowerCase()) && w.length >= adjBase.length + 1) {
+          return replaceWord(sentence, w, BLANK);
+        }
+      }
+    }
+  }
+  
   // Last resort: substring match for compound words / declined adjectives
   // e.g., "braun" inside "dunkelbraunem"
   for (const alt of alternatives) {
     const [, stem] = stripDictArticle(alt);
     const cleanStem = stem.replace(/\(.*?\)/g, '').trim().split(/\s+/)[0];
-    if (cleanStem.length >= 4) {
+    if (cleanStem.length >= 3) {
       const words = sentence.replace(/[.,!?;:!]/g, '').split(/\s+/);
       for (const w of words) {
         if (w.toLowerCase().includes(cleanStem.toLowerCase()) && w.toLowerCase() !== cleanStem.toLowerCase()) {
