@@ -13,6 +13,25 @@ const SEPARABLE_PREFIXES = ['ab', 'an', 'auf', 'aus', 'bei', 'ein', 'fest', 'her
 const REFLEXIVE_PRONOUNS = ['mich', 'dich', 'sich', 'uns', 'euch'];
 const BLANK = '______';
 
+/** Generate German strong verb vowel change variants for a stem */
+function generateVowelChanges(stem: string): string[] {
+  const variants: string[] = [];
+  const changes: [string, string][] = [
+    ['a', 'ä'], ['e', 'i'], ['e', 'ie'], ['o', 'ö'], ['u', 'ü'],
+    ['au', 'äu'], ['ei', 'ie'], ['ä', 'a'], ['ö', 'o'], ['ü', 'u'],
+    // Also handle "iss" → "eiß" type changes (wissen → weiß)
+    ['iss', 'eiß'], ['iss', 'uß'],
+  ];
+  for (const [from, to] of changes) {
+    const idx = stem.toLowerCase().indexOf(from);
+    if (idx >= 0) {
+      const variant = stem.substring(0, idx) + to + stem.substring(idx + from.length);
+      variants.push(variant);
+    }
+  }
+  return variants;
+}
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -147,6 +166,22 @@ function handleSeparableVerb(sentence: string, infinitive: string): { result: st
       }
     }
     
+    // Also try vowel-changed stems (e.g., fang → fäng for anfangen → fängt...an)
+    if (!foundStem) {
+      const vowelVariants = generateVowelChanges(stemRoot);
+      for (const variant of vowelVariants) {
+        for (const w of words) {
+          if (w.toLowerCase() === prefix.toLowerCase()) continue;
+          if (w.toLowerCase().startsWith(variant.toLowerCase()) && w.length >= variant.length) {
+            result = replaceWord(result, w, BLANK);
+            foundStem = true;
+            break;
+          }
+        }
+        if (foundStem) break;
+      }
+    }
+    
     if (foundStem) {
       // Blank the prefix
       if (hasPrefixAtEnd) {
@@ -277,6 +312,52 @@ function tryCreateGap(word: string, sentence: string): string {
           let result = replaceWord(sentence, w, BLANK);
           return result;
         }
+      }
+    }
+    
+    // Strategy 5: German strong verb vowel changes (a→ä, e→i/ie, o→ö, u→ü, au→äu)
+    if (stemRoot.length >= 3) {
+      const vowelVariants = generateVowelChanges(stemRoot);
+      const words = sentence.replace(/[.,!?;:!]/g, '').split(/\s+/);
+      for (const variant of vowelVariants) {
+        for (const w of words) {
+          if (w.toLowerCase().startsWith(variant.toLowerCase()) && w.length >= variant.length) {
+            let result = replaceWord(sentence, w, BLANK);
+            return result;
+          }
+        }
+      }
+    }
+    
+    // Strategy 6: Past participle forms (ge-...-t, ge-...-en)
+    if (stemRoot.length >= 3) {
+      const words = sentence.replace(/[.,!?;:!]/g, '').split(/\s+/);
+      for (const w of words) {
+        const wLow = w.toLowerCase();
+        // Check if word starts with "ge" + stem root (or vowel-changed root)
+        if (wLow.startsWith('ge') && wLow.length >= stemRoot.length + 2) {
+          const afterGe = wLow.substring(2);
+          if (afterGe.startsWith(stemRoot.toLowerCase().substring(0, Math.min(3, stemRoot.length)))) {
+            return replaceWord(sentence, w, BLANK);
+          }
+          // Also try vowel-changed forms
+          for (const variant of generateVowelChanges(stemRoot)) {
+            if (afterGe.startsWith(variant.toLowerCase().substring(0, Math.min(3, variant.length)))) {
+              return replaceWord(sentence, w, BLANK);
+            }
+          }
+        }
+      }
+    }
+    
+    // Strategy 7: Hyphenated compound words (e.g., "Universitäts-abschluss" matches "Universitätsabschluss")
+    if (stem.includes('-')) {
+      const dehyphenated = stem.replace(/-/g, '');
+      const dehypResult = blankWord(sentence, dehyphenated);
+      if (dehypResult.found) {
+        let result = dehypResult.result;
+        if (hasArticle) result = blankArticleBefore(result);
+        return result;
       }
     }
   } else {
