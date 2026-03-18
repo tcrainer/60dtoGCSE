@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import { useStore } from "../store/useStore";
 import { getLevel, getStreakBonus, getStreakFlames } from "../store/useStore";
 import { checkAnswer, checkWritingAnswer } from "../utils/grading";
