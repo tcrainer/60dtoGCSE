@@ -19,13 +19,20 @@ function generateVowelChanges(stem: string): string[] {
   const changes: [string, string][] = [
     ['a', 'ä'], ['e', 'i'], ['e', 'ie'], ['o', 'ö'], ['u', 'ü'],
     ['au', 'äu'], ['ei', 'ie'], ['ä', 'a'], ['ö', 'o'], ['ü', 'u'],
+    ['ö', 'a'], // mögen → mag
     // Also handle "iss" → "eiß" type changes (wissen → weiß)
     ['iss', 'eiß'], ['iss', 'uß'],
   ];
   for (const [from, to] of changes) {
-    const idx = stem.toLowerCase().indexOf(from);
+    const idx = stem.toLowerCase().lastIndexOf(from);
     if (idx >= 0) {
       const variant = stem.substring(0, idx) + to + stem.substring(idx + from.length);
+      variants.push(variant);
+    }
+    // Also try first occurrence if different
+    const firstIdx = stem.toLowerCase().indexOf(from);
+    if (firstIdx >= 0 && firstIdx !== idx) {
+      const variant = stem.substring(0, firstIdx) + to + stem.substring(firstIdx + from.length);
       variants.push(variant);
     }
   }
@@ -241,6 +248,11 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   let word = germanWord.trim();
   let sentence = germanSentence.trim();
   
+  // Handle parenthesized reflexive: "umdrehen (sich)" → "sich umdrehen"
+  // and "setzen (sich)" → "sich setzen"
+  word = word.replace(/^(\S+)\s+\(sich\)$/i, 'sich $1');
+  word = word.replace(/\(sich\)\s*/i, 'sich ');
+  
   // Handle alternatives - take first option for matching
   // e.g., "wechseln, umtauschen" → try "umtauschen" first (more likely in sentence), then "wechseln"
   const alternatives = word.split(/[/,]/).map(s => s.trim()).filter(Boolean);
@@ -255,6 +267,21 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   for (const alt of [...alternatives].reverse()) {
     const result = tryCreateGap(alt, sentence);
     if (result !== sentence) return result;
+  }
+  
+  // Last resort: substring match for compound words / declined adjectives
+  // e.g., "braun" inside "dunkelbraunem"
+  for (const alt of alternatives) {
+    const [, stem] = stripDictArticle(alt);
+    const cleanStem = stem.replace(/\(.*?\)/g, '').trim().split(/\s+/)[0];
+    if (cleanStem.length >= 4) {
+      const words = sentence.replace(/[.,!?;:!]/g, '').split(/\s+/);
+      for (const w of words) {
+        if (w.toLowerCase().includes(cleanStem.toLowerCase()) && w.toLowerCase() !== cleanStem.toLowerCase()) {
+          return replaceWord(sentence, w, BLANK);
+        }
+      }
+    }
   }
   
   // Fallback: return the sentence as-is (no gaps - shouldn't happen often)
@@ -294,7 +321,20 @@ function tryCreateGap(word: string, sentence: string): string {
     
     // Strategy 2: Separable verb
     const sep = handleSeparableVerb(sentence, stemParts[0]);
-    if (sep.found) return sep.result;
+    if (sep.found) {
+      let result = sep.result;
+      // Also blank reflexive pronoun if this is a reflexive separable verb
+      if (isReflexive) {
+        for (const pron of REFLEXIVE_PRONOUNS) {
+          const pronRegex = new RegExp(`\\b${escapeRegex(pron)}\\b`, 'i');
+          if (pronRegex.test(result)) {
+            result = result.replace(pronRegex, BLANK);
+            break;
+          }
+        }
+      }
+      return result;
+    }
     
     // Strategy 3: Reflexive verb with conjugation
     if (isReflexive) {
