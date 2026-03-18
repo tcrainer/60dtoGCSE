@@ -101,60 +101,60 @@ export const topicAVocab = `
 16	wünschen	to wish	Ich wünsche dir alles Gute zum Geburtstag.	I wish you all the best for your birthday.
 16	zelten	to camp	Im Sommer zelten wir gern am See.	In the summer we like to camp by the lake.
 16	zustellen	to deliver (letter)	Der Briefträger stellt die Post jeden Tag zu.	The postman delivers the post every day.
-17	Afrika	Africa	Afrika ist ein großer Kontinent.	Africa is a large continent.
-17	Afrikaner/in	African	Die Afrikanerin spricht drei Sprachen.	The African woman speaks three languages.
-17	Amerikaner/in	American	Der Amerikaner kommt aus New York.	The American comes from New York.
-17	Asiat/in	Asian	Die Asiatin studiert in Berlin.	The Asian woman is studying in Berlin.
-17	Asien	Asia	China und Japan liegen in Asien.	China and Japan are in Asia.
-17	Australien	Australia	Mein Cousin lebt seit zwei Jahren in Australien.	My cousin has been living in Australia for two years.
-18	Bangladesch	Bangladesh	Bangladesch liegt in Südasien.	Bangladesh is in South Asia.
-18	Bangladescher/in	Bangladeshi	Der Bangladescher arbeitet in einer Fabrik.	The Bangladeshi works in a factory.
-18	Bayern	Bavaria	München ist die Hauptstadt von Bayern.	Munich is the capital of Bavaria.
-18	Belgien	Belgium	Brüssel ist die Hauptstadt von Belgien.	Brussels is the capital of Belgium.
-18	Belgier/in	Belgian	Der Belgier spricht Französisch und Niederländisch.	The Belgian speaks French and Dutch.
-18	China	China	Die Chinesische Mauer ist in China.	The Great Wall is in China.
-19	Chinese/Chinesin	Chinese (person)	Die Chinesin kocht sehr gut.	The Chinese woman cooks very well.
-19	Däne/Dänin	Dane	Der Däne fährt gern Rad.	The Dane likes to cycle.
-19	Dänemark	Denmark	Dänemark liegt nördlich von Deutschland.	Denmark is north of Germany.
-19	England	England	London ist die Hauptstadt von England.	London is the capital of England.
-19	Europa	Europe	Frankreich und Deutschland liegen in Europa.	France and Germany are in Europe.
-19	Europäer/in	European	Die Europäerin reist gern in andere Länder.	The European woman likes to travel to other countries.
-20	Frankreich	France	In Frankreich essen wir Croissants zum Frühstück.	In France we eat croissants for breakfast.
-20	Genf	Geneva	Genf liegt am See in der Schweiz.	Geneva is on the lake in Switzerland.
-20	Grieche/Griechin	Greek	Der Grieche isst gern Olivenöl und Feta.	The Greek man likes eating olive oil and feta.
-20	Griechenland	Greece	Im Sommer fahren wir nach Griechenland.	In the summer we travel to Greece.
-20	Großbritannien	Great Britain	Großbritannien ist eine Insel in Europa.	Great Britain is an island in Europe.
-20	Inder/in	Indian	Die Inderin kocht gern scharfes Essen.	The Indian woman likes cooking spicy food.
-21	Indien	India	Indien ist ein großes Land in Asien.	India is a large country in Asia.
-21	Irland	Ireland	Wir fahren mit der Fähre nach Irland.	We are travelling by ferry to Ireland.
-21	Island	Iceland	Es ist im Winter sehr kalt in Island.	It is very cold in Iceland in winter.
-21	Italien	Italy	In Italien essen wir oft Pizza und Nudeln.	In Italy we often eat pizza and pasta.
-21	Italiener/in	Italian	Meine Tante ist Italienerin.	My aunt is Italian.
-21	Japan	Japan	Tokio ist eine riesige Stadt in Japan.	Tokyo is a huge city in Japan.
-22	Japaner/in	Japanese	Der Japaner fährt mit dem schnellen Zug.	The Japanese man travels on the fast train.
-22	Kanada	Canada	Mein Onkel wohnt in Kanada.	My uncle lives in Canada.
-22	Kanadier/in	Canadian	Der Kanadier spricht Englisch und Französisch.	The Canadian speaks English and French.
-22	Köln	Cologne	Der Dom in Köln ist sehr berühmt.	The cathedral in Cologne is very famous.
-22	Liechtenstein	Liechtenstein	Liechtenstein ist ein sehr kleines Land.	Liechtenstein is a very small country.
-22	Luxemburg	Luxembourg	Wir machen am Wochenende einen Ausflug nach Luxemburg.	We are going on a trip to Luxembourg at the weekend.
-23	München	Munich	München liegt in Süddeutschland.	Munich is situated in southern Germany.
-23	Nordamerika	North America	Die USA und Kanada liegen in Nordamerika.	The USA and Canada are located in North America.
-23	Norwegen	Norway	Die Landschaft in Norwegen ist sehr schön.	The scenery in Norway is very beautiful.
-23	Norweger/in	Norwegian	Die Norwegerin geht im Winter oft Ski fahren.	The Norwegian woman often goes skiing in winter.
-23	Pakistan	Pakistan	Es ist im Sommer sehr heiß in Pakistan.	It is very hot in Pakistan in the summer.
-23	Polen	Poland	Polen ist ein Nachbarland von Deutschland.	Poland is a neighbouring country of Germany.
-24	Portugal	Portugal	Wir verbringen unsere Sommerferien in Portugal.	We spend our summer holidays in Portugal.
-24	Russland	Russia	Russland ist das größte Land der Welt.	Russia is the largest country in the world.
-24	Schotte/Schottin	Scot	Der Schotte trägt einen Kilt.	The Scot is wearing a kilt.
-24	Schottland	Scotland	Es gibt viele alte Schlösser in Schottland.	There are many old castles in Scotland.
-24	Schweden	Sweden	Schweden hat viele schöne Seen und Wälder.	Sweden has many beautiful lakes and forests.
-24	Schweizer/in	Swiss	Der Schweizer liebt Schokolade und Käse.	The Swiss man loves chocolate and cheese.
-25	Spanien	Spain	Wir fliegen im August nach Spanien.	We are flying to Spain in August.
-25	Spanier/in	Spaniard	Die Spanierin tanzt sehr gut.	The Spanish woman dances very well.
-25	Südamerika	South America, Latin America	Brasilien liegt in Südamerika.	Brazil is located in South America.
-25	Türke/Türkin	Turk	Mein bester Freund ist Türke.	My best friend is a Turk.
-25	Ungarn	Hungary	Die Hauptstadt von Ungarn ist Budapest.	The capital of Hungary is Budapest.
-25	Wales	Wales	Wir machen oft Urlaub an der Küste in Wales.	We often go on holiday on the coast in Wales.
+38	Afrika	Africa	Afrika ist ein großer Kontinent.	Africa is a large continent.
+38	Afrikaner/in	African	Die Afrikanerin spricht drei Sprachen.	The African woman speaks three languages.
+38	Amerikaner/in	American	Der Amerikaner kommt aus New York.	The American comes from New York.
+38	Asiat/in	Asian	Die Asiatin studiert in Berlin.	The Asian woman is studying in Berlin.
+38	Asien	Asia	China und Japan liegen in Asien.	China and Japan are in Asia.
+38	Australien	Australia	Mein Cousin lebt seit zwei Jahren in Australien.	My cousin has been living in Australia for two years.
+39	Bangladesch	Bangladesh	Bangladesch liegt in Südasien.	Bangladesh is in South Asia.
+39	Bangladescher/in	Bangladeshi	Der Bangladescher arbeitet in einer Fabrik.	The Bangladeshi works in a factory.
+39	Bayern	Bavaria	München ist die Hauptstadt von Bayern.	Munich is the capital of Bavaria.
+39	Belgien	Belgium	Brüssel ist die Hauptstadt von Belgien.	Brussels is the capital of Belgium.
+39	Belgier/in	Belgian	Der Belgier spricht Französisch und Niederländisch.	The Belgian speaks French and Dutch.
+39	China	China	Die Chinesische Mauer ist in China.	The Great Wall is in China.
+40	Chinese/Chinesin	Chinese (person)	Die Chinesin kocht sehr gut.	The Chinese woman cooks very well.
+40	Däne/Dänin	Dane	Der Däne fährt gern Rad.	The Dane likes to cycle.
+40	Dänemark	Denmark	Dänemark liegt nördlich von Deutschland.	Denmark is north of Germany.
+40	England	England	London ist die Hauptstadt von England.	London is the capital of England.
+40	Europa	Europe	Frankreich und Deutschland liegen in Europa.	France and Germany are in Europe.
+40	Europäer/in	European	Die Europäerin reist gern in andere Länder.	The European woman likes to travel to other countries.
+41	Frankreich	France	In Frankreich essen wir Croissants zum Frühstück.	In France we eat croissants for breakfast.
+41	Genf	Geneva	Genf liegt am See in der Schweiz.	Geneva is on the lake in Switzerland.
+41	Grieche/Griechin	Greek	Der Grieche isst gern Olivenöl und Feta.	The Greek man likes eating olive oil and feta.
+41	Griechenland	Greece	Im Sommer fahren wir nach Griechenland.	In the summer we travel to Greece.
+41	Großbritannien	Great Britain	Großbritannien ist eine Insel in Europa.	Great Britain is an island in Europe.
+41	Inder/in	Indian	Die Inderin kocht gern scharfes Essen.	The Indian woman likes cooking spicy food.
+42	Indien	India	Indien ist ein großes Land in Asien.	India is a large country in Asia.
+42	Irland	Ireland	Wir fahren mit der Fähre nach Irland.	We are travelling by ferry to Ireland.
+42	Island	Iceland	Es ist im Winter sehr kalt in Island.	It is very cold in Iceland in winter.
+42	Italien	Italy	In Italien essen wir oft Pizza und Nudeln.	In Italy we often eat pizza and pasta.
+42	Italiener/in	Italian	Meine Tante ist Italienerin.	My aunt is Italian.
+42	Japan	Japan	Tokio ist eine riesige Stadt in Japan.	Tokyo is a huge city in Japan.
+43	Japaner/in	Japanese	Der Japaner fährt mit dem schnellen Zug.	The Japanese man travels on the fast train.
+43	Kanada	Canada	Mein Onkel wohnt in Kanada.	My uncle lives in Canada.
+43	Kanadier/in	Canadian	Der Kanadier spricht Englisch und Französisch.	The Canadian speaks English and French.
+43	Köln	Cologne	Der Dom in Köln ist sehr berühmt.	The cathedral in Cologne is very famous.
+43	Liechtenstein	Liechtenstein	Liechtenstein ist ein sehr kleines Land.	Liechtenstein is a very small country.
+43	Luxemburg	Luxembourg	Wir machen am Wochenende einen Ausflug nach Luxemburg.	We are going on a trip to Luxembourg at the weekend.
+44	München	Munich	München liegt in Süddeutschland.	Munich is situated in southern Germany.
+44	Nordamerika	North America	Die USA und Kanada liegen in Nordamerika.	The USA and Canada are located in North America.
+44	Norwegen	Norway	Die Landschaft in Norwegen ist sehr schön.	The scenery in Norway is very beautiful.
+44	Norweger/in	Norwegian	Die Norwegerin geht im Winter oft Ski fahren.	The Norwegian woman often goes skiing in winter.
+44	Pakistan	Pakistan	Es ist im Sommer sehr heiß in Pakistan.	It is very hot in Pakistan in the summer.
+44	Polen	Poland	Polen ist ein Nachbarland von Deutschland.	Poland is a neighbouring country of Germany.
+45	Portugal	Portugal	Wir verbringen unsere Sommerferien in Portugal.	We spend our summer holidays in Portugal.
+45	Russland	Russia	Russland ist das größte Land der Welt.	Russia is the largest country in the world.
+45	Schotte/Schottin	Scot	Der Schotte trägt einen Kilt.	The Scot is wearing a kilt.
+45	Schottland	Scotland	Es gibt viele alte Schlösser in Schottland.	There are many old castles in Scotland.
+45	Schweden	Sweden	Schweden hat viele schöne Seen und Wälder.	Sweden has many beautiful lakes and forests.
+45	Schweizer/in	Swiss	Der Schweizer liebt Schokolade und Käse.	The Swiss man loves chocolate and cheese.
+46	Spanien	Spain	Wir fliegen im August nach Spanien.	We are flying to Spain in August.
+46	Spanier/in	Spaniard	Die Spanierin tanzt sehr gut.	The Spanish woman dances very well.
+46	Südamerika	South America, Latin America	Brasilien liegt in Südamerika.	Brazil is located in South America.
+46	Türke/Türkin	Turk	Mein bester Freund ist Türke.	My best friend is a Turk.
+46	Ungarn	Hungary	Die Hauptstadt von Ungarn ist Budapest.	The capital of Hungary is Budapest.
+46	Wales	Wales	Wir machen oft Urlaub an der Küste in Wales.	We often go on holiday on the coast in Wales.
 26	Wien	Vienna	Wien ist eine sehr historische Stadt.	Vienna is a very historic city.
 26	ausgebucht	booked up, fully booked	Leider ist das Hotel komplett ausgebucht.	Unfortunately the hotel is completely booked up.
 26	besetzt	occupied, taken, full	Der Platz am Fenster ist schon besetzt.	The seat by the window is already taken.
@@ -227,60 +227,60 @@ export const topicAVocab = `
 37	der Aufenthalt	stay	Unser Aufenthalt in Berlin war fantastisch.	Our stay in Berlin was fantastic.
 37	der Aufzug	lift	Wir fahren mit dem Aufzug in den fünften Stock.	We take the lift to the fifth floor.
 37	der Balkon	balcony	Am Morgen trinke ich meinen Tee auf dem Balkon.	In the morning I drink my tea on the balcony.
-38	der Bauernhof	farm	In den Sommerferien helfe ich auf einem Bauernhof.	During the summer holidays I help on a farm.
-38	der Baum	tree	In unserem Garten steht ein großer Apfelbaum.	In our garden stands a large apple tree.
-38	der Berg	mountain	Wir wandern im Winter auf den Berg.	We hike up the mountain in winter.
-38	der Besuch	visit	Ich freue mich auf deinen Besuch am Wochenende.	I am looking forward to your visit at the weekend.
-38	der Blick	view (of)	Von meinem Zimmer habe ich einen tollen Blick auf das Meer.	From my room I have a great view of the sea.
-38	der Bodensee	Lake Constance	Wir machen im Frühling einen Ausflug an den Bodensee.	We are going on a trip to Lake Constance in the spring.
-39	der Brief	letter	Ich schreibe einen langen Brief an meinen Brieffreund.	I am writing a long letter to my penpal.
-39	der Briefkasten	letter box	Wir werfen die Postkarten in den Briefkasten.	We drop the postcards into the letter box.
-39	der Brunnen	fountain, well	In der Stadtmitte steht ein sehr alter Brunnen.	In the town centre stands a very old fountain.
-39	der Camcorder	camcorder	Mein Onkel filmt die Hochzeit mit dem Camcorder.	My uncle is filming the wedding with the camcorder.
-39	der Campingplatz	campsite	Dieser Campingplatz ist sehr billig und sauber.	This campsite is very cheap and clean.
-39	der Dom	cathedral	Der Dom in dieser Stadt ist sehr hoch.	The cathedral in this town is very tall.
-40	der Empfang	reception	Bitte holen Sie Ihren Zimmerschlüssel am Empfang ab.	Please pick up your room key at the reception.
-40	der Fahrstuhl	lift	Der Fahrstuhl ist leider schon wieder kaputt.	The lift is unfortunately broken again.
-40	der Fehler	mistake/fault	Ich habe einen Fehler in meinen Hausaufgaben gemacht.	I have made a mistake in my homework.
-40	der Fluss	river	Der Rhein ist ein langer Fluss in Deutschland.	The Rhine is a long river in Germany.
-40	der Fotoapparat	camera	Ich mache viele Bilder mit meinem neuen Fotoapparat.	I take lots of pictures with my new camera.
-40	der Frühling	spring	Der Frühling ist meine Lieblingsjahreszeit, weil es wärmer wird.	Spring is my favourite season because it gets warmer.
-41	der Fußgänger	pedestrian	Der Fußgänger wartet an der Ampel.	The pedestrian waits at the traffic lights.
-41	der Geburtsort	place of birth	Mein Geburtsort ist London.	My place of birth is London.
-41	der Hafen	port, harbour	Es gibt viele große Schiffe im Hafen.	There are many large ships in the port.
-41	der Herbst	autumn	Im Herbst fallen die Blätter von den Bäumen.	In autumn the leaves fall from the trees.
-41	der Jugendklub	youth club	Freitags spiele ich Tischtennis im Jugendklub.	On Fridays I play table tennis in the youth club.
-41	der Kurort	spa town	Meine Oma verbringt eine Woche in einem Kurort.	My grandma is spending a week in a spa town.
-42	der Nachname	last name	Wie buchstabiert man deinen Nachnamen?	How do you spell your last name?
-42	der Nachtklub	nightclub	Die Musik im Nachtklub war gestern sehr laut.	The music in the nightclub was very loud yesterday.
-42	der Notanruf	emergency call	Bei einem Unfall musst du den Notanruf wählen.	In an accident you must dial the emergency call.
-42	der Osterhase	Easter bunny	Der Osterhase bringt Schokolade für die Kinder.	The Easter bunny brings chocolate for the children.
-42	der Palast	palace	Der Buckingham Palast ist in London.	Buckingham Palace is in London.
-42	der Pass	passport	Zeigen Sie mir bitte Ihren Pass.	Please show me your passport.
-43	der Sand	sand	Der Sand am Strand ist heute sehr warm.	The sand on the beach is very warm today.
-43	der Schlafsack	sleeping bag	Wenn wir zelten, schlafe ich in einem Schlafsack.	When we camp, I sleep in a sleeping bag.
-43	der Schwarzwald	the Black Forest	Wir wandern im Sommer oft im Schwarzwald.	We often hike in the Black Forest in the summer.
-43	der See	lake	Im Sommer schwimmen wir oft im See.	In the summer we often swim in the lake.
-43	der Sekt	champagne	Zu Silvester trinken die Erwachsenen Sekt.	On New Year's Eve the adults drink champagne.
-43	der Sommer	summer	Im Sommer fahre ich immer ans Meer.	In summer I always travel to the seaside.
-44	der Souvenirladen	souvenir, gift shop	Ich kaufe eine Tasse im Souvenirladen.	I am buying a mug in the souvenir shop.
-44	der Stadtrand	outskirts	Wir wohnen am Stadtrand in einem kleinen Haus.	We live on the outskirts in a small house.
-44	der Stadtteil	part of town, district	Dieser Stadtteil ist sehr modern und sauber.	This part of town is very modern and clean.
-44	der Stock	floor, storey	Mein Zimmer ist oben im ersten Stock.	My room is upstairs on the first floor.
-44	der Supermarkt	supermarket	Wir kaufen Obst und Gemüse im Supermarkt.	We buy fruit and vegetables in the supermarket.
-44	der Tante-Emma-Laden	corner shop	Der kleine Tante-Emma-Laden um die Ecke ist sehr praktisch.	The small corner shop around the corner is very practical.
-45	der Tod	death	Der Tod ihres Hundes war sehr traurig.	The death of her dog was very sad.
-45	der Turm	tower	Wir klettern auf den hohen Turm, um die Aussicht zu sehen.	We are climbing the high tower to see the view.
-45	der Umzug	parade	Der Umzug zum Karneval ist sehr bunt und laut.	The carnival parade is very colourful and loud.
-45	der Verlust	loss	Der Verlust meines Handys ist sehr ärgerlich.	The loss of my mobile phone is very annoying.
-45	der Vorname	first name	Mein Vorname ist Thomas.	My first name is Thomas.
-45	der Wald	forest	Wir machen am Sonntag einen Spaziergang durch den Wald.	We are going for a walk through the forest on Sunday.
-46	der Weihnachtsbaum	Christmas tree	Wir schmücken den Weihnachtsbaum mit bunten Kugeln.	We are decorating the Christmas tree with colourful baubles.
-46	der Winter	winter	Im Winter schneit es oft in den Bergen.	In winter it often snows in the mountains.
-46	der Wintersport	winter sport	Skifahren ist ein sehr beliebter Wintersport.	Skiing is a very popular winter sport.
-46	der Wohnort	place of residence	Mein Wohnort ist eine ruhige Stadt in England.	My place of residence is a quiet town in England.
-46	die Alpen	the Alps	Die Alpen sind ein großes Gebirge in Europa.	The Alps are a large mountain range in Europe.
-46	die Apotheke	chemist's (dispensing)	Ich muss zur Apotheke gehen, um Medizin zu kaufen.	I need to go to the chemist's to buy medicine.
+17	der Bauernhof	farm	In den Sommerferien helfe ich auf einem Bauernhof.	During the summer holidays I help on a farm.
+17	der Baum	tree	In unserem Garten steht ein großer Apfelbaum.	In our garden stands a large apple tree.
+17	der Berg	mountain	Wir wandern im Winter auf den Berg.	We hike up the mountain in winter.
+17	der Besuch	visit	Ich freue mich auf deinen Besuch am Wochenende.	I am looking forward to your visit at the weekend.
+17	der Blick	view (of)	Von meinem Zimmer habe ich einen tollen Blick auf das Meer.	From my room I have a great view of the sea.
+17	der Bodensee	Lake Constance	Wir machen im Frühling einen Ausflug an den Bodensee.	We are going on a trip to Lake Constance in the spring.
+18	der Brief	letter	Ich schreibe einen langen Brief an meinen Brieffreund.	I am writing a long letter to my penpal.
+18	der Briefkasten	letter box	Wir werfen die Postkarten in den Briefkasten.	We drop the postcards into the letter box.
+18	der Brunnen	fountain, well	In der Stadtmitte steht ein sehr alter Brunnen.	In the town centre stands a very old fountain.
+18	der Camcorder	camcorder	Mein Onkel filmt die Hochzeit mit dem Camcorder.	My uncle is filming the wedding with the camcorder.
+18	der Campingplatz	campsite	Dieser Campingplatz ist sehr billig und sauber.	This campsite is very cheap and clean.
+18	der Dom	cathedral	Der Dom in dieser Stadt ist sehr hoch.	The cathedral in this town is very tall.
+19	der Empfang	reception	Bitte holen Sie Ihren Zimmerschlüssel am Empfang ab.	Please pick up your room key at the reception.
+19	der Fahrstuhl	lift	Der Fahrstuhl ist leider schon wieder kaputt.	The lift is unfortunately broken again.
+19	der Fehler	mistake/fault	Ich habe einen Fehler in meinen Hausaufgaben gemacht.	I have made a mistake in my homework.
+19	der Fluss	river	Der Rhein ist ein langer Fluss in Deutschland.	The Rhine is a long river in Germany.
+19	der Fotoapparat	camera	Ich mache viele Bilder mit meinem neuen Fotoapparat.	I take lots of pictures with my new camera.
+19	der Frühling	spring	Der Frühling ist meine Lieblingsjahreszeit, weil es wärmer wird.	Spring is my favourite season because it gets warmer.
+20	der Fußgänger	pedestrian	Der Fußgänger wartet an der Ampel.	The pedestrian waits at the traffic lights.
+20	der Geburtsort	place of birth	Mein Geburtsort ist London.	My place of birth is London.
+20	der Hafen	port, harbour	Es gibt viele große Schiffe im Hafen.	There are many large ships in the port.
+20	der Herbst	autumn	Im Herbst fallen die Blätter von den Bäumen.	In autumn the leaves fall from the trees.
+20	der Jugendklub	youth club	Freitags spiele ich Tischtennis im Jugendklub.	On Fridays I play table tennis in the youth club.
+20	der Kurort	spa town	Meine Oma verbringt eine Woche in einem Kurort.	My grandma is spending a week in a spa town.
+21	der Nachname	last name	Wie buchstabiert man deinen Nachnamen?	How do you spell your last name?
+21	der Nachtklub	nightclub	Die Musik im Nachtklub war gestern sehr laut.	The music in the nightclub was very loud yesterday.
+21	der Notanruf	emergency call	Bei einem Unfall musst du den Notanruf wählen.	In an accident you must dial the emergency call.
+21	der Osterhase	Easter bunny	Der Osterhase bringt Schokolade für die Kinder.	The Easter bunny brings chocolate for the children.
+21	der Palast	palace	Der Buckingham Palast ist in London.	Buckingham Palace is in London.
+21	der Pass	passport	Zeigen Sie mir bitte Ihren Pass.	Please show me your passport.
+22	der Sand	sand	Der Sand am Strand ist heute sehr warm.	The sand on the beach is very warm today.
+22	der Schlafsack	sleeping bag	Wenn wir zelten, schlafe ich in einem Schlafsack.	When we camp, I sleep in a sleeping bag.
+22	der Schwarzwald	the Black Forest	Wir wandern im Sommer oft im Schwarzwald.	We often hike in the Black Forest in the summer.
+22	der See	lake	Im Sommer schwimmen wir oft im See.	In the summer we often swim in the lake.
+22	der Sekt	champagne	Zu Silvester trinken die Erwachsenen Sekt.	On New Year's Eve the adults drink champagne.
+22	der Sommer	summer	Im Sommer fahre ich immer ans Meer.	In summer I always travel to the seaside.
+23	der Souvenirladen	souvenir, gift shop	Ich kaufe eine Tasse im Souvenirladen.	I am buying a mug in the souvenir shop.
+23	der Stadtrand	outskirts	Wir wohnen am Stadtrand in einem kleinen Haus.	We live on the outskirts in a small house.
+23	der Stadtteil	part of town, district	Dieser Stadtteil ist sehr modern und sauber.	This part of town is very modern and clean.
+23	der Stock	floor, storey	Mein Zimmer ist oben im ersten Stock.	My room is upstairs on the first floor.
+23	der Supermarkt	supermarket	Wir kaufen Obst und Gemüse im Supermarkt.	We buy fruit and vegetables in the supermarket.
+23	der Tante-Emma-Laden	corner shop	Der kleine Tante-Emma-Laden um die Ecke ist sehr praktisch.	The small corner shop around the corner is very practical.
+24	der Tod	death	Der Tod ihres Hundes war sehr traurig.	The death of her dog was very sad.
+24	der Turm	tower	Wir klettern auf den hohen Turm, um die Aussicht zu sehen.	We are climbing the high tower to see the view.
+24	der Umzug	parade	Der Umzug zum Karneval ist sehr bunt und laut.	The carnival parade is very colourful and loud.
+24	der Verlust	loss	Der Verlust meines Handys ist sehr ärgerlich.	The loss of my mobile phone is very annoying.
+24	der Vorname	first name	Mein Vorname ist Thomas.	My first name is Thomas.
+24	der Wald	forest	Wir machen am Sonntag einen Spaziergang durch den Wald.	We are going for a walk through the forest on Sunday.
+25	der Weihnachtsbaum	Christmas tree	Wir schmücken den Weihnachtsbaum mit bunten Kugeln.	We are decorating the Christmas tree with colourful baubles.
+25	der Winter	winter	Im Winter schneit es oft in den Bergen.	In winter it often snows in the mountains.
+25	der Wintersport	winter sport	Skifahren ist ein sehr beliebter Wintersport.	Skiing is a very popular winter sport.
+25	der Wohnort	place of residence	Mein Wohnort ist eine ruhige Stadt in England.	My place of residence is a quiet town in England.
+25	die Alpen	the Alps	Die Alpen sind ein großes Gebirge in Europa.	The Alps are a large mountain range in Europe.
+25	die Apotheke	chemist's (dispensing)	Ich muss zur Apotheke gehen, um Medizin zu kaufen.	I need to go to the chemist's to buy medicine.
 47	die Auskunft	information	Der Mann an der Auskunft am Bahnhof ist sehr hilfsbereit.	The man at the information desk at the station is very helpful.
 47	die Aussicht	view	Die Aussicht vom Berg ist wunderschön.	The view from the mountain is beautiful.
 47	die Besichtigung	viewing, sightseeing	Die Besichtigung des Schlosses beginnt um zehn Uhr.	The viewing of the castle begins at ten o'clock.
