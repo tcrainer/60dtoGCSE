@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react"; 
 import { Word } from "../data/vocabulary";
 import { checkAnswer, checkWritingAnswer, stripArticle, removeParentheses } from "../utils/grading";
 import { createGappedSentence } from "../utils/sentenceGap";
