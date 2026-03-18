@@ -260,6 +260,42 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   word = word.replace(/^(\S+)\s+\(sich\)$/i, 'sich $1');
   word = word.replace(/\(sich\)\s*/i, 'sich ');
   
+  // Handle dotted paired connectors: "weder...noch" → blank both "weder" and "noch"
+  const dottedMatch = word.match(/^(\S+?)\.{2,}(\S+?)$/);
+  if (dottedMatch) {
+    const [, part1, part2] = dottedMatch;
+    let result = sentence;
+    let anyFound = false;
+    const p1 = blankWord(result, part1);
+    if (p1.found) { result = p1.result; anyFound = true; }
+    const p2 = blankWord(result, part2);
+    if (p2.found) { result = p2.result; anyFound = true; }
+    if (anyFound) return result;
+  }
+  
+  // Handle "X...zu + Infinitiv" patterns: blank the keyword in the sentence
+  if (word.includes('...zu') || word.includes('.....zu')) {
+    const keyword = word.split(/\.+/)[0].trim();
+    if (keyword) {
+      const kwResult = blankWord(sentence, keyword);
+      if (kwResult.found) return kwResult.result;
+    }
+  }
+  
+  // Handle "(relative)" grammar labels — skip these, they're too common to gap meaningfully
+  if (word.includes('(relative)') || word.includes('(Relativ')) {
+    // Try to find and blank the relative pronoun in a relative clause (after comma)
+    const cleanWord = word.replace(/\s*\(relative\)\s*/i, '').replace(/\s*\/\s*/g, '/').trim();
+    const parts = cleanWord.split('/').map(s => s.trim()).filter(Boolean);
+    for (const p of parts) {
+      // Look for the word after a comma in the sentence
+      const afterComma = new RegExp(`,\\s+${escapeRegex(p)}\\b`, 'i');
+      if (afterComma.test(sentence)) {
+        return sentence.replace(afterComma, `, ${BLANK}`);
+      }
+    }
+  }
+  
   // Handle alternatives - take first option for matching
   // e.g., "wechseln, umtauschen" → try "umtauschen" first (more likely in sentence), then "wechseln"
   const alternatives = word.split(/[/,]/).map(s => s.trim()).filter(Boolean);
