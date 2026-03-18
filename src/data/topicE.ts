@@ -1,407 +1,409 @@
-export const topicEVocab = `1	spielen	to play
-1	laufen	to run
-1	Ski laufen	to ski
-1	der Fußball	football
-1	das Hobby	hobby, pastime
-1	lesen	to read
-1	das Lesen	reading
-2	hören	to hear, to listen to
-2	einkaufen	to buy, to shop
-2	kaufen	to buy
-2	das Geschäft	shop, business
-2	der Laden	shop, business
-2	verkaufen	to sell
-2	zahlen	to pay
-3	kosten	to cost
-3	kostenlos, gratis	free
-3	billig	cheap
-3	teuer	expensive
-3	die Gesundheit	health
-3	gesund	healthy
-3	krank	ill, sick
-4	das Krankenhaus	hospital
-4	der Krankenpfleger	(male) nurse
-4	die Krankenschwester	(female) nurse
-4	die Krankheit	illness
-4	sich krank fühlen	to feel ill, sick
-4	sich weh tun	to hurt oneself
-4	das Medikament	medicine
-5	essen	to eat
-5	das Abendessen	evening meal, supper
-5	das Mittagessen	lunch
-5	fressen	to eat, to scoff
-5	trinken	to drink
-5	das Frühstück	breakfast
-5	das Brot	bread
-6	das Fleisch	meat
-6	das Gemüse	vegetables
-6	der Kuchen	cake
-6	die Torte	gateau, flan
-6	das Getränk	drink
-6	der Saft	juice
-6	das Wasser	water
-7	die Speise	meal, food
-7	bestellen	to order
-7	ausgeben	to spend (money)
-7	ausgehen	to go out
-7	bearbeiten	to work on
-7	gehören	to belong to
-7	jobben	to do casual jobs
-8	musizieren	to play a musical instrument
-8	nehmen	to take
-8	umtauschen	to exchange (money)
-8	wandern	to hike, to go rambling
-8	Brieffreund/in	penfriend
-8	übel	bad, nauseous
-8	Bowling gehen	to go ten-pin bowling
-9	Einkäufe machen	to do one's shopping
-9	Feierabend machen	to finish work for the day
-9	Sport treiben	to do/play sport
-9	Wasserski fahren	to waterski
-9	besser gehen	to be better
-9	erkältet sein	to have a cold
-9	sich übergeben	to be sick, to vomit
-10	das Gewichtstraining	weight training
-10	das Kleingeld	(small or loose) change
-10	das Mineralwasser	mineral water
-10	das Schweinefilet	pork fillet
-10	das Tagesgericht	today's special
-10	das Taschengeld	pocket money
-10	der Bräutigam	bridegroom
-11	der Feiertag	public holiday
-11	der Sprudel	sparkling water
-11	der Wasserpark	water park
-11	die Debitkarte	debit card
-11	die Geldverschwendung	waste of money
-11	die Kreditkarte	credit card
-11	die Lebensmittel	food, groceries
-12	die Meeresfrüchte	seafood
-12	die Rechnung	bill
-12	die Tablette	tablet
-12	preiswert, günstig	good value, inexpensive, cheap
-12	wie viel(e)	how much, how many
-12	abnehmen	to lose weight
-12	angeln	to fish
-13	atmen	to breathe
-13	austauschen	to exchange
-13	bedienen	to serve
-13	begrüßen	to welcome
-13	duzen	to call someone 'du'
-13	fallen	to fall
-13	holen	to fetch
-14	husten	to cough
-14	joggen	to jog
-14	küssen	to kiss
-14	leiden	to suffer
-14	malen	to paint
-14	rauchen	to smoke
-14	reiten	to ride (a horse)
-15	schlagen	to hit, knock
-15	schließen	to close
-15	schmecken	to taste
-15	schützen	to protect
-15	segeln	to sail
-15	shoppen	to window shop
-15	siezen	to call someone 'Sie'
-16	sparen	to save
-16	springen	to jump
-16	tanzen	to dance
-16	tauchen	to dive
-16	umarmen	to hug, embrace
-16	untersuchen	to examine
-16	verletzen	to injure, to hurt, to wound
-17	verschreiben	to prescribe
-17	warten	to wait
-17	werfen	to throw
-17	windsurfen	to windsurf
-17	zeichnen	to draw
-17	zunehmen	to put on weight
-17	ändern	to change, to alter
-18	öffnen	to open
-18	Erste Hilfe leisten	to give first aid
-18	im Bett bleiben	to stay in bed
-18	Spieler/in	player
-18	atemberaubend	breathtaking
-18	begeistert	delighted
-18	besser	better
-19	eindrucksvoll	impressive
-19	ekelhaft	digusting
-19	ekelig	gross
-19	ernst	serious
-19	freudig	joyful
-19	frisch	fresh, cool
-19	gebrochen	broken
-20	geräuchert	smoked
-20	geschmacklos	tasteless
-20	geschmackvoll	tasteful
-20	gleich	same
-20	heiß	hot
-20	herzlich	warm, sincere
-20	köstlich	delicious
-21	kühl	cool
-21	lecker	tasty
-21	satt	full (after eating)
-21	sauer	sour
-21	scharf	hot, spicy
-21	schlechter	worse
-21	schwindlig	dizzy
-22	seltsam	odd, strange
-22	spannend	exciting
-22	süß	sweet
-22	verletzt	injured
-22	verstopft	constipated
-22	warm	warm
-22	wertvoll	valuable
-23	Rad fahren	to ride a bike, go cycling
-23	sich amüsieren	to enjoy oneself
-23	sich erholen	to recover
-23	Guten Appetit!	Enjoy your meal!
-23	Herzlichen Glückwunsch	congratulations
-23	bei mir	at (my) home
-23	das Asthma	asthma
-24	das Band	ribbon
-24	das Bein	leg
-24	das Bier	beer
-24	das Blut	blood
-24	das Bonbon	sweet
-24	das Brettspiel	board game
-24	das Brötchen	bread roll
-25	das Butterbrot	sandwich
-25	das Do-it-yourself	DIY
-25	das Ei	egg
-25	das Einkaufszentrum	shopping centre
-25	das Eis	ice, ice cream
-25	das Fieber	temperature, fever
-25	das Gebäck	biscuits, pastries
-26	das Gesicht	face
-26	das Hammelfleisch	mutton
-26	das Hauptgericht	main course
-26	das Herz	heart
-26	das Hähnchen	chicken
-26	das Inlineskaten	roller blading
-26	das Instrument	instrument
-27	das Kalbfleisch	veal
-27	das Kaufhaus	department store
-27	das Klavier	piano
-27	das Knie	knee
-27	das Kotelett	chop, cutlet
-27	das Käsebrot	cheese sandwich
-27	das Lammfleisch	lamb
-28	das Mehl	flour
-28	das Omelett	omelette
-28	das Parfum	perfume
-28	das Pflaster	plaster
-28	das Picknick	picnic
-28	das Portemonnaie	purse, wallet
-28	das Rezept	recipe
-29	das Rindfleisch	beef
-29	das Salz	salt
-29	das Schach	chess
-29	das Schaufenster	shop window
-29	das Schlagzeug	drums
-29	das Schnitzel	escalope
-29	das Schreibwarengeschäft	stationery shop
-30	das Schweinefleisch	pork
-30	das Spiegelei	fried egg
-30	das Spiel	game, match
-30	das Taschentuch	handkerchief
-30	das Tier	animal
-30	das Turnen	gymnastics
-30	das Würstchen	little sausage
-31	das Öl	oil
-31	der Alkohol	alcohol
-31	der Apfel	apple
-31	der Apfelsaft	apple juice
-31	der Apfelwein	cider
-31	der Arm	arm
-31	der Ausverkauf	clearance sale
-32	der Ball	ball
-32	der Bauch	tummy
-32	der Blumenkohl	cauliflower
-32	der Durchfall	diarrhoea
-32	der Espresso	espresso
-32	der Essig	vinegar
-32	der Finger	finger
-33	der Fisch	fish
-33	der Fischhändler	fishmonger
-33	der Freizeitpark	theme park
-33	der Fuß	foot
-33	der Geschmack	flavour
-33	der Hals	throat
-33	der Honig	honey
-34	der Imbiss	snack
-34	der Joghurt	yoghurt
-34	der Jugendklub	youth club
-34	der Kaffee	coffee
-34	der Kohl	cabbage
-34	der Kopf	head
-34	der Käse	cheese
-35	der Körper	body
-35	der Lachs	salmon
-35	der Magen	stomach
-35	der Markt	market
-35	der Mund	mouth
-35	der Nachtklub	nightclub
-35	der Organgensaft	orange juice
-36	der Pfannkuchen	pancake
-36	der Pfeffer	pepper
-36	der Pfirsich	peach
-36	der Raucher/in	smoker
-36	der Reis	rice
-36	der Reisescheck	traveller's cheque
-36	der Rettich	radish
-37	der Ring	ring
-37	der Rosenkohl	sprouts
-37	der Rotkohl	red cabbage
-37	der Rotwein	red wine
-37	der Salat	lettuce, salad
-37	der Sauerbraten	marinated pot roast
-37	der Schaufensterbummel	window shopping
-38	der Scheck	cheque
-38	der Schinken	ham
-38	der Schlussverkauf	end of season sale
-38	der Schläger	racket
-38	der Schmuck	jewellery
-38	der Schweinebraten	roast pork
-38	der Senf	mustard
-39	der Sonnenbrand	sunburn
-39	der Souvenirladen	souvenir, gift shop
-39	der Speck	bacon
-39	der Spezi	mix fanta and coke
-39	der Stich	sting, bite
-39	der Stress	stress
-39	der Supermarkt	supermarket
-40	der Tabak	tobacco
-40	der Tante-Emma-Laden	corner shop
-40	der Tee	tea
-40	der Thunfisch	tuna
-40	der Tiergarten	zoo
-40	der Umstand	circumstance
-40	der Unfall	accident
-41	der Verlobte	fiancé(e)
-41	der Wein	wine
-41	der Weißwein	white wine
-41	der Zahn	tooth
-41	der Zirkus	circus
-41	der Zoo	zoo
-41	der/die Vegetarier/in	vegetarian
-42	die Abteilung	department
-42	die Ananas	pineapple
-42	die Angelrute	fishing rod
-42	die Apfelschorle	apple spritzer
-42	die Apotheke	chemist's (dispensing)
-42	die Aprikose	apricot
-42	die Auswahl	selection, choice
-43	die Banane	banana
-43	die Bank	bank
-43	die Bauchschmerzen	tummy ache
-43	die Birne	pear
-43	die Blockflöte	recorder
-43	die Blutwurst	black pudding
-43	die Bratkartoffeln	fried potatoes
-44	die Bratwurst	fried sausage
-44	die Braut	bride
-44	die Brust	chest
-44	die Buchhandlung	bookshop
-44	die Butter	butter
-44	die Bäckerei	baker's shop
-44	die Chips	crisps
-45	die Cola	coke
-45	die Currywurst	currywurst
-45	die Disko	disco
-45	die Drogen	drugs
-45	die Drogerie	chemist's (non-dispensing)
-45	die Einkäufe	purchases
-45	die Eisbahn	skating rink
-46	die Ente	duck
-46	die Erbsen	peas
-46	die Erdbeere	strawberry
-46	die Flöte	flute
-46	die Frühstückscerealien	breakfast cereals
-46	die Gartenarbeit	gardening
-46	die Geige	violin
-47	die Grippe	flu
-47	die Größe	size
-47	die Gurke	cucumber
-47	die Halsschmerzen	sore throat
-47	die Hand	hand
-47	die Hilfe	help
-47	die Himbeere	raspberry
-48	die Hochzeit	wedding
-48	die Imbissstube	snack bar
-48	die Kartoffel	potato
-48	die Kegelbahn	bowling alley
-48	die Kirsche	cherry
-48	die Kleinigkeit	trifle, snack
-49	die Klinik	clinic
-49	die Konditorei	cake shop
-49	die Kopfschmerzen	headache
-49	die Krabbe	shrimp, prawn
-49	die Leberwurst	liver sausage
-49	die Leichtathletik	athletics
-50	die Limonade	lemonade
-50	die Magenschmerzen	stomach ache
-50	die Mahlzeit	meal
-50	die Mannschaft	team
-50	die Marmelade	jam
-50	die Mehlspeise	pastry
-51	die Metzgerei	butcher's shop
-51	die Milch	milk
-51	die Muscheln	mussels
-51	die Münze	coin
-51	die Nachspeise	dessert
-51	die Nudeln	pasta, noodles
-52	die Ohrenschmerzen	earache
-52	die Pastete	paté
-52	die Pflaume	plum
-52	die Pute	turkey
-52	die Rückenschmerzen	backache
-52	die Sahne	cream
-53	die Schokolade	chocolate
-53	die Selbstbedienung	self-service
-53	die Serviette	serviette
-53	die Sparkasse	savings bank
-53	die Sprechstunde	surgery (consultation hours)
-53	die Spritze	injection
-54	die Suppe	soup
-54	die Süßigkeiten	sweets
-54	die Tomate	tomato
-54	die Traube	grape
-54	die Trommel	drum
-54	die Trompete	trumpet
-55	die Untersuchung	examination
-55	die Verlobung	engagement
-55	die Vorspeise	starter
-55	die Waffel	waffle
-55	die Wurst	sausage
-55	die Zahnschmerzen	toothache
-56	die Zehe	toe
-56	die Zeremonie	ceremony
-56	die Zigarette	cigarette
-56	die Zitrone	lemon
-56	die Zunge	tongue
-56	die Zutaten	ingredients
-57	die Zwiebel	onion
-57	die Übung	exercise
-57	voll gar	well cooked, well done
-57	sich ausruhen, relaxen	to rest, relax
-57	Bier vom Fass	draft beer
-57	beim Arzt bestellt	appointment with the doctor
-58	das kohlensäurehaltige Getränk	fizzy drink
-58	der Akrobat /in	acrobat
-58	der Besucher /in	visitor
-58	der Champignon, der Pilz	mushroom
-58	der Kunde /in	customer, client
-58	der Verkäufer /in	sales assistant, shopkeeper
-59	der Zoowärter /in	zoo keeper
-59	die Karotte, die Möhre, Rüebli	carrot
-59	die Pille die Tablette	pill
-59	die Pommes (Frites)	chips, fries
-59	die Spezialität des Hauses	speciality of the house
-59	es schmeckt mir	it tastes (well)
-60	skateboarden, Skateboard fahren	to skateboard
-60	die Apfelsine / Orange	orange
-60	die Metzgerei, die Fleischerei	butcher
-60	die Party, die Fete	party
-60	es schmeckt mir nicht	it doesn't taste
-60	das Schmuckgeschäft, der Juwelier	jewellery shop`;
+export const topicEVocab = `
+1	spielen	to play	Mein Bruder spielt gern am Nachmittag im Garten.	My brother likes playing in the garden in the afternoon.
+1	laufen	to run	Wir laufen jeden Morgen furchtbar schnell zur Schule.	We run terribly quickly to school every morning.
+1	Ski laufen	to ski	Im kalten Winter laufen wir oft in den Bergen Ski.	In the cold winter we often ski in the mountains.
+1	der Fußball	football	Der Fußball ist ohne Zweifel ein extrem beliebter Sport.	Football is without a doubt an extremely popular sport.
+1	das Hobby	hobby, pastime	Mein absolutes liebstes Hobby ist das ruhige Lesen am Abend.	My absolute favourite hobby is quiet reading in the evening.
+1	lesen	to read	Ich lese abends im Bett oft furchtbar gern ein spannendes Buch.	I terribly like reading a thrilling book in bed in the evening.
+1	das Lesen	reading	Das fleißige Lesen ist extrem wichtig für gute Noten in der Schule.	Hard-working reading is extremely important for good grades in school.
+2	hören	to hear, to listen to	Ich höre morgens im Radio oft meine englische Lieblingsmusik.	I often listen to my favourite English music on the radio in the mornings.
+2	einkaufen	to buy, to shop	Wir kaufen jeden Samstagmorgen im großen Supermarkt ein.	We shop in the large supermarket every Saturday morning.
+2	kaufen	to buy	Ich kaufe heute Nachmittag einen brandneuen Ball für das wichtige Spiel.	I am buying a brand new ball for the important game this afternoon.
+2	das Geschäft	shop, business	Dieses moderne Geschäft im Zentrum verkauft absolut tolle Kleidung.	This modern shop in the centre sells absolutely great clothes.
+2	der Laden	shop, business	Der kleine Laden an der ruhigen Ecke hat immer unglaublich frisches Obst.	The small shop on the quiet corner always has incredibly fresh fruit.
+2	verkaufen	to sell	Die alte Bäckerei verkauft jeden Morgen furchtbar leckeres und frisches Brot.	The old baker's shop sells terribly delicious and fresh bread every morning.
+2	zahlen	to pay	Herr Ober, ich möchte jetzt bitte die teure Rechnung zahlen.	Waiter, I would like to pay the expensive bill now, please.
+3	kosten	to cost	Entschuldigung, wie viel kostet eigentlich diese schicke schwarze Hose?	Excuse me, how much do these smart black trousers actually cost?
+3	kostenlos, gratis	free	Der Eintritt in das moderne Museum ist für alle jungen Kinder völlig kostenlos.	Entry into the modern museum is completely free for all young children.
+3	billig	cheap	Dieses rote T-Shirt im Ausverkauf ist wirklich furchtbar billig.	This red T-shirt in the clearance sale is really terribly cheap.
+3	teuer	expensive	Das extrem schnelle und brandneue Auto ist leider furchtbar teuer.	The extremely fast and brand new car is unfortunately terribly expensive.
+3	die Gesundheit	health	Viel frisches Obst und gutes Gemüse ist extrem wichtig für die Gesundheit.	A lot of fresh fruit and good vegetables is extremely important for health.
+3	gesund	healthy	Ich trinke jeden Morgen Wasser, weil das unglaublich gesund ist.	I drink water every morning because that is incredibly healthy.
+3	krank	ill, sick	Mein bester Freund ist leider furchtbar krank und bleibt heute traurig im Bett.	My best friend is unfortunately terribly ill and is sadly staying in bed today.
+4	das Krankenhaus	hospital	Nach dem schlimmen Unfall auf der Straße musste er sofort ins Krankenhaus.	After the bad accident on the street he had to go to the hospital immediately.
+4	der Krankenpfleger	(male) nurse	Der freundliche Krankenpfleger hilft dem kompetenten Arzt bei der Untersuchung.	The friendly male nurse helps the competent doctor with the examination.
+4	die Krankenschwester	(female) nurse	Die unglaublich nette Krankenschwester bringt mir pünktlich meine bittere Medizin.	The incredibly nice nurse brings me my bitter medicine punctually.
+4	die Krankheit	illness	Diese furchtbar schlimme Krankheit dauert jetzt leider schon eine extrem lange Woche.	This terribly bad illness has unfortunately already lasted an extremely long week now.
+4	sich krank fühlen	to feel ill, sick	Ich fühle mich heute Morgen im Unterricht leider extrem müde und krank.	I unfortunately feel extremely tired and ill in the lesson this morning.
+4	sich weh tun	to hurt oneself	Beim schnellen Fußballspielen tue ich mir am Wochenende oft am Bein weh.	When playing fast football I often hurt my leg at the weekend.
+4	das Medikament	medicine	Ich muss dieses schreckliche Medikament leider dreimal am Tag nehmen.	I unfortunately have to take this terrible medicine three times a day.
+5	essen	to eat	Wir essen am warmen Mittag oft eine unglaublich leckere, heiße Suppe.	We often eat an incredibly delicious, hot soup at warm lunchtime.
+5	das Abendessen	evening meal, supper	Das fantastische Abendessen steht schon frisch gekocht auf dem Tisch.	The fantastic evening meal is already standing freshly cooked on the table.
+5	das Mittagessen	lunch	Direkt nach der langen Schule kocht meine liebe Mutter das warme Mittagessen.	Directly after long school my dear mother cooks the warm lunch.
+5	fressen	to eat, to scoff	Mein extrem großer Hund frisst sein frisches Fleisch jeden Tag furchtbar schnell.	My extremely large dog eats its fresh meat terribly quickly every day.
+5	trinken	to drink	Ich trinke im heißen Sommer am allerliebsten einen eiskalten Apfelsaft.	I most prefer to drink an ice-cold apple juice in the hot summer.
+5	das Frühstück	breakfast	Ein furchtbar gesundes Frühstück am Morgen ist ein unglaublich guter Start in den Tag.	A terribly healthy breakfast in the morning is an incredibly good start to the day.
+5	das Brot	bread	Der fleißige Bäcker backt jeden extrem frühen Morgen fantastisches, frisches Brot.	The hard-working baker bakes fantastic, fresh bread every extremely early morning.
+6	das Fleisch	meat	Mein hungriger Vater isst am Wochenende oft unglaublich leckeres, gebratenes Fleisch.	My hungry father often eats incredibly delicious, roast meat at the weekend.
+6	das Gemüse	vegetables	Gesunde Karotten und grüne Erbsen sind definitiv mein absolutes liebstes Gemüse.	Healthy carrots and green peas are definitely my absolute favourite vegetables.
+6	der Kuchen	cake	Meine nette Oma backt am Sonntag oft einen fantastischen Kuchen mit süßen Äpfeln.	My nice grandma often bakes a fantastic cake with sweet apples on Sunday.
+6	die Torte	gateau, flan	Zu meinem Geburtstag bekomme ich eine unglaublich große Torte mit Schokolade.	For my birthday I get an incredibly large chocolate gateau.
+6	das Getränk	drink	Kaltes Mineralwasser ist ohne Zweifel das allergesündeste Getränk für aktive Kinder.	Cold mineral water is without a doubt the absolute healthiest drink for active children.
+6	der Saft	juice	Ich trinke zu meinem gesunden Frühstück eigentlich immer ein frisches Glas Saft.	I actually always drink a fresh glass of juice with my healthy breakfast.
+6	das Wasser	water	Nach dem unglaublich anstrengenden Sportunterricht trinke ich furchtbar viel kaltes Wasser.	After the incredibly tiring PE lesson I drink a terrible amount of cold water.
+7	die Speise	meal, food	Diese fantastische spanische Speise schmeckt heute wirklich unglaublich gut.	This fantastic Spanish meal tastes really incredibly good today.
+7	bestellen	to order	Wir bestellen am hungrigen Samstagabend eine riesige Pizza im italienischen Restaurant.	We order a huge pizza in the Italian restaurant on the hungry Saturday evening.
+7	ausgeben	to spend (money)	Ich gebe mein Taschengeld am Wochenende furchtbar gern für neue Bücher aus.	I terribly like to spend my pocket money on new books at the weekend.
+7	ausgehen	to go out	Am entspannten Samstagabend gehe ich unglaublich gern mit meinen guten Freunden aus.	On the relaxed Saturday evening I incredibly like to go out with my good friends.
+7	bearbeiten	to work on	Ich bearbeite am ruhigen Nachmittag fleißig mein neues Kunstprojekt für die anstrengende Schule.	I work hard on my new art project for the tiring school on the quiet afternoon.
+7	gehören	to belong to	Dieses schicke, rote Fahrrad vor der Schule gehört eigentlich meinem jüngeren Bruder.	This smart, red bicycle in front of the school actually belongs to my younger brother.
+7	jobben	to do casual jobs	In den unglaublich langen Sommerferien jobbe ich fleißig in einem furchtbar kleinen Café.	In the incredibly long summer holidays I work hard doing casual jobs in a terribly small café.
+8	musizieren	to play a musical instrument	Wir musizieren am entspannten Freitagabend oft alle gemeinsam in unserem ruhigen Wohnzimmer.	We often all play a musical instrument together in our quiet living room on the relaxed Friday evening.
+8	nehmen	to take	Ich nehme heute Nachmittag lieber den Bus, weil es draußen furchtbar stark regnet.	I prefer to take the bus this afternoon because it is raining terribly heavily outside.
+8	umtauschen	to exchange (money)	Ich tausche dieses furchtbar kleine T-Shirt heute Nachmittag schnell im großen Geschäft um.	I am quickly exchanging this terribly small T-shirt in the large shop this afternoon.
+8	wandern	to hike, to go rambling	Im kühlen Herbst wandern wir furchtbar gern stundenlang durch den unglaublich schönen Wald.	In the cool autumn we terribly like to hike for hours through the incredibly beautiful forest.
+8	Brieffreund/in	penfriend	Mein netter englischer Brieffreund schreibt mir fast jede Woche einen furchtbar langen Brief.	My nice English penfriend writes me a terribly long letter almost every week.
+8	übel	bad, nauseous	Mir ist nach der schnellen Fahrt auf diesem extremen Karussell leider furchtbar übel.	I am unfortunately terribly nauseous after the fast ride on this extreme roundabout.
+8	Bowling gehen	to go ten-pin bowling	Am aufregenden Freitagabend gehen wir glücklich mit der ganzen Schulklasse Bowling.	On the exciting Friday evening we happily go ten-pin bowling with the whole school class.
+9	Einkäufe machen	to do one's shopping	Meine gestressten Eltern machen am frühen Samstagmorgen eigentlich immer fleißig die Einkäufe.	My stressed parents actually always hard-workingly do the shopping on early Saturday morning.
+9	Feierabend machen	to finish work for the day	Mein fleißiger Vater macht heute glücklicherweise schon pünktlich um vier Uhr Feierabend.	My hard-working father fortunately already finishes work for the day punctually at four o'clock today.
+9	Sport treiben	to do/play sport	Um fit und gesund zu bleiben, muss man in der Freizeit unbedingt regelmäßig Sport treiben.	To stay fit and healthy, one absolutely must play sport regularly in one's free time.
+9	Wasserski fahren	to waterski	Im extrem warmen Sommer fahren wir am ruhigen Wochenende oft auf dem See Wasserski.	In the extremely warm summer we often waterski on the lake on the quiet weekend.
+9	besser gehen	to be better	Nach der bitteren Medizin geht es mir heute glücklicherweise wieder furchtbar viel besser.	After the bitter medicine I am fortunately terribly much better again today.
+9	erkältet sein	to have a cold	Ich kann heute leider nicht draußen spielen, weil ich furchtbar stark erkältet bin.	I unfortunately cannot play outside today because I have a terribly bad cold.
+9	sich übergeben	to be sick, to vomit	Das kranke Kind muss sich nach dem schrecklichen Mittagessen leider im Badezimmer übergeben.	The sick child unfortunately has to vomit in the bathroom after the terrible lunch.
+10	das Gewichtstraining	weight training	Mein sportlicher Bruder macht jeden Nachmittag ein unglaublich anstrengendes Gewichtstraining.	My sporty brother does incredibly tiring weight training every afternoon.
+10	das Kleingeld	(small or loose) change	Entschuldigung, haben Sie vielleicht etwas Kleingeld für diesen alten Fahrkartenautomaten?	Excuse me, do you perhaps have some loose change for this old ticket machine?
+10	das Mineralwasser	mineral water	Ich trinke im teuren Restaurant eigentlich immer am liebsten ein eiskaltes Mineralwasser.	I actually always prefer to drink an ice-cold mineral water in the expensive restaurant.
+10	das Schweinefilet	pork fillet	Das furchtbar gut gebratene Schweinefilet schmeckt heute mit Kartoffeln extrem lecker.	The terribly well roast pork fillet tastes extremely tasty today with potatoes.
+10	das Tagesgericht	today's special	Der freundliche Kellner empfiehlt uns am Mittag glücklich das unglaublich leckere Tagesgericht.	The friendly waiter happily recommends today's incredibly delicious special to us at lunchtime.
+10	das Taschengeld	pocket money	Ich bekomme jeden Monat stolze zwanzig Pfund Taschengeld von meinen großzügigen Eltern.	I get a proud twenty pounds pocket money a month from my generous parents.
+10	der Bräutigam	bridegroom	Der furchtbar glückliche Bräutigam trägt bei der großen Hochzeit einen extrem schicken Anzug.	The terribly happy bridegroom wears an extremely smart suit at the large wedding.
+11	der Feiertag	public holiday	Nächste Woche ist ein wichtiger Feiertag, also haben wir alle glücklicherweise schulfrei.	Next week is an important public holiday, so we all fortunately have no school.
+11	der Sprudel	sparkling water	Ich möchte heute Mittag bitte ein unglaublich großes Glas eiskalten Sprudel mit viel Zitrone.	I would like an incredibly large glass of ice-cold sparkling water with lots of lemon this lunchtime, please.
+11	der Wasserpark	water park	Im extrem heißen Sommer macht der riesige Wasserpark allen Kindern furchtbar viel Spaß.	In the extremely hot summer the huge water park is a terrible amount of fun for all children.
+11	die Debitkarte	debit card	Ich bezahle meine neuen, teuren Schuhe im großen Geschäft eigentlich immer sicher mit der Debitkarte.	I actually always pay safely for my new, expensive shoes in the large shop with the debit card.
+11	die Geldverschwendung	waste of money	Dieses furchtbar schlechte Videospiel war leider am Ende eine totale Geldverschwendung.	This terribly bad video game was unfortunately a total waste of money in the end.
+11	die Kreditkarte	credit card	Mein Vater benutzt seine teure Kreditkarte, um unser schönes Sommerhotel schnell online zu buchen.	My father uses his expensive credit card to book our beautiful summer hotel quickly online.
+11	die Lebensmittel	food, groceries	Wir kaufen am frühen Samstagmorgen alle wichtigen, frischen Lebensmittel für die Woche auf dem Markt.	We buy all the important, fresh groceries for the week at the market on early Saturday morning.
+12	die Meeresfrüchte	seafood	Ich esse im sonnigen Urlaub am wunderschönen Strand unglaublich gern extrem frische Meeresfrüchte.	I incredibly like eating extremely fresh seafood on the sunny holiday at the beautiful beach.
+12	die Rechnung	bill	Entschuldigung Herr Ober, wir möchten nach dem fantastischen Essen jetzt bitte die Rechnung zahlen.	Excuse me waiter, we would like to pay the bill now after the fantastic meal, please.
+12	die Tablette	tablet	Gegen meine furchtbar starken Kopfschmerzen nehme ich sofort eine ziemlich kleine Tablette.	For my terribly bad headache I take a quite small tablet immediately.
+12	preiswert, günstig	good value, inexpensive, cheap	Das leckere warme Essen in unserer Schulkantine ist wirklich unglaublich preiswert und sehr gut.	The delicious warm food in our school canteen is really incredibly good value and very good.
+12	wie viel(e)	how much, how many	Wie viele frische, rote Äpfel brauchen wir eigentlich heute für diesen extrem großen Kuchen?	How many fresh, red apples do we actually need today for this extremely large cake?
+12	abnehmen	to lose weight	Mein übergewichtiger Onkel nimmt durch den vielen Sport jeden Monat glücklich zwei Kilo ab.	My overweight uncle happily loses two kilos every month through the great amount of sport.
+12	angeln	to fish	Mein entspannter Großvater angelt am unglaublich ruhigen Sonntagmorgen furchtbar gern am See.	My relaxed grandfather terribly likes to fish at the lake on the incredibly quiet Sunday morning.
+13	atmen	to breathe	Nach dem extrem schnellen Lauf atmet der erschöpfte Sportler plötzlich furchtbar schwer.	After the extremely fast run the exhausted sportsman suddenly breathes terribly heavily.
+13	austauschen	to exchange	Wir tauschen nach dem unglaublich langen Sommerurlaub in der Schule oft schöne Fotos aus.	We often exchange beautiful photos at school after the incredibly long summer holiday.
+13	bedienen	to serve	Der extrem freundliche Kellner bedient uns heute Abend im vollen Restaurant wirklich fantastisch.	The extremely friendly waiter serves us really fantastically in the full restaurant this evening.
+13	begrüßen	to welcome	Der stolze Direktor begrüßt alle neuen Schüler am extrem frühen Morgen herzlich in der Aula.	The proud headmaster warmly welcomes all new pupils in the hall on the extremely early morning.
+13	duzen	to call someone 'du'	In unserer kleinen, freundlichen Klasse duzen sich glücklicherweise alle Schüler ohne Probleme.	In our small, friendly class all pupils fortunately call each other 'du' without problems.
+13	fallen	to fall	Im extrem windigen und kühlen Herbst fallen unglaublich viele bunte Blätter von den Bäumen.	In the extremely windy and cool autumn incredibly many colourful leaves fall from the trees.
+13	holen	to fetch	Ich hole sofort einen Arzt, weil es auf der Kreuzung leider einen furchtbar schlimmen Unfall gab.	I am immediately fetching a doctor because there was unfortunately a terribly bad accident on the crossroads.
+14	husten	to cough	Das extrem kranke kleine Kind hustet leider die ganze dunkle Nacht furchtbar laut im Bett.	The extremely sick little child unfortunately coughs terribly loudly in bed the whole dark night.
+14	joggen	to jog	Ich jogge jeden frühen Morgen fleißig eine halbe anstrengende Stunde im großen Stadtpark.	I jog hard for half a tiring hour in the large town park every early morning.
+14	küssen	to kiss	Die extrem glückliche Mutter küsst ihr kleines Kind abends im Bett immer vor dem Schlafen.	The extremely happy mother always kisses her small child in bed in the evening before sleeping.
+14	leiden	to suffer	Im extrem warmen Frühling leiden unglaublich viele arme Menschen furchtbar an schlimmen Allergien.	In the extremely warm spring incredibly many poor people suffer terribly from bad allergies.
+14	malen	to paint	Ich male heute am ruhigen Nachmittag ein unglaublich schönes und farbenfrohes Bild im Kunstunterricht.	I am painting an incredibly beautiful and colourful picture in the art lesson on the quiet afternoon today.
+14	rauchen	to smoke	Es ist heutzutage absolut extrem ungesund und streng verboten, in der Schule zu rauchen.	It is absolutely extremely unhealthy and strictly forbidden to smoke in school nowadays.
+14	reiten	to ride (a horse)	Meine sportliche kleine Schwester reitet am sonnigen Wochenende eigentlich unglaublich gern auf ihrem Pferd.	My sporty little sister actually incredibly likes riding her horse on the sunny weekend.
+15	schlagen	to hit, knock	Der furchtbar wütende Junge schlägt den Ball am Nachmittag extrem fest gegen die hohe Mauer.	The terribly angry boy hits the ball extremely hard against the high wall in the afternoon.
+15	schließen	to close	Bitte schließen Sie die Tür sofort, weil es draußen furchtbar stark stürmt und sehr kalt ist.	Please close the door immediately because it is storming terribly heavily and is very cold outside.
+15	schmecken	to taste	Dieses heiße und frisch gekochte Essen schmeckt mir heute wirklich absolut fantastisch.	This hot and freshly cooked food really tastes absolutely fantastic to me today.
+15	schützen	to protect	Eine sehr gute Sonnencreme schützt die Haut im extrem heißen Sommer vor furchtbarem Sonnenbrand.	A very good sun cream protects the skin from terrible sunburn in the extremely hot summer.
+15	segeln	to sail	Wir segeln am unglaublich sonnigen und windigen Wochenende extrem glücklich mit unserem Boot auf dem See.	We sail extremely happily on the lake with our boat on the incredibly sunny and windy weekend.
+15	shoppen	to window shop	Meine guten Freunde shoppen am freien Samstag oft den ganzen entspannten Tag im großen Zentrum.	My good friends often window shop all relaxed day in the large centre on a free Saturday.
+15	siezen	to call someone 'Sie'	Man muss fast alle völlig fremden und erwachsenen Personen in Deutschland eigentlich normalerweise siezen.	You must actually normally call almost all completely strange and adult people 'Sie' in Germany.
+16	sparen	to save	Ich spare mein Taschengeld für ein neues, schnelles Fahrrad.	I save my pocket money for a new, fast bicycle.
+16	springen	to jump	Der kleine Hund springt unglaublich glücklich über das kalte Wasser.	The small dog jumps incredibly happily over the cold water.
+16	tanzen	to dance	Wir tanzen am lustigen Samstagabend oft in der lauten Disko.	We often dance in the loud disco on the funny Saturday evening.
+16	tauchen	to dive	Im warmen Sommerurlaub am Meer tauche ich furchtbar gern.	On the warm summer holiday by the sea I terribly like to dive.
+16	umarmen	to hug, embrace	Die Mutter umarmt ihr kleines Kind liebevoll direkt nach der Schule.	The mother lovingly hugs her small child directly after school.
+16	untersuchen	to examine	Der freundliche Arzt untersucht den extrem kranken Patienten im Krankenhaus.	The friendly doctor examines the extremely sick patient in the hospital.
+16	verletzen	to injure, to hurt, to wound	Ich verletze mich oft beim schnellen Fußballspielen furchtbar am Bein.	I often injure my leg terribly when playing fast football.
+17	verschreiben	to prescribe	Der Arzt verschreibt mir eine furchtbar bittere Medizin gegen den Husten.	The doctor prescribes me a terribly bitter medicine for the cough.
+17	warten	to wait	Ich warte im kalten Regen schon eine unglaublich lange Stunde auf den Bus!	I have already been waiting an incredibly long hour for the bus in the cold rain!
+17	werfen	to throw	Der sportliche Spieler wirft den kleinen Ball extrem weit über das Feld.	The sporty player throws the small ball extremely far across the field.
+17	windsurfen	to windsurf	Im extrem windigen Sommer windsurfe ich oft auf dem großen, blauen See.	In the extremely windy summer I often windsurf on the large, blue lake.
+17	zeichnen	to draw	Meine Schwester zeichnet ein wunderschönes und buntes Bild im Kunstunterricht.	My sister draws a beautiful and colourful picture in the art lesson.
+17	zunehmen	to put on weight	Wenn man furchtbar viel süße Schokolade isst, nimmt man extrem schnell zu.	If one eats a terribly large amount of sweet chocolate, one puts on weight extremely quickly.
+17	ändern	to change, to alter	Ich ändere meine feste Meinung über dieses unglaublich wichtige Thema nicht.	I am not changing my firm opinion about this incredibly important topic.
+18	öffnen	to open	Bitte öffnen Sie das kleine Fenster, weil es hier extrem heiß ist.	Please open the small window because it is extremely hot here.
+18	Erste Hilfe leisten	to give first aid	Bei einem schlimmen Unfall auf der Straße muss man sofort Erste Hilfe leisten.	In a bad accident on the street you must give first aid immediately.
+18	im Bett bleiben	to stay in bed	Wenn du extrem hohes Fieber hast, musst du definitiv im Bett bleiben.	If you have an extremely high temperature, you must definitely stay in bed.
+18	Spieler/in	player	Der absolut beste Spieler in der guten Mannschaft schießt ein fantastisches Tor.	The absolutely best player in the good team scores a fantastic goal.
+18	atemberaubend	breathtaking	Die weite Aussicht von dem furchtbar hohen Berg ist wirklich atemberaubend.	The wide view from the terribly high mountain is really breathtaking.
+18	begeistert	delighted	Meine strengen Eltern waren von meinem unglaublich guten Schulzeugnis extrem begeistert.	My strict parents were extremely delighted with my incredibly good school report.
+18	besser	better	Mir geht es heute nach der teuren Medizin glücklicherweise wieder viel besser.	I am fortunately much better again today after the expensive medicine.
+19	eindrucksvoll	impressive	Der extrem riesige Dom in der alten Stadt Köln ist wirklich sehr eindrucksvoll.	The extremely huge cathedral in the old city of Cologne is really very impressive.
+19	ekelhaft	digusting	Dieses furchtbar alte und völlig kalte Essen schmeckt einfach nur extrem ekelhaft.	This terribly old and completely cold food simply tastes extremely disgusting.
+19	ekelig	gross	Ich finde das extrem schmutzige Wasser in diesem kleinen See furchtbar ekelig.	I find the extremely dirty water in this small lake terribly gross.
+19	ernst	serious	Diese furchtbar schlimme und gefährliche Krankheit ist ein extrem ernstes Problem.	This terribly bad and dangerous illness is an extremely serious problem.
+19	freudig	joyful	Das kleine Kind öffnet sein tolles Geschenk zum Geburtstag unglaublich freudig.	The small child opens his great present for his birthday incredibly joyfully.
+19	frisch	fresh, cool	Am extrem frühen Morgen ist die kalte Luft hier unglaublich frisch und sauber.	In the extremely early morning the cold air here is incredibly fresh and clean.
+19	gebrochen	broken	Mein rechter Arm ist nach dem unglaublich schlimmen Unfall leider komplett gebrochen.	My right arm is unfortunately completely broken after the incredibly bad accident.
+20	geräuchert	smoked	Wir essen am entspannten Wochenende furchtbar gern leckeren geräucherten Lachs zum Frühstück.	We terribly like eating tasty smoked salmon for breakfast at the relaxed weekend.
+20	geschmacklos	tasteless	Ich finde dieses extrem langweilige und schlechte Essen heute leider ziemlich geschmacklos.	I find this extremely boring and bad food quite tasteless today unfortunately.
+20	geschmackvoll	tasteful	Die neuen und teuren Möbel in unserem großen Wohnzimmer sind extrem geschmackvoll.	The new and expensive furniture in our large living room is extremely tasteful.
+20	gleich	same	Meine Zwillingsschwester und ich tragen heute lustigerweise absolut das gleiche rote Kleid.	My twin sister and I are funnily wearing absolutely the same red dress today.
+20	heiß	hot	Im extrem warmen Sommer trinke ich kein heißes Wasser, sondern nur eiskalte Limonade.	In the extremely warm summer I do not drink hot water, but only ice-cold lemonade.
+20	herzlich	warm, sincere	Wir begrüßen unsere englischen Austauschpartner unglaublich herzlich am großen, vollen Bahnhof.	We welcome our English exchange partners incredibly warmly at the large, full railway station.
+20	köstlich	delicious	Der süße Apfelkuchen von meiner netten Oma schmeckt am Sonntag immer absolut köstlich.	The sweet apple cake from my nice grandma always tastes absolutely delicious on Sunday.
+21	kühl	cool	Im nassen Herbst ist das windige Wetter am dunklen Abend oft schon furchtbar kühl.	In the wet autumn the windy weather is often already terribly cool on the dark evening.
+21	lecker	tasty	Die fettige Bratwurst mit warmen Pommes an der kleinen Imbissstube ist extrem lecker.	The greasy fried sausage with warm chips at the small snack bar is extremely tasty.
+21	satt	full (after eating)	Nach dem furchtbar riesigen Hauptgericht im Restaurant bin ich wirklich komplett satt.	After the terribly huge main course in the restaurant I am really completely full.
+21	sauer	sour	Diese frische, grüne Zitrone ist furchtbar sauer, aber eigentlich auch extrem gesund.	This fresh, green lemon is terribly sour, but actually also extremely healthy.
+21	scharf	hot, spicy	Ich esse extrem ungern furchtbar scharfes Essen aus dem indischen Restaurant.	I extremely dislike eating terribly spicy food from the Indian restaurant.
+21	schlechter	worse	Das furchtbar schlechte Wetter wird heute Nachmittag leider noch unglaublich viel schlechter.	The terribly bad weather is unfortunately getting an incredibly large amount worse this afternoon.
+21	schwindlig	dizzy	Mir ist nach der extrem schnellen Fahrt auf dem großen Karussell unglaublich schwindlig.	I am incredibly dizzy after the extremely fast ride on the large roundabout.
+22	seltsam	odd, strange	Ich finde diesen extrem alten und furchtbar ruhigen Dokumentarfilm wirklich unglaublich seltsam.	I find this extremely old and terribly quiet documentary film really incredibly strange.
+22	spannend	exciting	Das furchtbar lange Fußballspiel am Samstagabend war bis zum Ende unglaublich spannend.	The terribly long football match on Saturday evening was incredibly exciting until the end.
+22	süß	sweet	Meine kleine Schwester isst am Nachmittag furchtbar gern extrem süße Bonbons.	My little sister terribly likes eating extremely sweet sweets in the afternoon.
+22	verletzt	injured	Der verletzte Spieler muss nach dem schlimmen Foul leider sofort ins große Krankenhaus fahren.	The injured player unfortunately must travel to the large hospital immediately after the bad foul.
+22	verstopft	constipated	Ich bin leider extrem verstopft, also muss ich unbedingt viel mehr kaltes Wasser trinken.	I am unfortunately extremely constipated, so I absolutely must drink much more cold water.
+22	warm	warm	Heute ist das Wetter endlich furchtbar sonnig und unglaublich warm für einen Ausflug.	Today the weather is finally terribly sunny and incredibly warm for an outing.
+22	wertvoll	valuable	Dieser extrem alte Schmuck von meiner Großmutter ist glücklicherweise unglaublich wertvoll.	This extremely old jewellery from my grandmother is fortunately incredibly valuable.
+23	Rad fahren	to ride a bike, go cycling	Wir fahren am entspannten und warmen Sonntag furchtbar gern im ruhigen Wald Rad.	We terribly like going cycling in the quiet forest on the relaxed and warm Sunday.
+23	sich amüsieren	to enjoy oneself	Wir amüsieren uns auf der unglaublich tollen Geburtstagsparty wirklich extrem gut.	We are enjoying ourselves really extremely well at the incredibly great birthday party.
+23	sich erholen	to recover	Ich erhole mich am Wochenende eigentlich immer extrem gut von der anstrengenden Schule.	I actually always recover extremely well from the tiring school at the weekend.
+23	Guten Appetit!	Enjoy your meal!	Die extrem nette Kellnerin bringt das leckere, warme Essen und wünscht guten Appetit!	The extremely nice waitress brings the tasty, warm food and wishes us enjoy your meal!
+23	Herzlichen Glückwunsch	congratulations	Herzlichen Glückwunsch zu deinen furchtbar fantastischen Noten in der schweren Abschlussprüfung!	Congratulations on your terribly fantastic grades in the difficult final exam!
+23	bei mir	at (my) home	Wir spielen nach der unglaublich langen Schule oft lustige Videospiele bei mir.	We often play funny video games at my home after the incredibly long school.
+23	das Asthma	asthma	Mein kleiner Bruder hat leider furchtbar starkes Asthma im kalten und nassen Winter.	My little brother unfortunately has terribly strong asthma in the cold and wet winter.
+24	das Band	ribbon	Das kleine, glückliche Mädchen hat ein furchtbar schönes, rotes Band im langen Haar.	The small, happy girl has a terribly beautiful, red ribbon in her long hair.
+24	das Bein	leg	Ich habe mir beim schnellen Fußball furchtbar weh am rechten, langen Bein getan.	I have hurt my right, long leg terribly at fast football.
+24	das Bier	beer	Mein müder Vater trinkt am Freitagabend oft ein furchtbar kühles Bier im ruhigen Garten.	My tired father often drinks a terribly cool beer in the quiet garden on Friday evening.
+24	das Blut	blood	Ich bin extrem schüchtern und kann nach dem Unfall absolut kein rotes Blut sehen!	I am extremely shy and can see absolutely no red blood after the accident!
+24	das Bonbon	sweet	Dieses extrem süße Bonbon mit Zucker ist furchtbar schlecht für deine weißen Zähne.	This extremely sweet sweet with sugar is terribly bad for your white teeth.
+24	das Brettspiel	board game	Wir spielen am ruhigen Sonntag oft ein unglaublich langes Brettspiel mit der netten Familie.	We often play an incredibly long board game with the nice family on a quiet Sunday.
+24	das Brötchen	bread roll	Ich kaufe morgens in der traditionellen Bäckerei oft fünf frische Brötchen für das große Frühstück.	I often buy five fresh bread rolls in the traditional baker's shop for the large breakfast in the mornings.
+25	das Butterbrot	sandwich	In der langen Pause in der Schule esse ich jeden Tag ein furchtbar gesundes Butterbrot.	In the long break in school I eat a terribly healthy sandwich every day.
+25	das Do-it-yourself	DIY	Mein geschickter Vater liebt das Do-it-yourself und repariert fast alles in unserem alten Haus.	My skilled father loves DIY and repairs almost everything in our old house.
+25	das Ei	egg	Ich esse zum furchtbar späten Frühstück am entspannten Sonntag unglaublich gern ein gekochtes Ei.	I incredibly like eating a boiled egg for terribly late breakfast on the relaxed Sunday.
+25	das Einkaufszentrum	shopping centre	Wir gehen am nassen Samstag oft im unglaublich riesigen Einkaufszentrum einkaufen.	We often go shopping in the incredibly huge shopping centre on a wet Saturday.
+25	das Eis	ice, ice cream	Im extrem heißen Sommer essen wir eigentlich jeden späten Nachmittag unglaublich gern ein Eis.	In the extremely hot summer we actually incredibly like eating an ice cream every late afternoon.
+25	das Fieber	temperature, fever	Das extrem kranke kleine Kind hat leider ein furchtbar hohes Fieber und bleibt müde im Bett.	The extremely sick little child unfortunately has a terribly high temperature and is staying tiredly in bed.
+25	das Gebäck	biscuits, pastries	In dieser unglaublich kleinen Konditorei gibt es extrem leckeres und frisches, süßes Gebäck.	There are extremely delicious and fresh, sweet pastries in this incredibly small cake shop.
+26	das Gesicht	face	Du musst morgens sofort nach dem Aufstehen unbedingt dein furchtbar müdes Gesicht waschen.	You absolutely must wash your terribly tired face immediately after getting up in the mornings.
+26	das Hammelfleisch	mutton	Mein alter Onkel isst im teuren Restaurant am Wochenende eigentlich am liebsten gebratenes Hammelfleisch.	My old uncle actually prefers to eat roast mutton in the expensive restaurant at the weekend.
+26	das Hauptgericht	main course	Als extrem leckeres und großes Hauptgericht gibt es heute Abend frischen Fisch mit warmen Kartoffeln.	For the extremely tasty and large main course there is fresh fish with warm potatoes this evening.
+26	das Herz	heart	Mein armer Großvater hat leider ein extrem schwaches Herz und muss furchtbar stark aufpassen.	My poor grandfather unfortunately has an extremely weak heart and must be terribly careful.
+26	das Hähnchen	chicken	Ich esse am ruhigen Sonntagmittag eigentlich furchtbar gern ein extrem knuspriges Hähnchen mit Pommes.	I actually terribly like eating an extremely crispy chicken with chips on a quiet Sunday lunchtime.
+26	das Inlineskaten	roller blading	Meine unglaublich sportliche Schwester macht im Sommer furchtbar gern Inlineskaten im großen Park.	My incredibly sporty sister terribly likes roller blading in the large park in summer.
+26	das Instrument	instrument	Das riesige und sehr laute Schlagzeug ist definitiv ein extrem lautes musikalisches Instrument.	The huge and very loud drums are definitely an extremely loud musical instrument.
+27	das Kalbfleisch	veal	Das unglaublich teure und klassische Wiener Schnitzel ist traditionell eigentlich aus sehr zartem Kalbfleisch.	The incredibly expensive and classic Wiener escalope is traditionally actually made of very tender veal.
+27	das Kaufhaus	department store	Ich kaufe meine extrem schicke Kleidung für die tolle Feier meistens im unglaublich großen Kaufhaus.	I mostly buy my extremely smart clothes for the great celebration in the incredibly large department store.
+27	das Klavier	piano	Meine talentierte kleine Schwester spielt eigentlich jeden Nachmittag unglaublich schön auf dem alten Klavier.	My talented little sister actually plays the old piano incredibly beautifully every afternoon.
+27	das Knie	knee	Mein furchtbar linkes Knie tut mir nach dem extrem langen Joggen heute leider unglaublich weh.	My terribly left knee unfortunately hurts me incredibly today after the extremely long jogging.
+27	das Kotelett	chop, cutlet	Mein hungriger Vater brät ein unglaublich riesiges Kotelett in der extrem heißen Bratpfanne auf dem Herd.	My hungry father fries an incredibly huge chop in the extremely hot frying pan on the cooker.
+27	das Käsebrot	cheese sandwich	Ich habe als unglaublich schnelle und billige Speise ein leckeres Käsebrot in meiner Schultasche.	I have a tasty cheese sandwich in my school bag as an incredibly quick and cheap meal.
+27	das Lammfleisch	lamb	Am unglaublich wichtigen Feiertag gibt es bei uns eigentlich oft gebratenes Lammfleisch mit viel Gemüse.	On the incredibly important public holiday we actually often have roast lamb with lots of vegetables.
+28	das Mehl	flour	Wir brauchen dringend furchtbar viel frisches Mehl und braune Eier für den süßen Kuchen.	We urgently need a terrible amount of fresh flour and brown eggs for the sweet cake.
+28	das Omelett	omelette	Ich koche mir zum einfachen Abendessen furchtbar schnell ein unglaublich leckeres Omelett mit viel Käse.	I cook myself an incredibly delicious omelette with lots of cheese terribly quickly for a simple dinner.
+28	das Parfum	perfume	Meine elegante Mutter kauft ein furchtbar teures und gut riechendes Parfum im modernen Kaufhaus.	My elegant mother buys a terribly expensive and good smelling perfume in the modern department store.
+28	das Pflaster	plaster	Hast du bitte extrem dringend ein kleines Pflaster für meinen furchtbar stark blutenden Finger?	Do you extremely urgently have a small plaster for my terribly heavily bleeding finger, please?
+28	das Picknick	picnic	Wir machen bei unglaublich sonnigem Wetter am Wochenende oft ein sehr gemütliches Picknick im großen Park.	We often have a very cozy picnic in the large park in incredibly sunny weather at the weekend.
+28	das Portemonnaie	purse, wallet	Oh nein, ich habe heute leider mein furchtbar teures Portemonnaie im vollen Supermarkt komplett verloren!	Oh no, I unfortunately completely lost my terribly expensive purse in the full supermarket today!
+28	das Rezept	recipe	Meine nette Oma hat eigentlich ein extrem gutes und altes Rezept für diesen fantastischen Apfelkuchen.	My nice grandma actually has an extremely good and old recipe for this fantastic apple cake.
+29	das Rindfleisch	beef	Ich mag leider überhaupt absolut kein Rindfleisch, ich esse eigentlich lieber extrem frisches Hähnchen.	I unfortunately like absolutely no beef at all, I actually prefer to eat extremely fresh chicken.
+29	das Salz	salt	Die heiße und frische Suppe ist extrem geschmacklos, sie braucht definitiv sofort unbedingt etwas Salz.	The hot and fresh soup is extremely tasteless, it definitely absolutely needs some salt immediately.
+29	das Schach	chess	Mein unglaublich intelligenter Bruder spielt am ruhigen Wochenende im kleinen Klub furchtbar gern Schach.	My incredibly intelligent brother terribly likes playing chess in the small club on a quiet weekend.
+29	das Schaufenster	shop window	Ich betrachte die brandneue und teure Kleidung am Wochenende sehr gern im großen, sauberen Schaufenster.	I really like looking at the brand new and expensive clothes in the large, clean shop window at the weekend.
+29	das Schlagzeug	drums	Das extrem laute Schlagzeug im kleinen, alten Musiksaal macht unglaublich viel furchtbar krassen Lärm.	The extremely loud drums in the small, old music room make an incredible amount of terribly awesome noise.
+29	das Schnitzel	escalope	Ich esse im typisch bayerischen Restaurant eigentlich furchtbar gern ein extrem riesiges Schnitzel mit Pommes.	I actually terribly like eating an extremely huge escalope with chips in the typically Bavarian restaurant.
+29	das Schreibwarengeschäft	stationery shop	Ich kaufe mir neue, fantastische blaue Kulis im unglaublich kleinen Schreibwarengeschäft direkt um die nächste Ecke.	I buy myself new, fantastic blue pens in the incredibly small stationery shop right around the next corner.
+30	das Schweinefleisch	pork	In Deutschland essen eigentlich extrem viele Menschen am Sonntag traditionell furchtbar gern frisches Schweinefleisch.	In Germany extremely many people actually traditionally terribly like eating fresh pork on Sunday.
+30	das Spiegelei	fried egg	Ich esse zum furchtbar späten Frühstück am Wochenende oft ein extrem leckeres Spiegelei mit knusprigem Speck.	I often eat an extremely delicious fried egg with crispy bacon for terribly late breakfast at the weekend.
+30	das Spiel	game, match	Das unglaublich wichtige Spiel am dunklen Samstagmittag war leider extrem furchtbar und unglaublich extrem langweilig.	The incredibly important match on dark Saturday lunchtime was unfortunately extremely terrible and incredibly extremely boring.
+30	das Taschentuch	handkerchief	Ich bin furchtbar stark erkältet und brauche dringend absolut ein sauberes Taschentuch für meine rote Nase.	I have a terribly bad cold and urgently absolutely need a clean handkerchief for my red nose.
+30	das Tier	animal	Ein unglaublich kleiner Hund ist eigentlich wirklich ein extrem süßes und furchtbar freundliches Tier.	An incredibly small dog is actually really an extremely sweet and terribly friendly animal.
+30	das Turnen	gymnastics	Das anstrengende Turnen in der lauten Schule ist furchtbar schwer, aber eigentlich extrem gut für den Körper.	The tiring gymnastics in the loud school is terribly difficult, but actually extremely good for the body.
+30	das Würstchen	little sausage	Wir grillen am unglaublich warmen Sommerabend extrem gern ein leckeres, kleines Würstchen im ruhigen Garten.	We extremely like grilling a tasty, little sausage in the quiet garden on the incredibly warm summer evening.
+31	das Öl	oil	Wir brauchen ein extrem gutes und teures Olivenöl für diesen frischen Salat.	We need an extremely good and expensive olive oil for this fresh salad.
+31	der Alkohol	alcohol	Die jungen Schüler dürfen auf der tollen Party absolut keinen Alkohol trinken.	The young pupils are absolutely not allowed to drink alcohol at the great party.
+31	der Apfel	apple	Ich esse jeden frühen Morgen einen unglaublich gesunden und süßen Apfel.	I eat an incredibly healthy and sweet apple every early morning.
+31	der Apfelsaft	apple juice	Zum großen englischen Frühstück trinke ich furchtbar gern kalten Apfelsaft.	For the large English breakfast I terribly like drinking cold apple juice.
+31	der Apfelwein	cider	Mein Vater trinkt im extrem warmen Sommer oft ein kühles Glas Apfelwein.	My father often drinks a cool glass of cider in the extremely warm summer.
+31	der Arm	arm	Mein linker Arm tut mir nach dem unglaublich langen Tennisspiel furchtbar weh.	My left arm hurts me terribly after the incredibly long tennis game.
+31	der Ausverkauf	clearance sale	Ich kaufe meine neuen, warmen Winterschuhe extrem billig im großen Ausverkauf.	I am buying my new, warm winter shoes extremely cheaply in the large clearance sale.
+32	der Ball	ball	Der sportliche Junge wirft den bunten Ball auf dem Feld extrem weit.	The sporty boy throws the colourful ball extremely far on the field.
+32	der Bauch	tummy	Nach dem furchtbar großen Abendessen tut mir mein dicker Bauch extrem weh.	After the terribly large dinner my fat tummy hurts me extremely.
+32	der Blumenkohl	cauliflower	Wir essen am warmen Sonntagmittag oft weich gekochten Blumenkohl mit gesundem Gemüse.	We often eat soft boiled cauliflower with healthy vegetables on warm Sunday lunchtime.
+32	der Durchfall	diarrhoea	Das extrem kranke Kind hat nach dem furchtbar schlechten Essen leider starken Durchfall.	The extremely sick child unfortunately has strong diarrhoea after the terribly bad food.
+32	der Espresso	espresso	Meine glückliche Mutter trinkt nach dem fantastischen Restaurantbesuch immer einen heißen Espresso.	My happy mother always drinks a hot espresso after the fantastic restaurant visit.
+32	der Essig	vinegar	Ich brauche für diesen frischen und gesunden Salat noch etwas Öl und sauren Essig.	I still need some oil and sour vinegar for this fresh and healthy salad.
+32	der Finger	finger	Ich habe mich beim schnellen Kochen in der Küche leider am rechten Finger verletzt.	I unfortunately injured my right finger while fast cooking in the kitchen.
+33	der Fisch	fish	Wir essen am Freitagabend in England traditionell furchtbar gern frischen Fisch.	We traditionally terribly like eating fresh fish on Friday evening in England.
+33	der Fischhändler	fishmonger	Der unglaublich nette Fischhändler auf dem lokalen Markt verkauft fantastischen, frischen Lachs.	The incredibly nice fishmonger at the local market sells fantastic, fresh salmon.
+33	der Freizeitpark	theme park	Der riesige und laute Freizeitpark macht meiner ganzen sportlichen Familie furchtbar viel Spaß.	The huge and loud theme park is a terrible amount of fun for my whole sporty family.
+33	der Fuß	foot	Mein extrem müder rechter Fuß tut mir nach dem anstrengenden und langen Joggen leider weh.	My extremely tired right foot unfortunately hurts me after the tiring and long jogging.
+33	der Geschmack	flavour	Der unglaublich süße Geschmack von diesem warmen Schokoladenkuchen ist wirklich fantastisch lecker.	The incredibly sweet flavour of this warm chocolate cake is really fantastically tasty.
+33	der Hals	throat	Im extrem kalten und nassen Winter habe ich leider oft einen furchtbar roten und schmerzhaften Hals.	In the extremely cold and wet winter I unfortunately often have a terribly red and painful throat.
+33	der Honig	honey	Ich esse mein frisches und knuspriges Brötchen am Sonntagmorgen unglaublich gern mit extrem süßem Honig.	I incredibly like eating my fresh and crispy bread roll with extremely sweet honey on Sunday morning.
+34	der Imbiss	snack	Wir kaufen uns am sonnigen Nachmittag einen unglaublich schnellen Imbiss in der kleinen Stadtmitte.	We buy ourselves an incredibly quick snack in the small town centre on the sunny afternoon.
+34	der Joghurt	yoghurt	Zum furchtbar gesunden und frischen Frühstück esse ich jeden frühen Morgen einen fruchtigen Joghurt.	For the terribly healthy and fresh breakfast I eat a fruity yoghurt every early morning.
+34	der Jugendklub	youth club	Mein älterer Bruder spielt am entspannten Freitagabend oft sehr gern Tischtennis im lokalen Jugendklub.	My older brother often very much likes playing table tennis in the local youth club on the relaxed Friday evening.
+34	der Kaffee	coffee	Mein extrem müder Vater trinkt morgens immer furchtbar viel heißen und schwarzen Kaffee.	My extremely tired father always drinks a terribly large amount of hot and black coffee in the mornings.
+34	der Kohl	cabbage	In Deutschland isst man im furchtbar kalten und langen Winter traditionell unglaublich gern gesunden Kohl.	In Germany one traditionally incredibly likes eating healthy cabbage in the terribly cold and long winter.
+34	der Kopf	head	Nach der furchtbar lauten Musik auf der langen Party tut mir mein schwerer Kopf extrem weh.	After the terribly loud music at the long party my heavy head hurts me extremely.
+34	der Käse	cheese	Ich kaufe im unglaublich großen Supermarkt ein ziemlich teures Stück von diesem furchtbar leckeren Käse.	I am buying a quite expensive piece of this terribly tasty cheese in the incredibly large supermarket.
+35	der Körper	body	Unglaublich viel frisches Wasser und sehr guter Sport sind absolut extrem gesund für den menschlichen Körper.	Incredibly much fresh water and very good sport are absolutely extremely healthy for the human body.
+35	der Lachs	salmon	Dieser fantastisch leckere geräucherte Lachs aus Schottland ist leider furchtbar teuer.	This fantastically tasty smoked salmon from Scotland is unfortunately terribly expensive.
+35	der Magen	stomach	Das extrem scharfe und fettige Essen aus dem Restaurant ist leider furchtbar schlecht für meinen empfindlichen Magen.	The extremely spicy and greasy food from the restaurant is unfortunately terribly bad for my sensitive stomach.
+35	der Markt	market	Meine fleißigen Eltern kaufen am sonnigen Samstagmorgen extrem gern frisches Obst auf dem Markt ein.	My hard-working parents extremely like buying fresh fruit at the market on sunny Saturday morning.
+35	der Mund	mouth	Öffne bitte deinen kleinen Mund für den kompetenten Zahnarzt jetzt ganz furchtbar weit!	Please open your small mouth very terribly wide for the competent dentist now!
+35	der Nachtklub	nightclub	Die unglaublich laute Musik im extrem dunklen Nachtklub ist oft furchtbar schlecht für die Ohren.	The incredibly loud music in the extremely dark nightclub is often terribly bad for the ears.
+35	der Orangensaft	orange juice	Ich trinke unglaublich gern ein furchtbar riesiges Glas frischen Orangensaft zum englischen Frühstück.	I incredibly like drinking a terribly huge glass of fresh orange juice with the English breakfast.
+36	der Pfannkuchen	pancake	Wir backen am extrem ruhigen Sonntagmorgen furchtbar gern unglaublich dicke, warme Pfannkuchen.	We terribly like baking incredibly thick, warm pancakes on extremely quiet Sunday morning.
+36	der Pfeffer	pepper	Die extrem heiße und frische Suppe braucht eigentlich unbedingt noch unglaublich viel Salz und schwarzen Pfeffer.	The extremely hot and fresh soup actually absolutely still needs an incredible amount of salt and black pepper.
+36	der Pfirsich	peach	Dieser unglaublich reife und extrem weiche Pfirsich schmeckt heute wirklich furchtbar süß und frisch.	This incredibly ripe and extremely soft peach really tastes terribly sweet and fresh today.
+36	der Raucher/in	smoker	Der extrem kranke und alte Raucher hustet am furchtbar kalten Morgen leider unglaublich laut.	The extremely sick and old smoker unfortunately coughs incredibly loudly in the terribly cold morning.
+36	der Reis	rice	Ich esse mein furchtbar scharfes und extrem heißes Curry eigentlich am allerliebsten mit weißem Reis.	I actually most prefer to eat my terribly spicy and extremely hot curry with white rice.
+36	der Reisescheck	traveller's cheque	Mein reicher Onkel bezahlt im warmen Urlaub oft absolut sicher mit einem alten Reisescheck.	My rich uncle often pays absolutely safely with an old traveller's cheque in the warm holiday.
+36	der Rettich	radish	Dieser furchtbar frische und unglaublich weiße Rettich im kleinen Salat schmeckt heute extrem lecker.	This terribly fresh and incredibly white radish in the small salad tastes extremely tasty today.
+37	der Ring	ring	Mein stolzer Vater kauft meiner extrem glücklichen Mutter einen unglaublich schönen und furchtbar teuren Ring.	My proud father is buying my extremely happy mother an incredibly beautiful and terribly expensive ring.
+37	der Rosenkohl	sprouts	Die lauten kleinen Kinder hassen den extrem gesunden und grünen Rosenkohl beim Abendessen furchtbar.	The loud small children terribly hate the extremely healthy and green sprouts at dinner.
+37	der Rotkohl	red cabbage	In Süddeutschland isst man am winterlichen Wochenende furchtbar gern unglaublich leckeren Rotkohl zum warmen Fleisch.	In southern Germany one terribly likes eating incredibly delicious red cabbage with warm meat on the wintery weekend.
+37	der Rotwein	red wine	Meine entspannten Eltern trinken abends im ruhigen Garten oft gemütlich ein kleines Glas Rotwein.	My relaxed parents often cozily drink a small glass of red wine in the quiet garden in the evening.
+37	der Salat	lettuce, salad	Ich esse am extrem heißen Sommerabend unglaublich gern einen furchtbar leckeren und sehr gesunden Salat.	I incredibly like eating a terribly delicious and very healthy salad on the extremely hot summer evening.
+37	der Sauerbraten	marinated pot roast	Der fantastisch riechende Sauerbraten von meiner alten deutschen Oma schmeckt wirklich extrem traditionell.	The fantastically smelling marinated pot roast from my old German grandma really tastes extremely traditional.
+37	der Schaufensterbummel	window shopping	Wir machen am furchtbar entspannten Samstagnachmittag glücklich einen unglaublich langen Schaufensterbummel in der Stadt.	We happily go on an incredibly long window shopping trip in the town on the terribly relaxed Saturday afternoon.
+38	der Scheck	cheque	Ich schreibe im extrem teuren Restaurant oft einen furchtbar großen Scheck für die unglaublich hohe Rechnung.	I often write a terribly large cheque for the incredibly high bill in the extremely expensive restaurant.
+38	der Schinken	ham	Ich esse zum unglaublich guten und frühen Frühstück oft ein furchtbar leckeres, kleines Brötchen mit geräuchertem Schinken.	I often eat a terribly delicious, small bread roll with smoked ham for the incredibly good and early breakfast.
+38	der Schlussverkauf	end of season sale	Im furchtbar großen Schlussverkauf im eiskalten Januar sind eigentlich fast alle warmen Jacken extrem billig.	In the terribly large end of season sale in the ice-cold January actually almost all warm jackets are extremely cheap.
+38	der Schläger	racket	Ich kaufe mir für das extrem wichtige und schwere Spiel heute Nachmittag einen absolut brandneuen Schläger.	I am buying myself an absolutely brand new racket for the extremely important and difficult match this afternoon.
+38	der Schmuck	jewellery	Meine furchtbar elegante und schöne Tante trägt auf der großen Hochzeit unglaublich viel teuren Schmuck.	My terribly elegant and beautiful aunt is wearing an incredible amount of expensive jewellery at the large wedding.
+38	der Schweinebraten	roast pork	Der furchtbar riesige und fettige Schweinebraten mit extrem dicken Kartoffeln schmeckt am warmen Sonntag unglaublich gut.	The terribly huge and greasy roast pork with extremely thick potatoes tastes incredibly good on warm Sunday.
+38	der Senf	mustard	Ich esse meine furchtbar fettige und extrem heiße Bratwurst auf dem Markt am allerliebsten mit scharfem Senf.	I most prefer to eat my terribly greasy and extremely hot fried sausage at the market with spicy mustard.
+39	der Sonnenbrand	sunburn	Im extrem furchtbar heißen Sommer am weißen Strand bekomme ich leider unglaublich schnell einen extrem schlimmen Sonnenbrand.	In the extremely terribly hot summer at the white beach I unfortunately get incredibly bad sunburn extremely quickly.
+39	der Souvenirladen	souvenir, gift shop	Wir kaufen furchtbar gern kleine und schöne Geschenke im englischen Souvenirladen für unsere extrem liebe Familie.	We terribly like buying small and beautiful gifts in the English gift shop for our extremely dear family.
+39	der Speck	bacon	Mein furchtbar traditioneller englischer Vater isst zum unglaublich frühen Frühstück am Sonntag furchtbar gern extrem knusprigen Speck.	My terribly traditional English father terribly likes eating extremely crispy bacon for the incredibly early breakfast on Sunday.
+39	der Spezi	mix fanta and coke	Dieses furchtbar eiskalte Spezi aus dem Kühlschrank ist im extrem heißen Sommer eigentlich mein absolutes liebstes Getränk.	This terribly ice-cold mix of fanta and coke from the fridge is actually my absolute favourite drink in the extremely hot summer.
+39	der Stich	sting, bite	Der extrem dicke und furchtbar rote Stich von der kleinen Biene tut mir heute leider unglaublich stark weh.	The extremely thick and terribly red sting from the small bee unfortunately hurts me incredibly strongly today.
+39	der Stress	stress	Der unglaublich viele und furchtbar anstrengende Stress vor den extrem schweren Prüfungen in der Schule macht mich krank.	The incredibly large amount of and terribly tiring stress before the extremely difficult exams in the school makes me ill.
+39	der Supermarkt	supermarket	Ich kaufe eigentlich fast mein gesamtes extrem frisches Obst und Gemüse jeden frühen Morgen im riesigen Supermarkt.	I actually buy almost all my extremely fresh fruit and vegetables in the huge supermarket every early morning.
+40	der Tabak	tobacco	Dieser extrem furchtbar starke Tabak für alte Holzpfeifen riecht eigentlich in diesem Raum unglaublich ekelig und schlecht.	This extremely terribly strong tobacco for old wooden pipes actually smells incredibly gross and bad in this room.
+40	der Tante-Emma-Laden	corner shop	Ich kaufe oft ganz schnell eine eiskalte Flasche Milch im kleinen, freundlichen Tante-Emma-Laden direkt um die Ecke.	I often very quickly buy an ice-cold bottle of milk in the small, friendly corner shop right around the corner.
+40	der Tee	tea	In England trinken wir am furchtbar entspannten und ruhigen Nachmittag eigentlich unglaublich gern einen extrem heißen, guten Tee.	In England we actually incredibly like drinking an extremely hot, good tea on the terribly relaxed and quiet afternoon.
+40	der Thunfisch	tuna	Ich esse zum furchtbar leichten und gesunden Abendessen nach dem Sport extrem gern einen unglaublich großen Salat mit Thunfisch.	I extremely like eating an incredibly large salad with tuna for the terribly light and healthy dinner after sport.
+40	der Tiergarten	zoo	Wir sehen im extrem furchtbar riesigen Tiergarten am sonnigen Wochenende glücklicherweise unglaublich viele seltene und extrem exotische Tiere.	We fortunately see incredibly many rare and extremely exotic animals in the extremely terribly huge zoo on the sunny weekend.
+40	der Umstand	circumstance	Dieser extrem traurige und furchtbar schwierige Umstand ändert meine eigentlich sehr positive alte Meinung im Moment leider absolut überhaupt nicht.	This extremely sad and terribly difficult circumstance unfortunately does not change my actually very positive old opinion absolutely at all at the moment.
+40	der Unfall	accident	Nach dem furchtbar schrecklichen und lauten Unfall an der extrem gefährlichen und großen Kreuzung kommt sofort unglaublich schnell die hilfsbereite Polizei.	After the terribly terrible and loud accident at the extremely dangerous and large crossroads the helpful police come immediately incredibly quickly.
+41	der Verlobte	fiancé(e)	Der furchtbar glückliche und unglaublich stolze Verlobte kauft einen extrem teuren und wirklich sehr wunderschönen Ring für seine große, neue Liebe.	The terribly happy and incredibly proud fiancé is buying an extremely expensive and really very beautiful ring for his great, new love.
+41	der Wein	wine	Mein alter und entspannter Großvater trinkt am furchtbar ruhigen und warmen Sommerabend oft unglaublich gern ein extrem fantastisches, gutes Glas Wein.	My old and relaxed grandfather often incredibly likes drinking an extremely fantastic, good glass of wine on the terribly quiet and warm summer evening.
+41	der Weißwein	white wine	Dieser extrem furchtbar kalte und frische Weißwein aus dem neuen Kühlschrank schmeckt zum warmen, gebratenen Fisch heute wirklich unglaublich absolut fantastisch.	This extremely terribly cold and fresh white wine from the new fridge really tastes incredibly absolutely fantastic with the warm, fried fish today.
+41	der Zahn	tooth	Oh nein, das ist extrem schlimm, mein furchtbar schmerzhafter und komplett kaputter linker Zahn tut mir heute leider wirklich unglaublich extrem weh!	Oh no, that is extremely bad, my terribly painful and completely broken left tooth unfortunately really hurts me incredibly extremely today!
+41	der Zirkus	circus	Der furchtbar kleine und unglaublich lustige, bunte Clown im extrem großen und lauten Zirkus macht alle schreienden Kinder am Nachmittag wirklich extrem furchtbar glücklich.	The terribly small and incredibly funny, colourful clown in the extremely large and loud circus makes all the screaming children really extremely terribly happy in the afternoon.
+41	der Zoo	zoo	Wir machen am furchtbar warmen und extrem sonnigen Samstag oft glücklich einen unglaublich schönen und extrem entspannten Familienausflug in den großen, lauten Zoo.	We often happily make an incredibly beautiful and extremely relaxed family outing to the large, loud zoo on the terribly warm and extremely sunny Saturday.
+41	der/die Vegetarier/in	vegetarian	Mein unglaublich umweltbewusster und furchtbar netter älterer Bruder ist eigentlich ein strenger Vegetarier und isst absolut überhaupt kein warmes, gebratenes Fleisch.	My incredibly environmentally aware and terribly nice older brother is actually a strict vegetarian and eats absolutely no warm, roast meat at all.
+42	die Abteilung	department	Die unglaublich große und extrem moderne Abteilung für neue, schicke Damenmode ist glücklicherweise ganz oben im zweiten, hellen Stock von diesem furchtbar teuren Kaufhaus.	The incredibly large and extremely modern department for new, smart women's fashion is fortunately right upstairs on the second, bright floor of this terribly expensive department store.
+42	die Ananas	pineapple	Ich esse im extrem furchtbar heißen Sommerurlaub am sonnigen Strand eigentlich unglaublich gern eine extrem unglaublich süße, frische und gelbe Ananas.	I actually incredibly like eating an extremely incredibly sweet, fresh and yellow pineapple on the sunny beach in the extremely terribly hot summer holiday.
+42	die Angelrute	fishing rod	Mein furchtbar entspannter und ruhiger alter Großvater kauft sich heute Nachmittag extrem glücklich eine unglaublich teure und absolut brandneue Angelrute für den tiefen See.	My terribly relaxed and quiet old grandfather is extremely happily buying himself an incredibly expensive and absolutely brand new fishing rod for the deep lake this afternoon.
+42	die Apfelschorle	apple spritzer	Ich trinke nach dem furchtbar anstrengenden und extrem heißen Sportunterricht draußen auf dem Feld sofort durstig eine unglaublich eiskalte und erfrischende Apfelschorle.	I immediately thirstily drink an incredibly ice-cold and refreshing apple spritzer after the terribly tiring and extremely hot PE lesson outside on the field.
+42	die Apotheke	chemist's (dispensing)	Ich kaufe das extrem teure und unglaublich wichtige, bittere Medikament für meine arme, furchtbar kranke Mutter heute schnell in der kleinen, weißen Apotheke.	I am quickly buying the extremely expensive and incredibly important, bitter medicine for my poor, terribly sick mother in the small, white chemist's today.
+42	die Aprikose	apricot	Diese extrem unglaublich reife und furchtbar weiche, orange Aprikose vom großen Markt schmeckt heute im Sommer wirklich absolut fantastisch süß und lecker.	This extremely incredibly ripe and terribly soft, orange apricot from the large market really tastes absolutely fantastically sweet and delicious today in the summer.
+42	die Auswahl	selection, choice	Der riesige und extrem furchtbar neue Supermarkt direkt unten im lauten Stadtzentrum hat glücklicherweise eine unglaublich furchtbar große und absolut fantastische Auswahl an frischem Obst.	The huge and extremely terribly new supermarket right downstairs in the loud town centre fortunately has an incredibly terribly large and absolutely fantastic selection of fresh fruit.
+43	die Banane	banana	Der unglaublich kleine, freche und extrem süße Affe im großen, lauten Zoo isst heute Nachmittag eigentlich furchtbar gern eine sehr frische und gelbe Banane.	The incredibly small, naughty and extremely sweet monkey in the large, loud zoo actually terribly likes eating a very fresh and yellow banana this afternoon.
+43	die Bank	bank	Ich hole mir am extrem furchtbar regnerischen Freitagnachmittag nach der Schule schnell etwas wichtiges Taschengeld auf der lokalen, ruhigen Bank für das teure Kino.	I quickly fetch myself some important pocket money for the expensive cinema at the local, quiet bank after school on the extremely terribly rainy Friday afternoon.
+43	die Bauchschmerzen	tummy ache	Das traurige, furchtbar kranke kleine Kind hat nach dem extrem unglaublich vielen, süßen Schokoladeneis heute Nachmittag leider furchtbar extrem schlimme und schmerzhafte Bauchschmerzen im Bett.	The sad, terribly sick little child unfortunately has terribly extremely bad and painful tummy ache in bed this afternoon after the extremely incredibly large amount of sweet chocolate ice cream.
+43	die Birne	pear	Diese unglaublich extrem saftige und furchtbar grüne, frische Birne aus unserem ruhigen Garten ist eigentlich im kalten Herbst mein absolutes Lieblingsobst.	This incredibly extremely juicy and terribly green, fresh pear from our quiet garden is actually my absolute favourite fruit in the cold autumn.
+43	die Blockflöte	recorder	Meine kleine, freche Schwester übt jeden furchtbar langen Nachmittag unglaublich laut und extrem nervig auf ihrer komplett brandneuen, hölzernen Blockflöte in ihrem Zimmer.	My little, naughty sister practises incredibly loudly and extremely annoyingly on her completely brand new, wooden recorder in her room every terribly long afternoon.
+43	die Blutwurst	black pudding	Ich finde diese furchtbar unglaublich traditionelle und extrem dunkelrote, kalte Blutwurst auf dem Frühstückstisch ehrlich gesagt furchtbar extrem ekelhaft und absolut widerlich.	I honestly find this terribly incredibly traditional and extremely dark red, cold black pudding on the breakfast table terribly extremely disgusting and absolutely revolting.
+43	die Bratkartoffeln	fried potatoes	Wir essen zum unglaublich furchtbar leckeren und extrem heißen Abendessen am späten Sonntag furchtbar gern extrem knusprige und fettige Bratkartoffeln mit etwas salzigem Speck.	We terribly like eating extremely crispy and greasy fried potatoes with some salty bacon for the incredibly terribly delicious and extremely hot dinner on late Sunday.
+44	die Bratwurst	fried sausage	Auf dem unglaublich wunderschönen, alten deutschen Weihnachtsmarkt im Dezember kaufe ich mir abends furchtbar gern eine extrem heiße, fettige Bratwurst mit etwas scharfem Senf.	At the incredibly beautiful, old German Christmas market in December I terribly like buying myself an extremely hot, greasy fried sausage with some spicy mustard in the evening.
+44	die Braut	bride	Die unglaublich extrem glückliche und furchtbar stolze Braut trägt auf der großen, feierlichen Hochzeit ein furchtbar schönes, elegantes, unglaublich langes und weißes Kleid.	The incredibly extremely happy and terribly proud bride wears a terribly beautiful, elegant, incredibly long and white dress at the large, festive wedding.
+44	die Brust	chest	Nach dem furchtbar starken und extrem unglaublich lauten Husten in der eiskalten, dunklen Winternacht tut mir heute leider meine kalte Brust extrem unglaublich stark weh.	After the terribly strong and extremely incredibly loud coughing in the ice-cold, dark winter night my cold chest unfortunately hurts me extremely incredibly strongly today.
+44	die Buchhandlung	bookshop	Ich kaufe meinen furchtbar dicken, extrem neuen und unglaublich spannenden Krimi für das entspannte Wochenende heute Nachmittag schnell in der kleinen, ruhigen Buchhandlung an der Ecke.	I am quickly buying my terribly thick, extremely new and incredibly thrilling thriller for the relaxed weekend in the small, quiet bookshop on the corner this afternoon.
+44	die Butter	butter	Bitte gib mir furchtbar schnell und extrem unglaublich sofort die kalte und weiche Butter aus dem Kühlschrank für mein furchtbar frisches, warmes Brot am Frühstückstisch.	Please give me the cold and soft butter from the fridge for my terribly fresh, warm bread at the breakfast table terribly quickly and extremely incredibly immediately.
+44	die Bäckerei	baker's shop	Die alte, traditionelle und extrem gute Bäckerei an der unglaublich furchtbar belebten und lauten Straßenecke öffnet eigentlich jeden extrem unglaublich frühen und dunklen Morgen um Punkt sechs Uhr.	The old, traditional and extremely good baker's shop on the incredibly terribly busy and loud street corner actually opens at exactly six o'clock every extremely incredibly early and dark morning.
+44	die Chips	crisps	Wir essen furchtbar gern extrem ungesunde und furchtbar fettige, aber unglaublich leckere und extrem salzige Chips entspannt auf dem Sofa vor dem lauten Fernseher am späten Abend.	We terribly like eating extremely unhealthy and terribly greasy, but incredibly delicious and extremely salty crisps relaxed on the sofa in front of the loud television in the late evening.
+45	die Cola	coke	Das extrem junge, kleine Kind darf auf der lauten, lustigen und furchtbar späten Geburtstagsparty glücklicherweise ausnahmsweise ein großes Glas eiskalte, extrem süße Cola mit viel Zucker trinken.	The extremely young, small child is fortunately exceptionally allowed to drink a large glass of ice-cold, extremely sweet coke with a lot of sugar at the loud, funny and terribly late birthday party.
+45	die Currywurst	currywurst	Meine furchtbar traditionelle englische Familie isst im furchtbar unglaublich warmen Urlaub in der Hauptstadt Berlin unglaublich gern eine typische, extrem scharfe und furchtbar heiße Currywurst.	My terribly traditional English family incredibly likes eating a typical, extremely spicy and terribly hot currywurst in the terribly incredibly warm holiday in the capital Berlin.
+45	die Disko	disco	Die furchtbar unglaublich laute und extrem schnelle, nervige Musik in dieser furchtbar dunklen und extrem vollen Disko ist eigentlich furchtbar schlecht und unglaublich gefährlich für die Ohren der tanzenden Jugendlichen.	The terribly incredibly loud and extremely fast, annoying music in this terribly dark and extremely full disco is actually terribly bad and incredibly dangerous for the ears of the dancing young people.
+45	die Drogen	drugs	Diese extrem furchtbar gefährlichen und unglaublich extrem teuren Drogen auf der dunklen Straße sind absolut illegal, furchtbar schlecht für die menschliche Gesundheit und ruinieren leider extrem viele junge Leben.	These extremely terribly dangerous and incredibly extremely expensive drugs on the dark street are absolutely illegal, terribly bad for human health and unfortunately ruin extremely many young lives.
+45	die Drogerie	chemist's (non-dispensing)	Ich kaufe mein extrem gut riechendes, neues und furchtbar unglaublich teures Haarshampoo für die heiße Dusche heute ausnahmsweise extrem billig in der lokalen, kleinen Drogerie um die nächste Ecke.	I am exceptionally buying my extremely good smelling, new and terribly incredibly expensive hair shampoo for the hot shower extremely cheaply in the local, small chemist's around the next corner today.
+45	die Einkäufe	purchases	Meine unglaublich furchtbar müde und extrem erschöpfte Mutter trägt die extrem schweren und furchtbar unglaublich vielen Einkäufe vom großen Supermarkt furchtbar langsam in die helle, warme Küche.	My incredibly terribly tired and extremely exhausted mother carries the extremely heavy and terribly incredibly many purchases from the large supermarket terribly slowly into the bright, warm kitchen.
+45	die Eisbahn	skating rink	Wir fahren im extrem furchtbar kalten, dunklen und unglaublich weißen Winter furchtbar gern extrem schnell und sportlich Schlittschuh auf der großen, furchtbar glatten und unglaublich extrem kalten Eisbahn im alten Stadtzentrum.	In the extremely terribly cold, dark and incredibly white winter we terribly like extremely fast and sporty ice skating on the large, terribly slippery and incredibly extremely cold skating rink in the old town centre.
+46	die Ente	duck	Im Park füttern wir am Nachmittag oft die kleine, braune Ente mit Brot.	In the park we often feed the small, brown duck with bread in the afternoon.
+46	die Erbsen	peas	Mein kleiner Bruder isst zum warmen Abendessen eigentlich überhaupt keine grünen Erbsen.	My little brother actually eats absolutely no green peas for warm dinner.
+46	die Erdbeere	strawberry	Im heißen Sommer pflücken wir unglaublich gern frische Erdbeeren in unserem großen Garten.	In the hot summer we incredibly like picking fresh strawberries in our large garden.
+46	die Flöte	flute	Meine talentierte Schwester spielt jeden entspannten Nachmittag wunderschön auf ihrer silbernen Flöte.	My talented sister plays beautifully on her silver flute every relaxed afternoon.
+46	die Frühstückscerealien	breakfast cereals	Ich esse morgens vor der langen Schule eigentlich immer gesunde Frühstückscerealien mit kalter Milch.	I actually always eat healthy breakfast cereals with cold milk in the mornings before long school.
+46	die Gartenarbeit	gardening	Mein entspannter Großvater macht am sonnigen und warmen Wochenende sehr gern die Gartenarbeit.	My relaxed grandfather very much likes doing the gardening on the sunny and warm weekend.
+46	die Geige	violin	Er lernt schon seit fünf langen Jahren, klassische Lieder auf der Geige zu spielen.	He has already been learning to play classical songs on the violin for five long years.
+47	die Grippe	flu	Ich habe leider eine furchtbare Grippe und muss eine ganze Woche im Bett bleiben.	I unfortunately have the terrible flu and must stay in bed for a whole week.
+47	die Größe	size	Entschuldigung, haben Sie dieses schicke blaue Hemd vielleicht auch noch in einer anderen Größe?	Excuse me, do you perhaps also still have this smart blue shirt in another size?
+47	die Gurke	cucumber	Für meinen gesunden und leichten Sommersalat brauche ich dringend noch eine frische, grüne Gurke.	For my healthy and light summer salad I urgently still need a fresh, green cucumber.
+47	die Halsschmerzen	sore throat	Ich trinke warmen Tee mit Honig, weil ich heute furchtbar starke Halsschmerzen habe.	I am drinking warm tea with honey because I have a terribly bad sore throat today.
+47	die Hand	hand	Bitte wasch dir vor dem leckeren Essen gründlich die schmutzige Hand im Badezimmer.	Please thoroughly wash your dirty hand in the bathroom before the delicious meal.
+47	die Hilfe	help	Ich brauche heute Nachmittag unbedingt deine gute Hilfe bei meinen furchtbar schweren Hausaufgaben.	I absolutely need your good help with my terribly difficult homework this afternoon.
+47	die Himbeere	raspberry	Meine nette Tante macht eine fantastische und extrem süße Marmelade aus der roten Himbeere.	My nice aunt makes a fantastic and extremely sweet jam from the red raspberry.
+48	die Hochzeit	wedding	Wir tanzen auf der großen, romantischen Hochzeit von meiner Cousine den ganzen langen Abend.	We are dancing all long evening at my cousin's large, romantic wedding.
+48	die Imbissstube	snack bar	Wir essen nach dem anstrengenden Fußballspiel oft schnelle Pommes in der kleinen Imbissstube.	We often eat fast chips in the small snack bar after the tiring football match.
+48	die Kartoffel	potato	Die traditionelle deutsche Küche benutzt eigentlich sehr oft die leckere, gekochte Kartoffel.	Traditional German cuisine actually very often uses the delicious, boiled potato.
+48	die Kegelbahn	bowling alley	Am lustigen Freitagabend spielen wir unglaublich gern mit der ganzen Familie auf der Kegelbahn.	On the funny Friday evening we incredibly like playing at the bowling alley with the whole family.
+48	die Kirsche	cherry	Diese dunkelrote, süße Kirsche von dem alten Baum im Garten schmeckt im Sommer wirklich fantastisch.	This dark red, sweet cherry from the old tree in the garden really tastes fantastic in summer.
+48	die Kleinigkeit	trifle, snack	Ich habe eigentlich keinen großen Hunger, ich möchte nur eine sehr schnelle Kleinigkeit essen.	I am actually not very hungry, I only want to eat a very quick snack.
+49	die Klinik	clinic	Mein kranker Onkel liegt wegen seiner schweren Operation leider schon eine Woche in der Klinik.	My sick uncle has unfortunately already been lying in the clinic for a week because of his major operation.
+49	die Konditorei	cake shop	Die traditionelle kleine Konditorei im Stadtzentrum verkauft unglaublich leckere Kuchen und große Torten.	The traditional small cake shop in the town centre sells incredibly delicious cakes and large gateaux.
+49	die Kopfschmerzen	headache	Ich nehme sofort eine kleine Tablette mit Wasser gegen meine extrem starken Kopfschmerzen.	I am taking a small tablet with water immediately for my extremely bad headache.
+49	die Krabbe	shrimp, prawn	Im teuren Fischrestaurant direkt am warmen Meer bestellt mein Vater sehr oft frische Krabben.	In the expensive seafood restaurant right by the warm sea my father very often orders fresh prawns.
+49	die Leberwurst	liver sausage	Mein deutscher Großvater isst zum Abendessen eigentlich sehr gern traditionelles Brot mit dicker Leberwurst.	My German grandfather actually very much likes eating traditional bread with thick liver sausage for dinner.
+49	die Leichtathletik	athletics	Meine sportliche Schwester macht im heißen Sommer nach der Schule sehr erfolgreich Leichtathletik.	My sporty sister does athletics very successfully in the hot summer after school.
+50	die Limonade	lemonade	Im extrem heißen August trinken die durstigen Kinder nachmittags furchtbar gern eiskalte Limonade.	In the extremely hot August the thirsty children terribly like drinking ice-cold lemonade in the afternoons.
+50	die Magenschmerzen	stomach ache	Nach dem viel zu schnellen Essen im Restaurant habe ich jetzt leider schreckliche Magenschmerzen.	After the much too fast eating in the restaurant I unfortunately have terrible stomach ache now.
+50	die Mahlzeit	meal	Das warme Mittagessen ist in meiner Familie die absolut wichtigste Mahlzeit des ganzen Tages.	The warm lunch is the absolutely most important meal of the whole day in my family.
+50	die Mannschaft	team	Unsere fantastische und unglaublich sportliche Mannschaft hat am Wochenende das große Spiel gewonnen.	Our fantastic and incredibly sporty team won the large match at the weekend.
+50	die Marmelade	jam	Ich esse morgens eigentlich am allerliebsten ein frisches Brötchen mit unglaublich süßer Erdbeermarmelade.	I actually most prefer eating a fresh bread roll with incredibly sweet strawberry jam in the mornings.
+50	die Mehlspeise	pastry	Als furchtbar leckeren Nachtisch im österreichischen Restaurant bestellen wir oft eine süße Mehlspeise.	As a terribly delicious dessert in the Austrian restaurant we often order a sweet pastry.
+51	die Metzgerei	butcher's shop	Ich kaufe frische und leckere Würstchen für das sommerliche Grillen am Samstag in der lokalen Metzgerei.	I am buying fresh and tasty sausages for the summery barbecue on Saturday in the local butcher's shop.
+51	die Milch	milk	Meine kleine, schwarze Katze trinkt am frühen Morgen furchtbar gern frische, kalte Milch.	My small, black cat terribly likes drinking fresh, cold milk in the early morning.
+51	die Muscheln	mussels	Im langen Urlaub in Frankreich essen wir abends am Strand oft frische Muscheln mit kühlem Weißwein.	On the long holiday in France we often eat fresh mussels with cool white wine at the beach in the evening.
+51	die Münze	coin	Entschuldigung, haben Sie vielleicht eine kleine Münze für den blauen Einkaufswagen im Supermarkt?	Excuse me, do you perhaps have a small coin for the blue shopping trolley in the supermarket?
+51	die Nachspeise	dessert	Nach dem furchtbar riesigen Hauptgericht habe ich eigentlich absolut keinen Platz mehr für die Nachspeise.	After the terribly huge main course I actually have absolutely no more room for the dessert.
+51	die Nudeln	pasta, noodles	Italienische Nudeln mit einer frischen Tomatensoße und viel Käse sind mein absolutes Lieblingsessen.	Italian pasta with a fresh tomato sauce and lots of cheese is my absolute favourite food.
+52	die Ohrenschmerzen	earache	Nach dem langen Schwimmen im extrem kalten See habe ich heute furchtbar schlimme Ohrenschmerzen.	After the long swimming in the extremely cold lake I have terribly bad earache today.
+52	die Pastete	paté	Zu einem großen Fest gibt es bei uns traditionell als sehr feine Vorspeise eine französische Pastete.	For a large festival we traditionally have a French paté as a very fine starter.
+52	die Pflaume	plum	Meine nette Oma backt im kühlen Herbst unglaublich gern einen fantastischen Kuchen mit frischen Pflaumen.	My nice grandma incredibly likes baking a fantastic cake with fresh plums in the cool autumn.
+52	die Pute	turkey	An unserem traditionellen englischen Weihnachtsfest essen wir abends eigentlich immer eine riesige, gebratene Pute.	At our traditional English Christmas festival we actually always eat a huge, roast turkey in the evening.
+52	die Rückenschmerzen	backache	Mein alter Onkel hat nach der furchtbar harten Arbeit im Garten oft unglaublich schlimme Rückenschmerzen.	My old uncle often has incredibly bad backache after the terribly hard work in the garden.
+52	die Sahne	cream	Ich trinke meinen heißen, schwarzen Kaffee am späten Nachmittag sehr gern mit ein bisschen frischer Sahne.	I very much like drinking my hot, black coffee in the late afternoon with a little bit of fresh cream.
+53	die Schokolade	chocolate	Ich kaufe meiner lieben Mutter zum großen Geburtstag eine unglaublich teure und extrem leckere Schokolade.	I am buying my dear mother an incredibly expensive and extremely delicious chocolate for her large birthday.
+53	die Selbstbedienung	self-service	In der extrem billigen Kantine an der Universität gibt es eigentlich immer nur einfache Selbstbedienung.	In the extremely cheap canteen at the university there is actually always only simple self-service.
+53	die Serviette	serviette	Herr Ober, darf ich bitte sofort eine saubere Serviette für meinen unglaublich schmutzigen Mund haben?	Waiter, may I immediately have a clean serviette for my incredibly dirty mouth, please?
+53	die Sparkasse	savings bank	Ich eröffne heute Nachmittag ein völlig neues Konto auf der modernen Sparkasse in der Stadtmitte.	I am opening a completely new account at the modern savings bank in the town centre this afternoon.
+53	die Sprechstunde	surgery (consultation hours)	Die praktische Sprechstunde bei meinem freundlichen Arzt beginnt am ruhigen Morgen leider erst um neun Uhr.	The practical surgery at my friendly doctor's unfortunately only begins at nine o'clock on the quiet morning.
+53	die Spritze	injection	Das kleine, kranke Kind hat beim Zahnarzt leider furchtbar große Angst vor der extrem langen Spritze.	The small, sick child is unfortunately terribly afraid of the extremely long injection at the dentist's.
+54	die Suppe	soup	Wir kochen im extrem kalten und nassen Winter oft eine unglaublich heiße und fantastisch leckere Suppe.	We often cook an incredibly hot and fantastically delicious soup in the extremely cold and wet winter.
+54	die Süßigkeiten	sweets	Kleine Kinder essen auf der lauten Geburtstagsparty leider oft unglaublich viel zu viele ungesunde Süßigkeiten.	Small children unfortunately often eat incredibly much too many unhealthy sweets at the loud birthday party.
+54	die Tomate	tomato	Ich schneide eine extrem frische und furchtbar rote Tomate für unseren großen, gesunden Sommersalat.	I am cutting an extremely fresh and terribly red tomato for our large, healthy summer salad.
+54	die Traube	grape	Diese kleine, grüne Traube aus dem lokalen Supermarkt ist eigentlich furchtbar sauer und nicht sehr süß.	This small, green grape from the local supermarket is actually terribly sour and not very sweet.
+54	die Trommel	drum	Mein lauter kleiner Bruder schlägt den ganzen langen Nachmittag extrem fest auf seine brandneue Trommel.	My loud little brother hits his brand new drum extremely hard all long afternoon.
+54	die Trompete	trumpet	Der talentierte junge Musiker spielt wunderschön und unglaublich laut auf der goldenen Trompete in der Schulband.	The talented young musician plays beautifully and incredibly loudly on the golden trumpet in the school band.
+55	die Untersuchung	examination	Die unglaublich gründliche medizinische Untersuchung im großen Krankenhaus dauerte furchtbar lange drei Stunden.	The incredibly thorough medical examination in the large hospital took a terribly long three hours.
+55	die Verlobung	engagement	Wir feiern die romantische Verlobung von meiner großen Schwester am Wochenende mit der ganzen glücklichen Familie.	We are celebrating my big sister's romantic engagement with the whole happy family at the weekend.
+55	die Vorspeise	starter	Als kleine, leichte Vorspeise bestelle ich im italienischen Restaurant eigentlich immer unglaublich gern einen einfachen Salat.	As a small, light starter I actually incredibly always like ordering a simple salad in the Italian restaurant.
+55	die Waffel	waffle	Wir essen im lauten Freizeitpark am extrem heißen Nachmittag unglaublich gern eine extrem warme Waffel mit süßem Eis.	We incredibly like eating an extremely warm waffle with sweet ice cream in the loud theme park on the extremely hot afternoon.
+55	die Wurst	sausage	Die extrem scharfe und furchtbar fettige Wurst auf dem traditionellen Weihnachtsmarkt schmeckt eigentlich unglaublich gut.	The extremely spicy and terribly greasy sausage at the traditional Christmas market actually tastes incredibly good.
+55	die Zahnschmerzen	toothache	Ich muss unbedingt sofort zum Zahnarzt gehen, weil ich extrem schlimme und furchtbar starke Zahnschmerzen habe.	I absolutely must go to the dentist immediately because I have extremely bad and terribly strong toothache.
+56	die Zehe	toe	Ich habe mir beim extrem schnellen Laufen leider furchtbar stark die kleine, linke Zehe am schweren Tisch gestoßen.	I unfortunately bumped my little, left toe terribly hard against the heavy table while running extremely fast.
+56	die Zeremonie	ceremony	Die traditionelle und furchtbar lange Zeremonie in der großen, alten Kirche war wirklich wunderschön und absolut rührend.	The traditional and terribly long ceremony in the large, old church was really beautiful and absolutely moving.
+56	die Zigarette	cigarette	Es ist extrem furchtbar ungesund für die frische Lunge, wirklich jeden Tag eine unglaublich schädliche Zigarette zu rauchen.	It is extremely terribly unhealthy for the fresh lungs to really smoke an incredibly harmful cigarette every day.
+56	die Zitrone	lemon	Ich trinke meinen unglaublich heißen und extrem starken schwarzen Tee eigentlich am allerliebsten mit etwas frischer Zitrone.	I actually most prefer drinking my incredibly hot and extremely strong black tea with some fresh lemon.
+56	die Zunge	tongue	Der unglaublich lustige und furchtbar freche kleine Junge zeigt dem strengen Lehrer im Unterricht einfach die lange Zunge.	The incredibly funny and terribly naughty little boy simply sticks his long tongue out at the strict teacher in the lesson.
+56	die Zutaten	ingredients	Ich habe heute leider absolut überhaupt nicht alle wichtigen, frischen Zutaten für diesen extrem komplizierten Kuchen gekauft.	I unfortunately absolutely did not buy all the important, fresh ingredients for this extremely complicated cake today at all.
+57	die Zwiebel	onion	Ich weine eigentlich fast immer furchtbar stark, wenn ich eine extrem frische, scharfe Zwiebel in der Küche schneide.	I actually almost always cry terribly strongly when I cut an extremely fresh, sharp onion in the kitchen.
+57	die Übung	exercise	Diese furchtbar schwere grammatikalische Übung im neuen Englischbuch ist für die jungen Schüler extrem kompliziert und schwer.	This terribly difficult grammatical exercise in the new English book is extremely complicated and hard for the young pupils.
+57	voll gar	well cooked, well done	Ich esse mein unglaublich teures und furchtbar leckeres Steak im klassischen Restaurant eigentlich am allerliebsten völlig voll gar.	I actually most prefer eating my incredibly expensive and terribly delicious steak in the classic restaurant completely well done.
+57	sich ausruhen, relaxen	to rest, relax	Ich ruhe mich am sonnigen und unglaublich entspannten Sonntagnachmittag extrem gern auf dem großen, bequemen Sofa aus.	I extremely like resting on the large, comfortable sofa on the sunny and incredibly relaxed Sunday afternoon.
+57	Bier vom Fass	draft beer	Mein furchtbar müder Vater trinkt im lauten, traditionellen Gasthaus am späten Freitagabend unglaublich gern ein kühles Bier vom Fass.	My terribly tired father incredibly likes drinking a cool draft beer in the loud, traditional inn on late Friday evening.
+57	beim Arzt bestellt	appointment with the doctor	Ich kann heute Nachmittag leider absolut nicht zum schnellen Fußball kommen, weil ich pünktlich beim Arzt bestellt bin.	I unfortunately absolutely cannot come to the fast football this afternoon because I have an appointment with the doctor punctually.
+58	das kohlensäurehaltige Getränk	fizzy drink	Ein extrem süßes und furchtbar kohlensäurehaltiges Getränk ist leider unglaublich schlecht für die absolut gesunden, weißen Zähne.	An extremely sweet and terribly fizzy drink is unfortunately incredibly bad for the absolutely healthy, white teeth.
+58	der Akrobat /in	acrobat	Der unglaublich talentierte und extrem mutige Akrobat im großen Zirkus springt am Nachmittag furchtbar hoch in der weiten Luft.	The incredibly talented and extremely brave acrobat in the large circus jumps terribly high in the wide air in the afternoon.
+58	der Besucher /in	visitor	Der extrem freundliche, junge Besucher aus England spricht leider überhaupt absolut kein deutsches Wort mit meiner Familie.	The extremely friendly, young visitor from England unfortunately speaks absolutely no German word at all with my family.
+58	der Champignon, der Pilz	mushroom	Ich esse auf meiner extrem leckeren, italienischen Pizza eigentlich am allerliebsten frische Champignons mit unglaublich viel Käse.	I actually most prefer eating fresh mushrooms with an incredible amount of cheese on my extremely delicious, Italian pizza.
+58	der Kunde /in	customer, client	Der extrem ungeduldige Kunde wartet an der furchtbar langsamen Kasse im großen Supermarkt schon eine furchtbar lange Zeit.	The extremely impatient customer has already been waiting a terribly long time at the terribly slow checkout in the large supermarket.
+58	der Verkäufer /in	sales assistant, shopkeeper	Der extrem nette und unglaublich hilfsbereite Verkäufer im schicken Modegeschäft sucht sofort die absolut richtige, kleine Größe für mich.	The extremely nice and incredibly helpful sales assistant in the smart fashion shop looks for the absolutely right, small size for me immediately.
+59	der Zoowärter /in	zoo keeper	Der furchtbar mutige Zoowärter füttert den extrem großen, hungrigen Löwen pünktlich jeden frühen Morgen im lauten Tierpark.	The terribly brave zoo keeper feeds the extremely large, hungry lion punctually every early morning in the loud zoo.
+59	die Karotte, die Möhre, Rüebli	carrot	Eine extrem gesunde und unglaublich frische Karotte ist eigentlich furchtbar gut für die kleinen, empfindlichen Augen von kleinen Kindern.	An extremely healthy and incredibly fresh carrot is actually terribly good for the small, sensitive eyes of small children.
+59	die Pille die Tablette	pill	Ich schlucke die unglaublich bittere, winzige Pille gegen meine extrem schlimmen Magenschmerzen schnell mit einem großen Glas Wasser.	I quickly swallow the incredibly bitter, tiny pill for my extremely bad stomach ache with a large glass of water.
+59	die Pommes (Frites)	chips, fries	Die glücklichen Kinder essen an der warmen Imbissstube furchtbar gern extrem knusprige Pommes mit ganz unglaublich viel fettiger Mayonnaise.	The happy children terribly like eating extremely crispy chips with a quite incredible amount of greasy mayonnaise at the warm snack bar.
+59	die Spezialität des Hauses	speciality of the house	Der extrem höfliche Kellner empfiehlt uns am teuren und schicken Abend eigentlich sofort begeistert die leckere Spezialität des Hauses.	The extremely polite waiter actually immediately enthusiastically recommends the delicious speciality of the house to us on the expensive and smart evening.
+59	es schmeckt mir	it tastes (well)	Die extrem frische und furchtbar heiße Suppe schmeckt mir heute im fantastischen neuen Restaurant wirklich unglaublich fantastisch gut.	The extremely fresh and terribly hot soup tastes really incredibly fantastically well to me in the fantastic new restaurant today.
+60	skateboarden, Skateboard fahren	to skateboard	Mein jüngerer Bruder fährt am extrem sonnigen Nachmittag eigentlich unglaublich gern mit seinen tollen und lustigen Freunden Skateboard.	My younger brother actually incredibly likes skateboarding with his great and funny friends on the extremely sunny afternoon.
+60	die Apfelsine / Orange	orange	Ich trinke zum furchtbar frühen englischen Frühstück jeden entspannten Tag unglaublich gern den frischen, süßen Saft aus einer reifen Apfelsine.	I incredibly like drinking the fresh, sweet juice from a ripe orange for the terribly early English breakfast every relaxed day.
+60	die Metzgerei, die Fleischerei	butcher	Meine unglaublich nette alte Oma kauft traditionell sehr frische und furchtbar leckere Wurst auf dem Markt oder in der lokalen Metzgerei.	My incredibly nice old grandma traditionally buys very fresh and terribly tasty sausage at the market or in the local butcher's.
+60	die Party, die Fete	party	Wir tanzen auf der furchtbar lauten und extrem lustigen Party am späten Samstagabend glücklich bis tief in die unglaublich dunkle Nacht.	We dance happily deep into the incredibly dark night at the terribly loud and extremely funny party on late Saturday evening.
+60	es schmeckt mir nicht	it doesn't taste	Dieser extrem bittere und furchtbar saure Salat schmeckt mir in dieser teuren und schicken Kantine heute leider absolut überhaupt nicht.	This extremely bitter and terribly sour salad unfortunately absolutely does not taste to me at all in this expensive and smart canteen today.
+60	das Schmuckgeschäft, der Juwelier	jewellery shop	Mein stolzer und extrem reicher Onkel kauft eine unglaublich wunderschöne, furchtbar teure, goldene Kette in dem schicken, kleinen Schmuckgeschäft.	My proud and extremely rich uncle is buying an incredibly beautiful, terribly expensive, gold necklace in the smart, small jewellery shop.
+`;
