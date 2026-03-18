@@ -36,6 +36,8 @@ export interface Word {
   day: number | string;
   german: string;
   english: string;
+  germanSentence?: string;
+  englishSentence?: string;
   category?: string;
   german3rdPerson?: string;
   germanImperfekt?: string;
@@ -50,7 +52,10 @@ const parseVocab = (topicId: string, rawData: string): Word[] => {
     .trim()
     .split("\n")
     .map((line, index) => {
-      const [dayStr, german, english] = line.split("\t");
+      const parts = line.split("\t");
+      const [dayStr, german, english] = parts;
+      const germanSentence = parts[3]?.trim() || undefined;
+      const englishSentence = parts[4]?.trim() || undefined;
       const day = parseInt(dayStr, 10);
       return {
         id: `word_${topicId}_${index}`,
@@ -58,6 +63,8 @@ const parseVocab = (topicId: string, rawData: string): Word[] => {
         day,
         german: german?.trim() || "",
         english: english?.trim() || "",
+        germanSentence,
+        englishSentence,
       };
     })
     .filter((w) => w.german && w.english && !isNaN(w.day));
