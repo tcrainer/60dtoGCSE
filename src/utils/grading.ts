@@ -186,6 +186,34 @@ function checkFormalPronouns(userInput: string, target: string): boolean {
   return true;
 }
 
+/** Normalize for writing: strip punctuation, lowercase, but keep all words (including pronouns) */
+function normalizeWriting(text: string): string {
+  return text
+    .replace(/\.\.\./g, "")
+    .replace(/[.,?!;:–—""„"'«»()]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/** Get sorted word bag from a string */
+function wordBag(text: string): string[] {
+  return text.split(/\s+/).filter(Boolean).sort();
+}
+
+/** Check if two word bags match, allowing a total Levenshtein budget for typos across all words */
+function wordBagsMatch(userWords: string[], targetWords: string[]): boolean {
+  if (userWords.length !== targetWords.length) return false;
+  // Sort both and compare word by word, allowing 1 typo total
+  let totalDist = 0;
+  for (let i = 0; i < userWords.length; i++) {
+    const d = levenshtein(userWords[i], targetWords[i]);
+    totalDist += d;
+    if (totalDist > 1) return false;
+  }
+  return true;
+}
+
 export function checkWritingAnswer(userInput: string, target: string) {
   const targetOptions = target
     .split("/")
@@ -193,7 +221,6 @@ export function checkWritingAnswer(userInput: string, target: string) {
     .filter(Boolean);
 
   // Allow user to type either side of a slash, or both sides with a slash.
-  // e.g. target "A / B": typing "A", "B", or "A / B" all count as correct.
   const userOptions = userInput
     .split("/")
     .map((s) => s.trim())
@@ -202,19 +229,30 @@ export function checkWritingAnswer(userInput: string, target: string) {
   if (userOptions.length === 0) return { isCorrect: false, points: 0 };
 
   for (const userOpt of userOptions) {
-    const userNorm = normalizeText(removeParentheses(userOpt));
+    const userNorm = normalizeWriting(userOpt);
 
     for (const option of targetOptions) {
-      const optStripped  = normalizeText(removeParentheses(option));
-      const optExpanded  = normalizeText(option.replace(/\(([^)]+)\)/g, "$1"));
+      const optStripped  = normalizeWriting(removeParentheses(option));
+      const optExpanded  = normalizeWriting(option.replace(/\(([^)]+)\)/g, "$1"));
 
       for (const optNorm of [optStripped, optExpanded]) {
+        // 1. Exact match (after punctuation stripping)
         if (userNorm === optNorm) {
           if (!checkFormalPronouns(userOpt, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
           return { isCorrect: true, points: 10 };
         }
+
+        // 2. Levenshtein on the whole string (catches small typos)
         const maxDist = optNorm.length > 10 ? 1 : 0;
         if (levenshtein(userNorm, optNorm) <= maxDist) {
+          if (!checkFormalPronouns(userOpt, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
+          return { isCorrect: true, points: 10 };
+        }
+
+        // 3. Word-bag comparison: same words in any order (German word order flexibility)
+        const userWords = wordBag(userNorm);
+        const optWords = wordBag(optNorm);
+        if (wordBagsMatch(userWords, optWords)) {
           if (!checkFormalPronouns(userOpt, option)) return { isCorrect: false, points: 0, message: "Check capitalisation: Sie / Ihnen / Ihr" };
           return { isCorrect: true, points: 10 };
         }
