@@ -261,15 +261,15 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   word = word.replace(/\(sich\)\s*/i, 'sich ');
   
   // Handle dotted paired connectors: "weder...noch" → blank both "weder" and "noch"
-  const dottedMatch = word.match(/^(\S+?)\.{2,}(\S+?)$/);
-  if (dottedMatch) {
-    const [, part1, part2] = dottedMatch;
+  // Also handles "Einerseits..., andererseits..." with commas/spaces between parts
+  const dottedParts = word.split(/\.{2,}[,\s]*/g).map(s => s.trim()).filter(s => s && !s.match(/^[,\s]*$/));
+  if (dottedParts.length >= 1 && word.includes('...')) {
     let result = sentence;
     let anyFound = false;
-    const p1 = blankWord(result, part1);
-    if (p1.found) { result = p1.result; anyFound = true; }
-    const p2 = blankWord(result, part2);
-    if (p2.found) { result = p2.result; anyFound = true; }
+    for (const part of dottedParts) {
+      const p = blankWord(result, part);
+      if (p.found) { result = p.result; anyFound = true; }
+    }
     if (anyFound) return result;
   }
   
