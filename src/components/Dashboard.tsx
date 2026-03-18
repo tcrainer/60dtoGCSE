@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
 import { getLevel, getStreakBonus, getStreakFlames } from "../store/useStore";
 import { checkAnswer, checkWritingAnswer } from "../utils/grading";
@@ -32,9 +32,10 @@ interface DashboardProps {
     mode: "test" | "learn" | "revise" | "practice",
     words: any[],
   ) => void;
+  onOpenPaperlike?: () => void;
 }
 
-export function Dashboard({ onStartSession }: DashboardProps) {
+export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
   const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints, fixMisplacedWords, b1Settings, setB1Settings } = useStore();
   const [showB1Settings, setShowB1Settings] = useState(false);
   const [selectedBoxContext, setSelectedBoxContext] = useState<"gcse" | "b1">("gcse");
@@ -1089,6 +1090,24 @@ export function Dashboard({ onStartSession }: DashboardProps) {
           })}
         </div>
       </div>
+
+      {/* Paperlike Mode Card */}
+      {onOpenPaperlike && (
+        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-5 rounded-3xl shadow-sm border border-violet-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-violet-900 flex items-center gap-2">📝 Paperlike Mode</h2>
+              <p className="text-sm text-violet-600 mt-0.5">Practice Schreiben 1, 2 & 3 phrases with a vocabulary list — just like on paper.</p>
+            </div>
+            <button
+              onClick={onOpenPaperlike}
+              className="px-6 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200 shrink-0 flex items-center gap-2"
+            >
+              Start Paperlike
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* B1 Topics & Priority Group Grid */}
       <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
