@@ -69,11 +69,41 @@ function hasUmlautMismatch(a: string, b: string): boolean {
   return false;
 }
 
+/** 
+ * Pre-process target to expand shared-noun article patterns.
+ * "der/die Reisende" → "der Reisende / die Reisende"
+ * "der/die Angestellte, -n" → "der Angestellte, -n / die Angestellte, -n"
+ * This prevents "/" from splitting into "der" and "die Reisende" as two unrelated options.
+ */
+function expandArticleSlash(text: string): string {
+  const ARTICLES = ['der', 'die', 'das', 'ein', 'eine', 'einen', 'einem', 'einer'];
+  // Pattern: article/article followed by a word (the shared noun)
+  // e.g. "der/die Reisende" or "ein/eine Angestellte, -n"
+  return text.replace(
+    new RegExp(`\\b(${ARTICLES.join('|')})\\s*/\\s*(${ARTICLES.join('|')})\\s+`, 'gi'),
+    (match, art1, art2, offset, str) => {
+      // Find the rest of the string (the shared noun + any suffix like ", -n")
+      const rest = str.substring(offset + match.length);
+      // Take everything up to the next " / " or end (but not comma-space that's part of declension like ", -n")
+      const nounMatch = rest.match(/^(\S+(?:\s*,\s*-\w*)?)/);
+      if (nounMatch) {
+        const noun = nounMatch[1];
+        // Replace the whole "art1/art2 noun" with "art1 noun / art2 noun"
+        return `${art1} ${noun} / ${art2} `;
+      }
+      return match;
+    }
+  );
+}
+
 export function checkAnswer(
   userInput: string,
   target: string,
   isGermanTarget: boolean,
 ) {
+  // Pre-process: expand "der/die Noun" → "der Noun / die Noun"
+  target = expandArticleSlash(target);
+  
   const targetSynonyms = target
     .split(/[/,]/)
     .map((s) => s.trim())
