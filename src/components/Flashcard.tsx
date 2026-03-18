@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"; 
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Word } from "../data/vocabulary";
 import { checkAnswer, checkWritingAnswer, stripArticle, removeParentheses } from "../utils/grading";
 import { createGappedSentence } from "../utils/sentenceGap";
@@ -415,6 +415,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
           <div className={`flex-1 p-8 flex flex-col justify-center items-center min-h-[200px] border-b ${askGerman ? "bg-blue-50 border-blue-100" : "bg-yellow-50 border-yellow-100"}`}>
             <span className={`text-xs font-bold uppercase tracking-wider mb-4 ${askGerman ? "text-blue-400" : "text-yellow-600"}`}>{promptLang}</span>
             <h2 className={`text-3xl font-bold text-center ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>{promptText}</h2>
+            {/* Show sentence alongside prompt word */}
+            {!askGerman && currentWord.germanSentence && (
+              <p className="mt-4 text-sm text-yellow-700 italic text-center leading-relaxed max-w-md">{currentWord.germanSentence}</p>
+            )}
+            {askGerman && currentWord.englishSentence && (
+              <p className="mt-4 text-sm text-blue-600 italic text-center leading-relaxed max-w-md">{currentWord.englishSentence}</p>
+            )}
           </div>
 
           {/* Answer half */}
@@ -435,6 +442,13 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                       <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold">{currentWord.germanPerfekt}</span>
                     )}
                   </div>
+                )}
+                {/* Show sentence alongside revealed answer */}
+                {!askGerman && currentWord.englishSentence && (
+                  <p className="mt-3 text-sm text-blue-600 italic text-center leading-relaxed max-w-md">{currentWord.englishSentence}</p>
+                )}
+                {askGerman && currentWord.germanSentence && (
+                  <p className="mt-3 text-sm text-yellow-700 italic text-center leading-relaxed max-w-md">{currentWord.germanSentence}</p>
                 )}
               </div>
             ) : (
