@@ -22,6 +22,7 @@ function generateVowelChanges(stem: string): string[] {
     ['ö', 'a'], // mögen → mag
     // Also handle "iss" → "eiß" type changes (wissen → weiß)
     ['iss', 'eiß'], ['iss', 'uß'],
+    ['ehm', 'imm'], // nehmen → nimmt
   ];
   for (const [from, to] of changes) {
     const idx = stem.toLowerCase().lastIndexOf(from);
