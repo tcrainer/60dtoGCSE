@@ -82,20 +82,33 @@ function blankWord(sentence: string, word: string): { result: string; found: boo
 
 /** Try to blank an article that appears before a blank in the sentence */
 function blankArticleBefore(sentence: string): string {
-  // Match article followed by optional adjectives, then blank
+  // Find the closest article before the FIRST blank (max 3 words before it)
   // e.g., "in der Stadtmitte" → "der" before blank
   // e.g., "in einer großen Stadt" → "einer" before blank
+  // Must NOT match unrelated articles earlier in the sentence
+  const articlesPattern = ARTICLES.join('|');
+  // Match: article + up to 2 optional adjective/words + blank
+  // Use character class that includes German umlauts (ä, ö, ü, ß)
+  const WORD = '[a-zA-ZäöüÄÖÜß]+';
   const pattern = new RegExp(
-    `\\b(${ARTICLES.join('|')})\\b((?:\\s+\\w+)*?)\\s+${escapeRegex(BLANK)}`,
-    'i'
+    `(?:^|\\s)(${articlesPattern})((?:\\s+${WORD}){0,2})\\s+${escapeRegex(BLANK)}`,
+    'gi'
   );
-  const match = sentence.match(pattern);
-  if (match) {
-    // Only blank the article, keep adjectives (they're a hint, not the answer)
-    return sentence.replace(
-      new RegExp(`\\b${escapeRegex(match[1])}\\b(${escapeRegex(match[2])})\\s+${escapeRegex(BLANK)}`, 'i'),
-      `${BLANK}$1 ${BLANK}`
+  // Find ALL matches and use the last one (closest to blank)
+  let lastMatch: RegExpExecArray | null = null;
+  let m: RegExpExecArray | null;
+  while ((m = pattern.exec(sentence)) !== null) {
+    lastMatch = m;
+  }
+  if (lastMatch) {
+    const article = lastMatch[1];
+    const middle = lastMatch[2]; // adjectives between article and blank
+    // Replace this specific occurrence: article + middle + blank → blank + middle + blank
+    const toReplace = new RegExp(
+      `(^|\\s)${escapeRegex(article)}${escapeRegex(middle)}\\s+${escapeRegex(BLANK)}`,
+      'i'
     );
+    return sentence.replace(toReplace, `$1${BLANK}${middle} ${BLANK}`);
   }
   return sentence;
 }
