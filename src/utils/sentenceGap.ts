@@ -260,6 +260,47 @@ export function createGappedSentence(germanWord: string, germanSentence: string)
   word = word.replace(/^(\S+)\s+\(sich\)$/i, 'sich $1');
   word = word.replace(/\(sich\)\s*/i, 'sich ');
   
+  // Strip trailing exclamation mark: "Achtung!" → "Achtung"
+  word = word.replace(/!$/, '');
+  
+  // Handle prefix-dash patterns: "heutig-", "Traum-", "manch-", "gesamt-"
+  // These are word-building prefixes — find compound words in sentence that start with the stem
+  if (word.endsWith('-') && !word.includes('/') && !word.includes(' ')) {
+    const prefixStem = word.replace(/-$/, '').toLowerCase();
+    if (prefixStem.length >= 3) {
+      const words = sentence.replace(/[.,!?;:]/g, '').split(/\s+/);
+      for (const w of words) {
+        if (w.toLowerCase().startsWith(prefixStem) && w.length > prefixStem.length) {
+          return replaceWord(sentence, w, BLANK);
+        }
+      }
+    }
+  }
+  
+  // Handle compound-slash patterns: "Nord-/Ostsee" or "gesamt-/Gesamt-" or "die Nord-/Ostsee"
+  // Try each slash-part as a prefix stem of a compound word
+  if (word.includes('/') && word.includes('-')) {
+    // Strip article first if present
+    const wordNoArt = word.replace(/^(der|die|das|dem|den|des|ein|eine|einem|einen|einer|eines)\s+/i, '');
+    const slashParts = wordNoArt.split('/').map(s => s.trim().replace(/-$/, '')).filter(Boolean);
+    const sentWords = sentence.replace(/[.,!?;:]/g, '').split(/\s+/);
+    for (const part of slashParts) {
+      if (part.length < 3) continue;
+      // Try as compound prefix
+      for (const w of sentWords) {
+        if (w.toLowerCase().startsWith(part.toLowerCase()) && w.length > part.length) {
+          let result = replaceWord(sentence, w, BLANK);
+          // Also blank article before if original had article
+          if (word !== wordNoArt) result = blankArticleBefore(result);
+          return result;
+        }
+      }
+      // Try exact match too
+      const exact = blankWord(sentence, part);
+      if (exact.found) return exact.result;
+    }
+  }
+  
   // Handle dotted paired connectors: "weder...noch" → blank both "weder" and "noch"
   // Also handles "Einerseits..., andererseits..." with commas/spaces between parts
   const dottedParts = word.split(/\.{2,}[,\s]*/g).map(s => s.trim()).filter(s => s && !s.match(/^[,\s]*$/));
@@ -426,6 +467,18 @@ function tryCreateGap(word: string, sentence: string): string {
         if (w.toLowerCase().startsWith(stemRoot.toLowerCase()) && w.length >= stemRoot.length) {
           let result = replaceWord(sentence, w, BLANK);
           return result;
+        }
+      }
+      // For -eln verbs (e.g., verwechseln, zweifeln, wechseln), the 1st person
+      // drops the middle "e": verwechsel → verwechsle, zweifel → zweifle
+      // So also try stem with final "el" → "l" 
+      if (stemRoot.toLowerCase().endsWith('el')) {
+        const elnStem = stemRoot.slice(0, -2) + 'l'; // verwechsel → verwechsl
+        for (const w of words) {
+          if (w.toLowerCase().startsWith(elnStem.toLowerCase()) && w.length >= elnStem.length) {
+            let result = replaceWord(sentence, w, BLANK);
+            return result;
+          }
         }
       }
     }
