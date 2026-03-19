@@ -89,7 +89,7 @@ export const topicB1WritingVocab = `
 16	Leider ist es mir nicht möglich,...	Unfortunately it is not possible for me to... [FORMAL]	Leider ist es mir nicht möglich, die teure Rechnung heute schon zu bezahlen.	Unfortunately it is not possible for me to pay the expensive bill already today.
 17	Das wird nicht wieder vorkommen.	It will not happen again. [FORMAL]	Das wird nicht wieder vorkommen.	It will not happen again.
 17	Ich bitte vielmals um Entschuldigung, aber	I sincerely apologise, but [FORMAL]	Ich bitte vielmals um Entschuldigung, aber ich habe den falschen Termin notiert.	I sincerely apologise, but I noted down the wrong appointment.
-17	Entschuldigen Sie für die Unannehmlichkeiten	Please excuse the inconvenience [FORMAL]	Entschuldigen Sie für die Unannehmlichkeiten.	Please excuse the inconvenience.
+17	Entschuldigen Sie die Unannehmlichkeiten	Please excuse the inconvenience [FORMAL]	Entschuldigen Sie für die Unannehmlichkeiten.	Please excuse the inconvenience.
 17	Würden Sie bitte...	Would you please... [FORMAL]	Würden Sie bitte das große Fenster im Büro schließen?	Would you please close the large window in the office?
 17	Wäre es (Ihnen) möglich, dass	Would it be possible (for you) that... [FORMAL]	Wäre es Ihnen möglich, dass Sie mir bei diesem Schulprojekt helfen?	Would it be possible for you that you help me with this school project?
 17	Wäre es möglich, einen (neuen) Termin zu bekommen?	Would it be possible to get a (new) appointment? [FORMAL]	Wäre es möglich, einen neuen Termin zu bekommen?	Would it be possible to get a new appointment?
@@ -101,7 +101,7 @@ export const topicB1WritingVocab = `
 18	Der Grund für mein Schreiben ist...	The reason for my writing is... [FORMAL]	Der Grund für mein Schreiben ist eine offizielle Beschwerde über den Service.	The reason for my writing is an official complaint about the service.
 18	wegen eines dringenden Arztbesuchs	due to an urgent doctor visit [FORMAL]	Ich komme heute leider später zur Arbeit wegen eines dringenden Arztbesuchs.	I am unfortunately arriving later to work today due to an urgent doctor visit.
 18	wegen einer (dringenden) Familienangelegenheit	due to an (urgent) family matter [FORMAL]	Ich brauche nächste Woche Urlaub wegen einer dringenden Familienangelegenheit.	I need a holiday next week due to an urgent family matter.
-19	aufgrund / wegen einer Familienfeier	due to a family celebration [FORMAL]	Ich kann am Wochenende absolut nicht arbeiten wegen einer großen Familienfeier.	I absolutely cannot work at the weekend due to a large family celebration.
+19	aufgrund einer Familienfeier / wegen einer Familienfeier	due to a family celebration [FORMAL]	Ich kann am Wochenende absolut nicht arbeiten wegen einer großen Familienfeier.	I absolutely cannot work at the weekend due to a large family celebration.
 19	aufgrund von Krankheit	due to illness [FORMAL]	Das Konzert am Samstag wurde leider aufgrund von Krankheit komplett abgesagt.	The concert on Saturday was unfortunately completely cancelled due to illness.
 19	wegen eines Wettbewerbs	due to a competition [FORMAL]	Ich bin am Samstag leider nicht in der Stadt wegen eines sportlichen Wettbewerbs.	I am unfortunately not in the town on Saturday due to a sporty competition.
 19	ich wende mich an Sie, weil ich ein Problem habe	I am contacting you because I have a problem [FORMAL]	Ich wende mich an Sie, weil ich ein Problem habe.	I am contacting you because I have a problem.
@@ -120,7 +120,7 @@ export const topicB1WritingVocab = `
 21	Ich erwarte eine Lösung / Ich erwarte eine Rückerstattung	I expect a solution / I expect a refund [FORMAL]	Ich erwarte eine schnelle Lösung für dieses furchtbar ärgerliche Problem.	I expect a quick solution for this terribly annoying problem.
 21	Könnten Sie mir bitte die Erlaubnis dafür geben?	Could you give me permission? [FORMAL]	Könnten Sie mir bitte die Erlaubnis dafür geben?	Could you give me permission?
 22	Wäre es Ihnen Recht, wenn ich um 16:00 Uhr komme?	Would it be all right if I came at 4pm? [FORMAL]	Wäre es Ihnen Recht, wenn ich um 16:00 Uhr komme?	Would it be all right if I came at 4pm?
-22	mir Informationen senden / zusenden	to send information [FORMAL]	Könnten Sie mir bitte weitere nützliche Informationen über den Kurs zusenden?	Could you please send me further useful information about the course?
+22	mir Informationen senden / mir Informationen zusenden	to send information [FORMAL]	Könnten Sie mir bitte weitere nützliche Informationen über den Kurs zusenden?	Could you please send me further useful information about the course?
 22	Wäre es möglich, dass Sie mir die Unterlagen schicken?	Would it be possible that you send me the documents? [FORMAL]	Wäre es möglich, dass Sie mir die Unterlagen schicken?	Would it be possible that you send me the documents?
 22	Bitte senden Sie mir alle Informationen per Email	Please send all information via email (to me) [FORMAL]	Bitte senden Sie mir alle Informationen per Email.	Please send all information via email to me.
 22	Ich würde mich gerne bei Ihnen vorstellen.	I would like to introduce myself (to you) [FORMAL]	Ich würde mich gerne bei Ihnen vorstellen.	I would like to introduce myself (to you).
