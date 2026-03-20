@@ -22,6 +22,8 @@ export interface UserWord {
   nextReviewDate: string | null;
   lastTestedDate: string | null;
   consecutiveWrong: number; // count of consecutive wrong answers
+  correctCount?: number;    // total times answered correctly (all-time)
+  incorrectCount?: number;  // total times answered incorrectly (all-time)
 }
 
 export interface UserStats {
@@ -317,7 +319,9 @@ export const useStore = create<StoreState>()(
 
           const nextReviewDate = effectiveMode === "practice" ? currentWord.nextReviewDate : getNextReviewDate(newBox);
           const consecutiveWrong = isCorrect ? 0 : (currentWord.consecutiveWrong ?? 0) + 1;
-          const updatedWord: UserWord = { ...currentWord, box: newBox, nextReviewDate, lastTestedDate: now, consecutiveWrong };
+          const correctCount   = (currentWord.correctCount   ?? 0) + (isCorrect ? 1 : 0);
+          const incorrectCount = (currentWord.incorrectCount ?? 0) + (isCorrect ? 0 : 1);
+          const updatedWord: UserWord = { ...currentWord, box: newBox, nextReviewDate, lastTestedDate: now, consecutiveWrong, correctCount, incorrectCount };
 
           const newStats = { ...state.stats };
           const today = getTodayKey();
