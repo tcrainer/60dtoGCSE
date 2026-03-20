@@ -302,6 +302,25 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
           </div>
         );
       })()}
+
+      {/* B1 Schreiben Practice Card — top of dashboard */}
+      {onOpenPaperlike && (
+        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-5 rounded-3xl shadow-sm border border-violet-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-violet-900 flex items-center gap-2">📝 B1 Schreiben Practice</h2>
+              <p className="text-sm text-violet-600 mt-0.5">Practice Schreiben 1, 2 & 3 phrases with a vocabulary list — just like on paper.</p>
+            </div>
+            <button
+              onClick={onOpenPaperlike}
+              className="px-6 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200 shrink-0 flex items-center gap-2"
+            >
+              Start Practice
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header & Stats */}
       {(() => {
         const level = getLevel(stats.points);
@@ -1090,24 +1109,6 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
           })}
         </div>
       </div>
-
-      {/* Paperlike Mode Card */}
-      {onOpenPaperlike && (
-        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-5 rounded-3xl shadow-sm border border-violet-200">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-bold text-violet-900 flex items-center gap-2">📝 Paperlike Mode</h2>
-              <p className="text-sm text-violet-600 mt-0.5">Practice Schreiben 1, 2 & 3 phrases with a vocabulary list — just like on paper.</p>
-            </div>
-            <button
-              onClick={onOpenPaperlike}
-              className="px-6 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200 shrink-0 flex items-center gap-2"
-            >
-              Start Paperlike
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* B1 Topics & Priority Group Grid */}
       <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
