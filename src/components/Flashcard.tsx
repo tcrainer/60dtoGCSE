@@ -516,7 +516,7 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
-        {/* Top Half */}
+        {/* Top Half - always shows the PROMPT (display only) */}
         <div className={`flex-1 ${topColor} p-8 flex flex-col justify-center items-center min-h-[220px] border-b relative`}>
           <span className={`absolute top-4 left-4 text-xs font-bold ${topLabelColor} uppercase tracking-wider flex items-center gap-2`}>
             {topLabel}
@@ -524,78 +524,71 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
             {currentWord.topicId === "S2" && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">💬 Opinion piece</span>}
             {currentWord.topicId === "S3" && <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case">📋 Formal letter</span>}
           </span>
-          {/* If asking English (top is German → show it) OR asking German (top is English → show it) */}
-          {(askGerman ? false : true) && !showResult ? (
-            /* askGerman=false means top is Deutsch and is the input area */
-            <div className="w-full">
-              {currentWord.isVerb ? renderVerbInputs() : (
-                <input type="text" value={input}
-                  onChange={(e) => { setInput(e.target.value); justAdvancedRef.current = false; }}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Type German translation..."
-                  className="w-full px-6 py-4 text-lg border-2 border-yellow-200 rounded-2xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
-                  autoFocus autoComplete="off" />
+          <div className="text-center">
+            <h2 className={`text-3xl font-bold flex items-center gap-2 justify-center ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>
+              {topContent}
+              {!showResult && (
+                <button type="button" onClick={handleHint}
+                  className={`p-1 rounded-full transition-colors ${askGerman ? "hover:bg-blue-100 text-blue-400" : "hover:bg-yellow-100 text-yellow-600"}`}
+                  title="Hint">
+                  <HelpCircle className="w-5 h-5" />
+                </button>
               )}
-              {hint && <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
-              {renderShortcuts()}
-            </div>
-          ) : (
-            <div className="text-center">
-              <h2 className={`text-3xl font-bold flex items-center gap-2 justify-center ${askGerman ? "text-blue-900" : "text-yellow-900"}`}>
-                {topContent}
-                {!showResult && (
-                  <button type="button" onClick={handleHint}
-                    className={`p-1 rounded-full transition-colors ${askGerman ? "hover:bg-blue-100 text-blue-400" : "hover:bg-yellow-100 text-yellow-600"}`}
-                    title="Hint">
-                    <HelpCircle className="w-5 h-5" />
-                  </button>
-                )}
-              </h2>
-              {/* Show English sentence when asking for German (topic A with sentences) */}
-              {askGerman && currentWord.englishSentence && (
-                <p className="mt-3 text-base text-blue-700 italic max-w-md leading-relaxed">
-                  {currentWord.englishSentence}
+            </h2>
+            {/* Show English sentence when asking for German */}
+            {askGerman && currentWord.englishSentence && (
+              <p className="mt-3 text-base text-blue-700 italic max-w-md leading-relaxed">
+                {currentWord.englishSentence}
+              </p>
+            )}
+            {/* Show German sentence when asking for English */}
+            {!askGerman && currentWord.germanSentence && (
+              <p className="mt-3 text-base text-yellow-700 italic max-w-md leading-relaxed">
+                {currentWord.germanSentence}
+              </p>
+            )}
+            {/* Word count underscores for writing topics (only when askGerman=true) */}
+            {askGerman && currentWord.topicId.startsWith("S") && !showResult && (() => {
+              const firstOption = currentWord.german.split("/")[0].trim();
+              const wordCount = firstOption.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean).length;
+              return (
+                <p className="mt-2 text-blue-300 tracking-widest text-lg font-bold select-none">
+                  {Array.from({ length: wordCount }).map((_, i) => (
+                    <span key={i} className="inline-block border-b-2 border-blue-300 w-8 mx-1">&nbsp;</span>
+                  ))}
+                  <span className="text-xs font-normal text-blue-400 ml-2 tracking-normal">{wordCount} word{wordCount !== 1 ? "s" : ""}</span>
                 </p>
-              )}
-              {/* Word count underscores for writing topics (only when askGerman=true) */}
-              {askGerman && currentWord.topicId.startsWith("S") && !showResult && (() => {
-                const firstOption = currentWord.german.split("/")[0].trim();
-                const wordCount = firstOption.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean).length;
-                return (
-                  <p className="mt-2 text-blue-300 tracking-widest text-lg font-bold select-none">
-                    {Array.from({ length: wordCount }).map((_, i) => (
-                      <span key={i} className="inline-block border-b-2 border-blue-300 w-8 mx-1">&nbsp;</span>
-                    ))}
-                    <span className="text-xs font-normal text-blue-400 ml-2 tracking-normal">{wordCount} word{wordCount !== 1 ? "s" : ""}</span>
-                  </p>
-                );
-              })()}
-              {currentWord.isVerb && askGerman && (
-                <div className="mt-2 flex gap-4 justify-center text-sm font-medium text-blue-600">
-                  <span>{currentWord.englishImperfekt}</span><span>•</span><span>{currentWord.englishPerfekt}</span>
-                </div>
-              )}
-            </div>
-          )}
+              );
+            })()}
+            {currentWord.isVerb && askGerman && (
+              <div className="mt-2 flex gap-4 justify-center text-sm font-medium text-blue-600">
+                <span>{currentWord.englishImperfekt}</span><span>•</span><span>{currentWord.englishPerfekt}</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Bottom Half */}
+        {/* Bottom Half - always the ANSWER area (input when testing, display when revealed) */}
         <div className={`flex-1 ${bottomColor} p-8 flex flex-col justify-center items-center min-h-[220px] relative`}>
           <span className={`absolute top-4 left-4 text-xs font-bold ${bottomLabelColor} uppercase tracking-wider`}>{bottomLabel}</span>
-          {askGerman && !showResult ? (
+          {!showResult ? (
             <div className="w-full">
               {currentWord.isVerb ? renderVerbInputs() : (
                 <input type="text" value={input}
                   onChange={(e) => { setInput(e.target.value); justAdvancedRef.current = false; }}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type German translation..."
-                  className="w-full px-6 py-4 text-lg border-2 border-yellow-200 rounded-2xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 outline-none transition-all bg-white"
+                  placeholder={askGerman ? "Type German translation..." : "Type English translation..."}
+                  className={`w-full px-6 py-4 text-lg border-2 rounded-2xl focus:ring-4 outline-none transition-all bg-white ${
+                    askGerman
+                      ? "border-yellow-200 focus:border-yellow-500 focus:ring-yellow-100"
+                      : "border-blue-200 focus:border-blue-500 focus:ring-blue-100"
+                  }`}
                   autoFocus autoComplete="off" />
               )}
-              {hint && <div className="mt-2 text-sm font-bold text-yellow-600 animate-pulse">Hint: Starts with "{hint}"</div>}
+              {hint && <div className={`mt-2 text-sm font-bold animate-pulse ${askGerman ? "text-yellow-600" : "text-blue-500"}`}>Hint: Starts with "{hint}"</div>}
               {renderShortcuts()}
-              {/* Show gapped German sentence as context clue */}
-              {currentWord.germanSentence && (() => {
+              {/* Show gapped German sentence as context clue (only when typing German) */}
+              {askGerman && currentWord.germanSentence && (() => {
                 const gapped = createGappedSentence(currentWord.german, currentWord.germanSentence);
                 if (gapped && gapped !== currentWord.germanSentence) {
                   return (
@@ -626,10 +619,16 @@ export function Flashcard({ words, mode, onComplete }: FlashcardProps) {
                   </button>
                 )}
               </h2>
-              {/* Show revealed German sentence after answering */}
+              {/* Show revealed German sentence after answering (when typed German) */}
               {showResult && askGerman && currentWord.germanSentence && (
                 <p className="mt-2 text-sm text-yellow-800 italic max-w-md leading-relaxed">
                   {currentWord.germanSentence}
+                </p>
+              )}
+              {/* Show revealed English sentence after answering (when typed English) */}
+              {showResult && !askGerman && currentWord.englishSentence && (
+                <p className="mt-2 text-sm text-blue-700 italic max-w-md leading-relaxed">
+                  {currentWord.englishSentence}
                 </p>
               )}
               {currentWord.isVerb && (
