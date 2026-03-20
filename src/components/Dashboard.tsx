@@ -32,10 +32,9 @@ interface DashboardProps {
     mode: "test" | "learn" | "revise" | "practice",
     words: any[],
   ) => void;
-  onOpenPaperlike?: () => void;
 }
 
-export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
+export function Dashboard({ onStartSession }: DashboardProps) {
   const { userWords, stats, dailyStats, awardBonus, recordTimedResult, updateWord, addPoints, fixMisplacedWords, b1Settings, setB1Settings } = useStore();
   const [showB1Settings, setShowB1Settings] = useState(false);
   const [selectedBoxContext, setSelectedBoxContext] = useState<"gcse" | "b1">("gcse");
@@ -1091,24 +1090,6 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
         </div>
       </div>
 
-      {/* Paperlike Mode Card */}
-      {onOpenPaperlike && (
-        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-5 rounded-3xl shadow-sm border border-violet-200">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-bold text-violet-900 flex items-center gap-2">📝 Paperlike Mode</h2>
-              <p className="text-sm text-violet-600 mt-0.5">Practice Schreiben 1, 2 & 3 phrases with a vocabulary list — just like on paper.</p>
-            </div>
-            <button
-              onClick={onOpenPaperlike}
-              className="px-6 py-3 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200 shrink-0 flex items-center gap-2"
-            >
-              Start Paperlike
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* B1 Topics & Priority Group Grid */}
       <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -1800,7 +1781,23 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
             </div>
             {(() => {
               const ctxWords = selectedBoxContext === "b1" ? b1Words : gcseWords;
-              const wordsInBox = ctxWords.filter(w => selectedBox === 0 ? !userWords[w.id] : userWords[w.id]?.box === selectedBox);
+              const wordsInBox = ctxWords
+                .filter(w => selectedBox === 0 ? !userWords[w.id] : userWords[w.id]?.box === selectedBox)
+                .sort((a, b) => {
+                  // Sort by: words with attempts first, then by incorrect ratio (worst first)
+                  const ua = userWords[a.id];
+                  const ub = userWords[b.id];
+                  const aTotal = (ua?.correctCount ?? 0) + (ua?.incorrectCount ?? 0);
+                  const bTotal = (ub?.correctCount ?? 0) + (ub?.incorrectCount ?? 0);
+                  // Words never attempted go to the bottom
+                  if (aTotal === 0 && bTotal === 0) return 0;
+                  if (aTotal === 0) return 1;
+                  if (bTotal === 0) return -1;
+                  // Sort by incorrect ratio descending (most problematic first)
+                  const aRatio = (ua?.incorrectCount ?? 0) / aTotal;
+                  const bRatio = (ub?.incorrectCount ?? 0) / bTotal;
+                  return bRatio - aRatio;
+                });
               const dueWordsInBox = selectedBox >= 2 && selectedBox <= 5
                 ? wordsInBox.filter(w => { const uw = userWords[w.id]; return uw?.nextReviewDate && startOfDay(new Date(uw.nextReviewDate)) <= startOfDay(today); })
                 : wordsInBox;
@@ -1822,7 +1819,7 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
                         const isNotDue = selectedBox >= 2 && selectedBox <= 5 && !isDue;
                         return (
                           <div key={w.id}
-                            className={`flex items-center gap-4 p-3 rounded-xl border-2 transition-colors ${isNotDue ? "opacity-40 cursor-not-allowed border-transparent bg-slate-50" : isSelected ? "border-indigo-500 bg-indigo-50 cursor-pointer" : "border-transparent bg-slate-50 hover:bg-slate-100 cursor-pointer"}`}
+                            className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-colors ${isNotDue ? "opacity-40 cursor-not-allowed border-transparent bg-slate-50" : isSelected ? "border-indigo-500 bg-indigo-50 cursor-pointer" : "border-transparent bg-slate-50 hover:bg-slate-100 cursor-pointer"}`}
                             onClick={() => {
                               if (isNotDue) return;
                               const next = new Set(selectedWordsToRevise);
@@ -1834,16 +1831,29 @@ export function Dashboard({ onStartSession, onOpenPaperlike }: DashboardProps) {
                               {isSelected && <Check className="w-4 h-4" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold text-gray-900">{w.german}</p>
-                              <p className="text-sm text-gray-600">{w.english}</p>
+                              <p className="font-bold text-gray-900 text-sm">{w.german}</p>
+                              <p className="text-xs text-gray-500">{w.english}</p>
                             </div>
-                            {selectedBox > 0 && selectedBox < 6 && (
-                              <div className="ml-auto text-right shrink-0">
-                                <span className={`text-xs font-bold px-2 py-1 rounded-md ${!uw?.nextReviewDate ? "bg-gray-100 text-gray-600" : isDue ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
+                            {/* Attempt history — shown for any word that has been attempted */}
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {uw && ((uw.correctCount ?? 0) > 0 || (uw.incorrectCount ?? 0) > 0) ? (
+                                <>
+                                  <span title="Times correct" className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-1.5 py-0.5 rounded-md ${(uw.correctCount ?? 0) > 0 ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-400"}`}>
+                                    ✓{uw.correctCount ?? 0}
+                                  </span>
+                                  <span title="Times incorrect" className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-1.5 py-0.5 rounded-md ${(uw.incorrectCount ?? 0) > 0 ? "bg-rose-100 text-rose-700" : "bg-gray-100 text-gray-400"}`}>
+                                    ✗{uw.incorrectCount ?? 0}
+                                  </span>
+                                </>
+                              ) : uw ? (
+                                <span className="text-[10px] text-gray-300 italic">no attempts</span>
+                              ) : null}
+                              {selectedBox > 0 && selectedBox < 6 && (
+                                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${!uw?.nextReviewDate ? "bg-gray-100 text-gray-600" : isDue ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
                                   {getDaysUntilReview(uw?.nextReviewDate || null)}
                                 </span>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
                         );
                       })
